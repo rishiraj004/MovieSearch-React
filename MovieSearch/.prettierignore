@@ -1,0 +1,27 @@
+# Dependencies
+node_modules/
+package-lock.json
+yarn.lock
+
+# Build outputs
+dist/
+build/
+out/
+.next/
+
+# Cache directories
+.cache/
+.parcel-cache/
+.nyc_output/
+coverage/
+
+# Config files
+*.config.js
+*.config.ts
+
+# Other
+.DS_Store
+*.log
+.env*
+.vscode/
+.idea/
