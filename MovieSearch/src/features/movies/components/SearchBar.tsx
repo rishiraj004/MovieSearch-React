@@ -28,7 +28,7 @@ export function SearchBar({
 
   return (
     <form onSubmit={handleSubmit} className="w-full max-w-2xl mx-auto">
-      <div className="flex gap-2">
+      <div className="flex gap-2 items-center">
         <div className="flex-1">
           <input
             type="text"

@@ -14,6 +14,7 @@ export interface SearchParams extends PaginationParams {
   query: string
   language?: string
   region?: string
+  include_adult?: boolean
 }
 
 export interface BaseEntity {

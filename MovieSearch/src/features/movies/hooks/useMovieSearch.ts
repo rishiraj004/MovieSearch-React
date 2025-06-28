@@ -44,6 +44,7 @@ export function useMovieSearch(): UseMovieSearchReturn {
       const response: MovieSearchResponse = await movieService.searchMovies({
         query: query.trim(),
         page,
+        include_adult: false, // Assuming we want to exclude adult content by default
       })
 
       setState(prev => ({

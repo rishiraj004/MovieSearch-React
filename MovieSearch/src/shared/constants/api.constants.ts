@@ -2,7 +2,7 @@
 export const API_CONFIG = {
   BASE_URL: 'https://api.themoviedb.org/3',
   IMAGE_BASE_URL: 'https://image.tmdb.org/t/p',
-  API_KEY: import.meta.env.VITE_TMDB_API_KEY || '',
+  API_KEY: import.meta.env.VITE_TMDB_API_READ_ACCESS_TOKEN || '',
   DEFAULT_LANGUAGE: 'en-US',
   DEFAULT_REGION: 'US',
 } as const
