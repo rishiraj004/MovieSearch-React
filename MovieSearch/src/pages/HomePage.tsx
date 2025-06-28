@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useCallback } from 'react'
 
 import {
   MovieGrid,
@@ -18,21 +18,28 @@ export function HomePage() {
     clearSearch,
     currentPage,
     totalPages,
+    debouncedSearch,
+    hasSearched,
   } = useMovieSearch()
   const [selectedMovie, setSelectedMovie] = useState<Movie | null>(null)
 
-  const handleSearch = (query: string) => {
+  // Stable callback references to prevent SearchBar re-renders
+  const handleSearch = useCallback((query: string) => {
     searchMovies(query)
-  }
+  }, [searchMovies])
 
-  const handleMovieClick = (movie: Movie) => {
+  const handleDebouncedSearch = useCallback((query: string) => {
+    debouncedSearch(query)
+  }, [debouncedSearch])
+
+  const handleMovieClick = useCallback((movie: Movie) => {
     setSelectedMovie(movie)
     // In a real app, you might navigate to a movie details page
-  }
+  }, [])
 
-  const handleLoadMore = () => {
+  const handleLoadMore = useCallback(() => {
     loadNextPage()
-  }
+  }, [loadNextPage])
 
   const hasMorePages = currentPage < totalPages
 
@@ -46,9 +53,10 @@ export function HomePage() {
         </p>
 
         {/* Search Bar */}
-        <div className="max-w-2xl mx-auto px-4">
+        <div className="max-w-2xl mx-auto px-4 flex justify-center items-center">
           <SearchBar
             onSearch={handleSearch}
+            onSearchDebounced={handleDebouncedSearch}
             isLoading={isLoading}
             placeholder="Search for movies, actors, directors..."
           />
@@ -104,7 +112,7 @@ export function HomePage() {
       )}
 
       {/* Welcome Message */}
-      {movies.length === 0 && !isLoading && !error && (
+      {movies.length === 0 && !isLoading && !error && !hasSearched && (
         <div className="text-center py-16">
           <div className="text-6xl mb-4">🎬</div>
           <h2 className="text-2xl font-bold text-gray-900 mb-4">

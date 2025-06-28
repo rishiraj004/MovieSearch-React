@@ -1,69 +1,59 @@
-# React + TypeScript + Vite
+# MovieSearch App
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A modern, optimized React application for searching and discovering movies using the TMDb API.
 
-Currently, two official plugins are available:
+## Features
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+- **Advanced Search**: Real-time debounced search with pagination
+- **Optimized Performance**: In-memory caching, request deduplication, and retry logic
+- **Modern UI**: Clean, responsive design with loading states
+- **TypeScript**: Full type safety throughout the application
+- **Feature-based Architecture**: Scalable folder structure
 
-## Expanding the ESLint configuration
+## Quick Start
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+### Prerequisites
 
-```js
-export default tseslint.config([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+- Node.js 18+
+- npm or yarn
+- TMDb API account
 
-      // Remove tseslint.configs.recommended and replace with this
-      ...tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      ...tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      ...tseslint.configs.stylisticTypeChecked,
+### Setup
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
+1. **Clone and Install**
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+   ```bash
+   git clone <your-repo-url>
+   cd MovieSearch
+   npm install
+   ```
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+2. **Get TMDb API Access Token**
+   - Go to [https://www.themoviedb.org/settings/api](https://www.themoviedb.org/settings/api)
+   - Get your **Read Access Token** (Bearer Token), not the API Key
+   - Copy the token (starts with `eyJhbGciOiJIUzI1NiJ9...`)
 
-export default tseslint.config([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
+3. **Configure Environment**
+
+   ```bash
+   # Copy the example environment file
+   cp .env.example .env
+   
+   # Edit .env and add your TMDb Read Access Token
+   VITE_TMDB_API_READ_ACCESS_TOKEN=your_actual_token_here
+   ```
+
+4. **Run the Development Server**
+
+   ```bash
+   npm run dev
+   ```
+
+## Tech Stack
+
+- **Frontend**: React 18 + TypeScript + Vite
+- **Styling**: Tailwind CSS
+- **API**: TMDb REST API with Bearer token authentication
+- **Performance**: Custom caching, debouncing, request deduplication
+- **Code Quality**: ESLint + Prettier + TypeScript strict mode
+

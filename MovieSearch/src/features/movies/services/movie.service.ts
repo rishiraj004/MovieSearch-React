@@ -8,13 +8,44 @@ interface FetchConfig {
   retries?: number
 }
 
+// Simple cache implementation for performance optimization
+class SimpleCache {
+  private cache = new Map<string, { data: unknown; timestamp: number; ttl: number }>()
+
+  set(key: string, data: unknown, ttl: number = 5 * 60 * 1000) {
+    this.cache.set(key, {
+      data,
+      timestamp: Date.now(),
+      ttl
+    })
+  }
+
+  get(key: string) {
+    const item = this.cache.get(key)
+    if (!item) return null
+    
+    if (Date.now() - item.timestamp > item.ttl) {
+      this.cache.delete(key)
+      return null
+    }
+    
+    return item.data
+  }
+
+  clear() {
+    this.cache.clear()
+  }
+}
+
 class MovieService {
   private baseUrl = API_CONFIG.BASE_URL
   private apiKey = API_CONFIG.API_KEY
   private defaultConfig: FetchConfig = {
-    timeout: 10000, // 10 seconds
-    retries: 3,
+    timeout: 8000, // Optimized timeout
+    retries: 2, // Reduced retries for faster failure
   }
+  private cache = new SimpleCache()
+  private requestQueue = new Map<string, Promise<unknown>>() // Request deduplication
 
   private async fetchWithTimeout(
     url: string,
@@ -28,6 +59,9 @@ class MovieService {
       const response = await fetch(url, {
         ...options,
         signal: controller.signal,
+        // Performance optimizations
+        keepalive: true,
+        cache: 'default',
       })
       clearTimeout(timeoutId)
       return response
@@ -40,21 +74,63 @@ class MovieService {
     }
   }
 
+  private getCacheKey(endpoint: string): string {
+    return `tmdb:${endpoint}`
+  }
+
   private async fetchFromApi<T>(
     endpoint: string,
     config: FetchConfig = {},
     method: 'GET' | 'POST' = 'GET'
   ): Promise<T> {
-    const url = `${this.baseUrl}${endpoint}`
+    const cacheKey = this.getCacheKey(endpoint)
     
-    const options = {
-      method,
-      headers: {
-        accept: 'application/json',
-        Authorization: `Bearer ${this.apiKey}`
-      }
+    // Check cache first
+    const cached = this.cache.get(cacheKey)
+    if (cached) {
+      return cached as T
     }
 
+    // Prevent duplicate requests (deduplication)
+    if (this.requestQueue.has(cacheKey)) {
+      return this.requestQueue.get(cacheKey) as Promise<T>
+    }
+
+    const url = `${this.baseUrl}${endpoint}`
+    
+    const options: RequestInit = {
+      method,
+      headers: {
+        'Accept': 'application/json',
+        'Authorization': `Bearer ${this.apiKey}`,
+        // Performance headers
+        'Accept-Encoding': 'gzip, deflate, br',
+        'Connection': 'keep-alive',
+        'Cache-Control': 'max-age=300',
+      },
+      // Additional performance options
+      keepalive: true,
+      cache: 'force-cache',
+    }
+
+    const requestPromise = this.performRequest<T>(url, options, config, cacheKey, endpoint.includes('search'))
+    this.requestQueue.set(cacheKey, requestPromise)
+
+    try {
+      const result = await requestPromise
+      return result
+    } finally {
+      this.requestQueue.delete(cacheKey)
+    }
+  }
+
+  private async performRequest<T>(
+    url: string,
+    options: RequestInit,
+    config: FetchConfig,
+    cacheKey: string,
+    isSearchRequest = false
+  ): Promise<T> {
     const { timeout, retries = this.defaultConfig.retries! } = { ...this.defaultConfig, ...config }
     let lastError: Error = new Error('Unknown error')
 
@@ -75,7 +151,13 @@ class MovieService {
           )
         }
 
-        return response.json()
+        const data = await response.json()
+        
+        // Cache successful responses with shorter TTL for search
+        const cacheTTL = isSearchRequest ? 2 * 60 * 1000 : 5 * 60 * 1000 // 2 min for search, 5 min for others
+        this.cache.set(cacheKey, data, cacheTTL)
+        
+        return data
       } catch (error) {
         lastError = error instanceof Error ? error : new Error('Unknown error')
         
@@ -87,10 +169,10 @@ class MovieService {
           throw lastError
         }
 
-        // Wait before retry (exponential backoff)
+        // Exponential backoff for retries
         if (attempt < retries) {
           await new Promise(resolve =>
-            setTimeout(resolve, Math.pow(2, attempt) * 1000)
+            setTimeout(resolve, 300 * Math.pow(2, attempt - 1)) // 300ms, 600ms
           )
         }
       }
@@ -140,6 +222,30 @@ class MovieService {
   ): Promise<MovieSearchResponse> {
     const endpoint = `/movie/${movieId}/recommendations?language=${language}&page=${page}`
     return this.fetchFromApi<MovieSearchResponse>(endpoint)
+  }
+
+  // Performance optimization methods
+  async preloadData(): Promise<void> {
+    try {
+      // Fire and forget - don't await these for non-blocking preload
+      this.getPopularMovies(1).catch(() => {}) // Ignore errors
+      this.getTrendingMovies('week').catch(() => {})
+    } catch {
+      // Silently fail - this is optimization, not critical
+    }
+  }
+
+  // Clear cache when needed (useful for testing or memory management)
+  clearCache(): void {
+    this.cache.clear()
+  }
+
+  // Get cache stats for debugging
+  getCacheStats(): { size: number; keys: string[] } {
+    return {
+      size: this.cache['cache'].size,
+      keys: Array.from(this.cache['cache'].keys())
+    }
   }
 
   getImageUrl(path: string | null, size = 'w500'): string {
