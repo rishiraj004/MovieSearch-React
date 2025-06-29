@@ -3,6 +3,7 @@ export { MovieCard } from './components/MovieCard'
 export { MovieGrid } from './components/MovieGrid'
 export { SearchBar } from './components/SearchBar'
 export { HeroSection } from './components/HeroSection'
+export { TrendingSection } from './components/TrendingSection'
 
 // Hooks
 export { useMovieSearch } from './hooks/useMovieSearch'

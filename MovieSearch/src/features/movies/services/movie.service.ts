@@ -47,6 +47,10 @@ class MovieService {
   private cache = new SimpleCache()
   private requestQueue = new Map<string, Promise<unknown>>() // Request deduplication
 
+  constructor() {
+    // API key validation will be handled in fetchFromApi method
+  }
+
   private async fetchWithTimeout(
     url: string,
     options: RequestInit = {},
@@ -83,6 +87,11 @@ class MovieService {
     config: FetchConfig = {},
     method: 'GET' | 'POST' = 'GET'
   ): Promise<T> {
+    // Check if API key is configured
+    if (!this.apiKey) {
+      throw new Error('TMDb API key is not configured. Please add VITE_TMDB_API_READ_ACCESS_TOKEN to your .env file.')
+    }
+
     const cacheKey = this.getCacheKey(endpoint)
     
     // Check cache first
@@ -227,24 +236,28 @@ class MovieService {
     return this.fetchFromApi<MovieSearchResponse>(endpoint)
   }
 
+  // Trending endpoints
   async getTrendingMovies(
-    timeWindow: 'day' | 'week' = 'week'
+    timeWindow: 'day' | 'week' = 'day',
+    language = API_CONFIG.DEFAULT_LANGUAGE
   ): Promise<MovieSearchResponse> {
-    const endpoint = `/trending/movie/${timeWindow}`
+    const endpoint = `/trending/movie/${timeWindow}?language=${language}`
     return this.fetchFromApi<MovieSearchResponse>(endpoint)
   }
 
   async getTrendingTVShows(
-    timeWindow: 'day' | 'week' = 'week'
+    timeWindow: 'day' | 'week' = 'day',
+    language = API_CONFIG.DEFAULT_LANGUAGE
   ): Promise<TVShowSearchResponse> {
-    const endpoint = `/trending/tv/${timeWindow}`
+    const endpoint = `/trending/tv/${timeWindow}?language=${language}`
     return this.fetchFromApi<TVShowSearchResponse>(endpoint)
   }
 
   async getTrendingPeople(
-    timeWindow: 'day' | 'week' = 'week'
+    timeWindow: 'day' | 'week' = 'day',
+    language = API_CONFIG.DEFAULT_LANGUAGE
   ): Promise<PersonSearchResponse> {
-    const endpoint = `/trending/person/${timeWindow}`
+    const endpoint = `/trending/person/${timeWindow}?language=${language}`
     return this.fetchFromApi<PersonSearchResponse>(endpoint)
   }
 

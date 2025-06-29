@@ -15,40 +15,52 @@ export function TrendingPersonCard({ person, onClick }: TrendingPersonCardProps)
     return `${API_CONFIG.IMAGE_BASE_URL}/${IMAGE_SIZES.POSTER.W500}${path}`
   }
 
+  const getKnownForTitles = () => {
+    if (!person.known_for || person.known_for.length === 0) return 'Various projects'
+    return person.known_for
+      .slice(0, 2)
+      .map(item => 'title' in item ? item.title : item.name)
+      .join(', ')
+  }
+
   return (
     <motion.div
-      className="flex-shrink-0 w-[140px] cursor-pointer group"
-      whileHover={{ scale: 1.05 }}
-      transition={{ duration: 0.2 }}
+      className="bg-gray-900/50 backdrop-blur-sm border border-white/10 rounded-2xl overflow-hidden cursor-pointer group hover:shadow-2xl hover:shadow-purple-500/20 active:shadow-2xl active:shadow-purple-500/30 transition-all duration-300 touch-card max-w-[140px] mx-auto"
       onClick={() => onClick?.(person)}
+      whileHover={{ scale: 1.05, y: -4 }}
+      whileTap={{ scale: 0.95 }}
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.3 }}
     >
-      <div className="relative bg-transparent rounded-xl overflow-hidden text-center group hover:brightness-110 transition-all duration-300">
-        {/* Profile Image */}
-        <div className="relative mx-auto mb-3">
-          <div className="w-[120px] h-[120px] mx-auto rounded-full overflow-hidden bg-gray-700 border-4 border-gray-600 group-hover:border-pink-400 transition-colors duration-300">
-            <img
-              src={getImageUrl(person.profile_path)}
-              alt={person.name}
-              className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
-              loading="lazy"
-            />
-          </div>
-          
-          {/* Popularity Badge */}
-          <div className="absolute -top-2 -right-2 bg-gradient-to-r from-pink-500 to-purple-500 text-white px-2 py-1 rounded-full text-xs font-bold">
-            🔥 {Math.round(person.popularity)}
-          </div>
+      <div className="relative overflow-hidden p-3">
+        <div className="relative w-16 h-16 sm:w-20 sm:h-20 mx-auto mb-2">
+          <img
+            src={getImageUrl(person.profile_path)}
+            alt={person.name}
+            className="w-full h-full object-cover rounded-full group-hover:scale-110 group-active:scale-110 transition-transform duration-500 border-2 border-purple-400/20 group-hover:border-purple-400/50 group-active:border-purple-400/50"
+            loading="lazy"
+          />
+          <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent opacity-0 group-hover:opacity-100 group-active:opacity-100 rounded-full transition-opacity duration-300" />
         </div>
+        
+        {/* Popularity Badge */}
+        <div className="absolute top-2 right-2 bg-black/70 backdrop-blur-sm text-purple-400 px-2 py-1 rounded-full text-xs font-semibold flex items-center gap-1">
+          <span>🔥</span>
+          {person.popularity.toFixed(0)}
+        </div>
+      </div>
 
-        {/* Person Info */}
-        <div className="px-2">
-          <h3 className="text-white font-semibold text-sm leading-tight mb-1 line-clamp-2 group-hover:text-pink-400 transition-colors">
-            {person.name}
-          </h3>
-          <p className="text-gray-400 text-xs capitalize">
-            {person.known_for_department?.toLowerCase() || 'Actor'}
-          </p>
-        </div>
+      <div className="px-2 pb-3 text-center">
+        <h3 className="text-white font-semibold text-sm mb-1 line-clamp-2 group-hover:text-purple-400 group-active:text-purple-400 transition-colors">
+          {person.name}
+        </h3>
+        <p className="text-gray-400 text-xs mb-1">
+          {person.known_for_department}
+        </p>
+        <p className="text-gray-500 text-xs line-clamp-1 hidden sm:block">
+          {getKnownForTitles()}
+        </p>
       </div>
     </motion.div>
   )

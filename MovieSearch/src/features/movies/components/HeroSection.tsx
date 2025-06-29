@@ -301,19 +301,19 @@ export function HeroSection({ onSearchClick, onTrendingClick, onTopRatedClick, o
           <div className="hidden md:flex items-center space-x-6">
             <button 
               onClick={onTrendingClick}
-              className="text-white/90 hover:text-white transition-colors"
+              className="text-white/90 hover:text-white hover:bg-white/10 px-3 py-2 rounded-lg transition-all duration-200 cursor-pointer"
             >
               Trending
             </button>
             <button 
               onClick={onTopRatedClick}
-              className="text-white/90 hover:text-white transition-colors"
+              className="text-white/90 hover:text-white hover:bg-white/10 px-3 py-2 rounded-lg transition-all duration-200 cursor-pointer"
             >
               Top Rated
             </button>
             <button 
               onClick={onGenresClick}
-              className="text-white/90 hover:text-white transition-colors"
+              className="text-white/90 hover:text-white hover:bg-white/10 px-3 py-2 rounded-lg transition-all duration-200 cursor-pointer"
             >
               Genres
             </button>
@@ -326,7 +326,7 @@ export function HeroSection({ onSearchClick, onTrendingClick, onTopRatedClick, o
           <button
             onClick={onSearchClick}
             aria-label="Search movies"
-            className="md:hidden bg-black/60 backdrop-blur-md rounded-lg p-2 text-white/80 hover:text-white transition-colors border border-white/20"
+            className="md:hidden bg-black/60 backdrop-blur-md rounded-lg p-2 text-white/80 hover:text-white transition-colors border border-white/20 cursor-pointer"
           >
             <Search className="w-5 h-5" />
           </button>
@@ -334,7 +334,7 @@ export function HeroSection({ onSearchClick, onTrendingClick, onTopRatedClick, o
           {/* Desktop Search Bar */}
           <button
             onClick={onSearchClick}
-            className="hidden md:block bg-black/60 backdrop-blur-md rounded-xl px-4 py-2 text-white/80 hover:text-white transition-colors border border-white/20"
+            className="hidden md:block bg-black/60 backdrop-blur-md rounded-xl px-6 py-3 text-white/80 hover:text-white hover:bg-black/70 transition-all duration-200 border border-white/20 cursor-pointer min-w-[300px] lg:min-w-[400px] text-left"
           >
             Search movies...
           </button>
@@ -348,9 +348,9 @@ export function HeroSection({ onSearchClick, onTrendingClick, onTopRatedClick, o
             ? 'opacity-0 transform translate-x-8' 
             : 'opacity-100 transform translate-x-0'
         }`}>
-          {/* Now Playing Badge */}
+          {/* Featured Badge */}
           <div className="inline-flex items-center bg-red-600 text-white px-3 py-1 rounded-full text-sm font-medium mb-4">
-            Now Playing
+            Featured
           </div>
 
           {/* Rating */}

@@ -22,42 +22,40 @@ export function TrendingMovieCard({ movie, onClick }: TrendingMovieCardProps) {
 
   return (
     <motion.div
-      className="flex-shrink-0 w-[180px] cursor-pointer group"
-      whileHover={{ scale: 1.05 }}
-      transition={{ duration: 0.2 }}
+      className="bg-gray-900/50 backdrop-blur-sm border border-white/10 rounded-xl overflow-hidden cursor-pointer group hover:shadow-2xl hover:shadow-pink-500/20 active:shadow-2xl active:shadow-pink-500/30 transition-all duration-300 touch-card"
       onClick={() => onClick?.(movie)}
+      whileHover={{ scale: 1.02, y: -4 }}
+      whileTap={{ scale: 0.95 }}
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.3 }}
     >
-      <div className="relative bg-gray-800 rounded-xl overflow-hidden shadow-lg hover:shadow-xl transition-shadow duration-300">
-        {/* Poster Image */}
-        <div className="relative h-[270px] overflow-hidden">
-          <img
-            src={getImageUrl(movie.poster_path)}
-            alt={movie.title}
-            className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
-            loading="lazy"
-          />
-          
-          {/* Rating Badge */}
-          {movie.vote_average > 0 && (
-            <div className="absolute top-2 right-2 bg-yellow-500 text-black px-2 py-1 rounded-lg text-xs font-bold flex items-center">
-              <span className="mr-1">⭐</span>
-              {movie.vote_average.toFixed(1)}
-            </div>
-          )}
-          
-          {/* Gradient Overlay */}
-          <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+      <div className="relative overflow-hidden">
+        <img
+          src={getImageUrl(movie.poster_path)}
+          alt={movie.title}
+          className="w-full h-[180px] sm:h-[200px] md:h-[220px] object-cover group-hover:scale-105 group-active:scale-105 transition-transform duration-500"
+          loading="lazy"
+        />
+        <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 group-active:opacity-100 transition-opacity duration-300" />
+        
+        {/* Rating Badge */}
+        <div className="absolute top-2 right-2 bg-black/70 backdrop-blur-sm text-yellow-400 px-2 py-1 rounded-lg text-xs font-semibold flex items-center gap-1">
+          <span>⭐</span>
+          {movie.vote_average.toFixed(1)}
         </div>
+      </div>
 
-        {/* Movie Info */}
-        <div className="p-3">
-          <h3 className="text-white font-semibold text-sm leading-tight mb-1 line-clamp-2 group-hover:text-pink-400 transition-colors">
-            {movie.title}
-          </h3>
-          <p className="text-gray-400 text-xs">
-            {getReleaseYear(movie.release_date)}
-          </p>
-        </div>
+      <div className="p-3">
+        <h3 className="text-white font-semibold text-sm sm:text-base mb-1 line-clamp-2 group-hover:text-pink-400 group-active:text-pink-400 transition-colors">
+          {movie.title}
+        </h3>
+        <p className="text-gray-400 text-xs sm:text-sm mb-1">
+          {getReleaseYear(movie.release_date)}
+        </p>
+        <p className="text-gray-500 text-xs line-clamp-2 hidden sm:block">
+          {movie.overview}
+        </p>
       </div>
     </motion.div>
   )

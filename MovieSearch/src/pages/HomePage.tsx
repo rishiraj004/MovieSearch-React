@@ -1,13 +1,14 @@
-import { useState, useCallback, useRef } from 'react'
+import { useState, useCallback, useRef, useEffect } from 'react'
 
-import { TrendingPage } from './TrendingPage'
+import { movieService } from '../features/movies/services/movie.service'
+import type { Movie, TVShow, Person } from '../features/movies/types/movie.types'
 
 import {
   MovieGrid,
   SearchBar,
   useMovieSearch,
   HeroSection,
-  type Movie,
+  TrendingSection,
 } from '@/features/movies'
 import { Button } from '@/shared/components/ui/button'
 
@@ -24,14 +25,115 @@ export function HomePage() {
     totalPages,
     debouncedSearch,
     hasSearched,
-    loadTrendingMovies,
     loadTopRatedMovies,
     loadPopularMovies,
   } = useMovieSearch()
+  
   const [selectedMovie, setSelectedMovie] = useState<Movie | null>(null)
   const [showSearchSection, setShowSearchSection] = useState(false)
-  const [activeView, setActiveView] = useState<'home' | 'trending'>('home')
   const searchSectionRef = useRef<HTMLDivElement>(null)
+  
+  // Trending data state
+  const [trendingMovies, setTrendingMovies] = useState<Movie[]>([])
+  const [trendingTVShows, setTrendingTVShows] = useState<TVShow[]>([])
+  const [trendingPeople, setTrendingPeople] = useState<Person[]>([])
+  
+  const [loadingMovies, setLoadingMovies] = useState(true)
+  const [loadingTVShows, setLoadingTVShows] = useState(true)
+  const [loadingPeople, setLoadingPeople] = useState(true)
+  const [apiError, setApiError] = useState<string | null>(null)
+
+  // Debug: Check if API key is loaded
+  const apiKey = import.meta.env.VITE_TMDB_API_READ_ACCESS_TOKEN
+
+  // Fetch trending data on component mount
+  useEffect(() => {
+    const fetchTrendingData = async () => {
+      try {
+        // Fetch trending movies
+        setLoadingMovies(true)
+        const moviesResponse = await movieService.getTrendingMovies('day')
+        setTrendingMovies(moviesResponse.results)
+      } catch (error) {
+        if (error instanceof Error && error.message.includes('API key')) {
+          setApiError(error.message)
+        }
+      } finally {
+        setLoadingMovies(false)
+      }
+
+      try {
+        // Fetch trending TV shows
+        setLoadingTVShows(true)
+        const tvResponse = await movieService.getTrendingTVShows('day')
+        setTrendingTVShows(tvResponse.results)
+      } catch (error) {
+        if (error instanceof Error && error.message.includes('API key')) {
+          setApiError(error.message)
+        }
+      } finally {
+        setLoadingTVShows(false)
+      }
+
+      try {
+        // Fetch trending people
+        setLoadingPeople(true)
+        const peopleResponse = await movieService.getTrendingPeople('day')
+        setTrendingPeople(peopleResponse.results)
+      } catch (error) {
+        if (error instanceof Error && error.message.includes('API key')) {
+          setApiError(error.message)
+        }
+      } finally {
+        setLoadingPeople(false)
+      }
+    }
+
+    fetchTrendingData()
+  }, [])
+
+  // Trending refresh handlers with time window
+  const refreshTrendingMovies = useCallback(async (timeWindow: 'day' | 'week' = 'day') => {
+    setLoadingMovies(true)
+    try {
+      const moviesResponse = await movieService.getTrendingMovies(timeWindow)
+      setTrendingMovies(moviesResponse.results)
+    } catch (error) {
+      if (error instanceof Error && error.message.includes('API key')) {
+        setApiError(error.message)
+      }
+    } finally {
+      setLoadingMovies(false)
+    }
+  }, [])
+
+  const refreshTrendingTVShows = useCallback(async (timeWindow: 'day' | 'week' = 'day') => {
+    setLoadingTVShows(true)
+    try {
+      const tvResponse = await movieService.getTrendingTVShows(timeWindow)
+      setTrendingTVShows(tvResponse.results)
+    } catch (error) {
+      if (error instanceof Error && error.message.includes('API key')) {
+        setApiError(error.message)
+      }
+    } finally {
+      setLoadingTVShows(false)
+    }
+  }, [])
+
+  const refreshTrendingPeople = useCallback(async (timeWindow: 'day' | 'week' = 'day') => {
+    setLoadingPeople(true)
+    try {
+      const peopleResponse = await movieService.getTrendingPeople(timeWindow)
+      setTrendingPeople(peopleResponse.results)
+    } catch (error) {
+      if (error instanceof Error && error.message.includes('API key')) {
+        setApiError(error.message)
+      }
+    } finally {
+      setLoadingPeople(false)
+    }
+  }, [])
 
   // Stable callback references to prevent SearchBar re-renders
   const handleSearch = useCallback((query: string) => {
@@ -68,8 +170,11 @@ export function HomePage() {
   }, [])
 
   const handleTrendingClick = useCallback(() => {
-    // Navigate to trending page
-    setActiveView('trending')
+    // Scroll to trending section
+    const trendingSection = document.getElementById('trending-section')
+    if (trendingSection) {
+      trendingSection.scrollIntoView({ behavior: 'smooth' })
+    }
   }, [])
 
   const handleTopRatedClick = useCallback(() => {
@@ -90,19 +195,85 @@ export function HomePage() {
     }, 100)
   }, [loadPopularMovies])
 
-  const handleBackToHome = useCallback(() => {
-    setActiveView('home')
+  const handleTrendingItemClick = useCallback((item: Movie | TVShow | Person) => {
+    // Handle item click based on type
+    if ('title' in item) {
+      // It's a movie - could navigate to movie details
+      // Navigate to movie details page or handle as needed
+    } else if ('name' in item && 'first_air_date' in item) {
+      // It's a TV show - could navigate to TV show details
+      // Navigate to TV show details page or handle as needed
+    } else if ('name' in item && 'known_for_department' in item) {
+      // It's a person - could navigate to person details
+      // Navigate to person details page or handle as needed
+    }
   }, [])
 
   const hasMorePages = currentPage < totalPages
 
-  // Render trending page if selected
-  if (activeView === 'trending') {
-    return <TrendingPage onBackToHome={handleBackToHome} />
+  // Show API setup message if API key is missing
+  if (apiError) {
+    return (
+      <div className="min-h-screen bg-[#1a1a1a] text-white">
+        {/* Hero Section */}
+        <HeroSection 
+          onSearchClick={handleSearchClick}
+          onTrendingClick={handleTrendingClick}
+          onTopRatedClick={handleTopRatedClick}
+          onGenresClick={handleGenresClick}
+        />
+        
+        {/* API Setup Message */}
+        <div className="flex items-center justify-center py-20 px-6">
+          <div className="max-w-4xl mx-auto text-center">
+            <div className="bg-red-500/10 backdrop-blur-md border border-red-500/20 rounded-2xl p-8 lg:p-12">
+              <div className="text-6xl mb-6">🔑</div>
+              <h2 className="text-3xl font-bold text-white mb-4">API Key Required</h2>
+              <p className="text-red-300 text-lg mb-8">{apiError}</p>
+              
+              <div className="bg-gray-800/50 rounded-xl p-6 text-left space-y-4">
+                <h3 className="text-xl font-semibold text-pink-400 mb-4">Setup Instructions:</h3>
+                <ol className="space-y-3 text-gray-300">
+                  <li className="flex items-start">
+                    <span className="bg-pink-500 text-white rounded-full w-6 h-6 flex items-center justify-center text-sm font-bold mr-3 mt-0.5">1</span>
+                    <span>Go to <a href="https://www.themoviedb.org/settings/api" target="_blank" rel="noopener noreferrer" className="text-pink-400 hover:text-pink-300 underline">TMDb API Settings</a></span>
+                  </li>
+                  <li className="flex items-start">
+                    <span className="bg-pink-500 text-white rounded-full w-6 h-6 flex items-center justify-center text-sm font-bold mr-3 mt-0.5">2</span>
+                    <span>Get your <strong>Read Access Token</strong> (Bearer Token)</span>
+                  </li>
+                  <li className="flex items-start">
+                    <span className="bg-pink-500 text-white rounded-full w-6 h-6 flex items-center justify-center text-sm font-bold mr-3 mt-0.5">3</span>
+                    <span>Create a <code className="bg-gray-700 px-2 py-1 rounded text-pink-300">.env</code> file in the project root</span>
+                  </li>
+                  <li className="flex items-start">
+                    <span className="bg-pink-500 text-white rounded-full w-6 h-6 flex items-center justify-center text-sm font-bold mr-3 mt-0.5">4</span>
+                    <span>Add: <code className="bg-gray-700 px-2 py-1 rounded text-pink-300">VITE_TMDB_API_READ_ACCESS_TOKEN=your_token_here</code></span>
+                  </li>
+                  <li className="flex items-start">
+                    <span className="bg-pink-500 text-white rounded-full w-6 h-6 flex items-center justify-center text-sm font-bold mr-3 mt-0.5">5</span>
+                    <span>Restart the development server</span>
+                  </li>
+                </ol>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    )
   }
+
+  // Debug info panel at the top
+  const debugInfo = !apiKey ? (
+    <div className="bg-red-600 text-white p-4 text-center">
+      <strong>Debug: API Key Status - {apiKey ? 'Found' : 'Missing'}</strong>
+      {!apiKey && ' - Check .env.development file'}
+    </div>
+  ) : null
 
   return (
     <>
+      {debugInfo}
       {/* Hero Section */}
       <HeroSection 
         onSearchClick={handleSearchClick}
@@ -110,6 +281,38 @@ export function HomePage() {
         onTopRatedClick={handleTopRatedClick}
         onGenresClick={handleGenresClick}
       />
+
+      {/* Trending Section */}
+      <div id="trending-section" className="min-h-screen bg-[#1a1a1a] text-white py-8">
+        <div className="space-y-16">
+          <TrendingSection
+            title="Trending Movies"
+            type="movie"
+            data={trendingMovies}
+            isLoading={loadingMovies}
+            onItemClick={handleTrendingItemClick}
+            onTimeWindowChange={refreshTrendingMovies}
+          />
+
+          <TrendingSection
+            title="Trending TV Shows"
+            type="tv"
+            data={trendingTVShows}
+            isLoading={loadingTVShows}
+            onItemClick={handleTrendingItemClick}
+            onTimeWindowChange={refreshTrendingTVShows}
+          />
+
+          <TrendingSection
+            title="Trending People"
+            type="person"
+            data={trendingPeople}
+            isLoading={loadingPeople}
+            onItemClick={handleTrendingItemClick}
+            onTimeWindowChange={refreshTrendingPeople}
+          />
+        </div>
+      </div>
       
       {/* Search and Results Section */}
       {showSearchSection && (
