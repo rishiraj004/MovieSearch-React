@@ -1,4 +1,4 @@
-import type { MovieDetails, MovieSearchResponse } from '../types/movie.types'
+import type { MovieDetails, MovieSearchResponse, TVShowSearchResponse, PersonSearchResponse } from '../types/movie.types'
 
 import { API_CONFIG } from '@/shared/constants/api.constants'
 import type { SearchParams } from '@/shared/types/common.types'
@@ -232,6 +232,20 @@ class MovieService {
   ): Promise<MovieSearchResponse> {
     const endpoint = `/trending/movie/${timeWindow}`
     return this.fetchFromApi<MovieSearchResponse>(endpoint)
+  }
+
+  async getTrendingTVShows(
+    timeWindow: 'day' | 'week' = 'week'
+  ): Promise<TVShowSearchResponse> {
+    const endpoint = `/trending/tv/${timeWindow}`
+    return this.fetchFromApi<TVShowSearchResponse>(endpoint)
+  }
+
+  async getTrendingPeople(
+    timeWindow: 'day' | 'week' = 'week'
+  ): Promise<PersonSearchResponse> {
+    const endpoint = `/trending/person/${timeWindow}`
+    return this.fetchFromApi<PersonSearchResponse>(endpoint)
   }
 
   async getMovieRecommendations(

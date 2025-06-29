@@ -1,5 +1,7 @@
 import { useState, useCallback, useRef } from 'react'
 
+import { TrendingPage } from './TrendingPage'
+
 import {
   MovieGrid,
   SearchBar,
@@ -8,6 +10,7 @@ import {
   type Movie,
 } from '@/features/movies'
 import { Button } from '@/shared/components/ui/button'
+
 
 export function HomePage() {
   const {
@@ -27,6 +30,7 @@ export function HomePage() {
   } = useMovieSearch()
   const [selectedMovie, setSelectedMovie] = useState<Movie | null>(null)
   const [showSearchSection, setShowSearchSection] = useState(false)
+  const [activeView, setActiveView] = useState<'home' | 'trending'>('home')
   const searchSectionRef = useRef<HTMLDivElement>(null)
 
   // Stable callback references to prevent SearchBar re-renders
@@ -37,6 +41,15 @@ export function HomePage() {
   const handleDebouncedSearch = useCallback((query: string) => {
     debouncedSearch(query)
   }, [debouncedSearch])
+
+  const handleSuggestionClick = useCallback((movie: Movie) => {
+    // When a suggestion is clicked, perform search with movie title
+    searchMovies(movie.title)
+    setShowSearchSection(true)
+    setTimeout(() => {
+      searchSectionRef.current?.scrollIntoView({ behavior: 'smooth' })
+    }, 100)
+  }, [searchMovies])
 
   const handleMovieClick = useCallback((movie: Movie) => {
     setSelectedMovie(movie)
@@ -55,13 +68,9 @@ export function HomePage() {
   }, [])
 
   const handleTrendingClick = useCallback(() => {
-    // Load trending movies
-    loadTrendingMovies()
-    setShowSearchSection(true)
-    setTimeout(() => {
-      searchSectionRef.current?.scrollIntoView({ behavior: 'smooth' })
-    }, 100)
-  }, [loadTrendingMovies])
+    // Navigate to trending page
+    setActiveView('trending')
+  }, [])
 
   const handleTopRatedClick = useCallback(() => {
     // Load top rated movies
@@ -81,7 +90,16 @@ export function HomePage() {
     }, 100)
   }, [loadPopularMovies])
 
+  const handleBackToHome = useCallback(() => {
+    setActiveView('home')
+  }, [])
+
   const hasMorePages = currentPage < totalPages
+
+  // Render trending page if selected
+  if (activeView === 'trending') {
+    return <TrendingPage onBackToHome={handleBackToHome} />
+  }
 
   return (
     <>
@@ -123,6 +141,7 @@ export function HomePage() {
                       <SearchBar
                         onSearch={handleSearch}
                         onSearchDebounced={handleDebouncedSearch}
+                        onSuggestionClick={handleSuggestionClick}
                         isLoading={isLoading}
                         placeholder="Search for movies..."
                       />

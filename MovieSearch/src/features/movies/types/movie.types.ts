@@ -16,6 +16,36 @@ export interface Movie {
   video: boolean
 }
 
+// TV Show API Types
+export interface TVShow {
+  id: number
+  name: string
+  overview: string
+  poster_path: string | null
+  backdrop_path: string | null
+  first_air_date: string
+  vote_average: number
+  vote_count: number
+  genre_ids: number[]
+  adult: boolean
+  original_language: string
+  original_name: string
+  popularity: number
+  origin_country: string[]
+}
+
+// Person API Types
+export interface Person {
+  id: number
+  name: string
+  profile_path: string | null
+  adult: boolean
+  popularity: number
+  known_for_department: string
+  known_for: (Movie | TVShow)[]
+  gender: number
+}
+
 export interface MovieDetails extends Movie {
   genres: Genre[]
   runtime: number
@@ -57,6 +87,20 @@ export interface SpokenLanguage {
 export interface MovieSearchResponse {
   page: number
   results: Movie[]
+  total_pages: number
+  total_results: number
+}
+
+export interface TVShowSearchResponse {
+  page: number
+  results: TVShow[]
+  total_pages: number
+  total_results: number
+}
+
+export interface PersonSearchResponse {
+  page: number
+  results: Person[]
   total_pages: number
   total_results: number
 }
