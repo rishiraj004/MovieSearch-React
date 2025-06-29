@@ -181,6 +181,17 @@ class MovieService {
     throw lastError
   }
 
+  async searchMulti(params: SearchParams): Promise<MovieSearchResponse> {
+    const { query, page = 1, language = API_CONFIG.DEFAULT_LANGUAGE,include_adult = false } = params
+
+    if (!query.trim()) {
+      throw new Error('Search query is required')
+    }
+
+    const endpoint = `/search/multi?query=${encodeURIComponent(query)}&include_adult=${include_adult}&language=${language}&page=${page}`
+    return this.fetchFromApi<MovieSearchResponse>(endpoint)
+  }
+
   async searchMovies(params: SearchParams): Promise<MovieSearchResponse> {
     const { query, page = 1, language = API_CONFIG.DEFAULT_LANGUAGE,include_adult = false } = params
 
