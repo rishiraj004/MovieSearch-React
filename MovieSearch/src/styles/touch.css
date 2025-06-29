@@ -1,0 +1,59 @@
+/* Touch Card Interactions */
+
+/* Touch improvements for mobile and tablet */
+@media (max-width: 1024px) {
+  .touch-card {
+    -webkit-tap-highlight-color: transparent;
+    touch-action: manipulation;
+  }
+  
+  .touch-card:active {
+    transform: scale(0.95);
+    transition: transform 0.1s ease-out;
+  }
+  
+  /* Ensure mobile/tablet cards have proper touch feedback */
+  .touch-card:active .group-active\:scale-105 {
+    transform: scale(1.05);
+  }
+  
+  .touch-card:active .group-active\:scale-110 {
+    transform: scale(1.10);
+  }
+  
+  .touch-card:active .group-active\:opacity-100 {
+    opacity: 1;
+  }
+  
+  .touch-card:active .group-active\:text-pink-400 {
+    color: rgb(244 114 182);
+  }
+  
+  .touch-card:active .group-active\:text-cyan-400 {
+    color: rgb(34 211 238);
+  }
+  
+  .touch-card:active .group-active\:text-purple-400 {
+    color: rgb(196 181 253);
+  }
+  
+  .touch-card:active .group-active\:shadow-2xl {
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+  }
+  
+  .touch-card:active .group-active\:shadow-pink-500\/30 {
+    box-shadow: 0 25px 50px -12px rgba(236, 72, 153, 0.3);
+  }
+  
+  .touch-card:active .group-active\:shadow-cyan-500\/30 {
+    box-shadow: 0 25px 50px -12px rgba(6, 182, 212, 0.3);
+  }
+  
+  .touch-card:active .group-active\:shadow-purple-500\/30 {
+    box-shadow: 0 25px 50px -12px rgba(168, 85, 247, 0.3);
+  }
+  
+  .touch-card:active .group-active\:border-purple-400\/50 {
+    border-color: rgba(196, 181, 253, 0.5);
+  }
+}

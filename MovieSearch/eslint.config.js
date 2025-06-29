@@ -11,7 +11,91 @@ import prettier from 'eslint-config-prettier'
 
 export default tseslint.config([
   {
-    ignores: ['dist', 'node_modules', '*.config.js', '*.config.ts', 'build', 'coverage']
+    ignores: [
+      // Build outputs
+      'dist',
+      'build',
+      'out',
+      '.next',
+      
+      // Dependencies
+      'node_modules',
+      
+      // Configuration files
+      '*.config.js',
+      '*.config.ts',
+      '*.config.mjs',
+      '*.config.cjs',
+      'vite.config.*',
+      'tailwind.config.*',
+      'postcss.config.*',
+      'webpack.config.*',
+      'rollup.config.*',
+      
+      // Environment and deployment
+      '.env',
+      '.env.*',
+      '.vercel',
+      '.netlify',
+      
+      // Testing and coverage
+      'coverage',
+      'test-results',
+      'playwright-report',
+      'junit.xml',
+      
+      // Cache and temporary files
+      '.cache',
+      'tmp',
+      'temp',
+      '.tmp',
+      '.temp',
+      
+      // Logs
+      '*.log',
+      'logs',
+      'npm-debug.log*',
+      'yarn-debug.log*',
+      'yarn-error.log*',
+      
+      // IDE and editor files
+      '.vscode/settings.json',
+      '.idea',
+      '*.swp',
+      '*.swo',
+      '*~',
+      
+      // OS generated files
+      '.DS_Store',
+      'Thumbs.db',
+      
+      // Package manager files
+      'package-lock.json',
+      'yarn.lock',
+      'pnpm-lock.yaml',
+      
+      // Static assets that don't need linting
+      'public/**/*.js',
+      'public/**/*.ts',
+      'src/**/*.d.ts',
+      
+      // Generated or vendor files
+      'src/lib/generated/**',
+      'src/types/generated/**',
+      'vendor/**',
+      
+      // Documentation that might contain code blocks
+      '*.md',
+      'docs/**',
+      
+      // Storybook
+      '.storybook',
+      'storybook-static',
+      
+      // ESLint and Prettier
+      '.eslintcache',
+      '.prettierrc*',
+    ]
   },
   {
     files: ['**/*.{ts,tsx,js,jsx}'],

@@ -25,7 +25,7 @@ export function TrendingPersonCard({ person, onClick }: TrendingPersonCardProps)
 
   return (
     <motion.div
-      className="bg-gray-900/50 backdrop-blur-sm border border-white/10 rounded-2xl overflow-hidden cursor-pointer group hover:shadow-2xl hover:shadow-purple-500/20 active:shadow-2xl active:shadow-purple-500/30 transition-all duration-300 touch-card max-w-[140px] mx-auto"
+      className="bg-gray-900/50 backdrop-blur-sm border border-white/10 rounded-2xl overflow-hidden cursor-pointer group hover:shadow-2xl hover:shadow-purple-500/20 active:shadow-2xl active:shadow-purple-500/30 transition-all duration-300 touch-card w-[100px] sm:w-[120px] mx-auto"
       onClick={() => onClick?.(person)}
       whileHover={{ scale: 1.05, y: -4 }}
       whileTap={{ scale: 0.95 }}
@@ -33,8 +33,8 @@ export function TrendingPersonCard({ person, onClick }: TrendingPersonCardProps)
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.3 }}
     >
-      <div className="relative overflow-hidden p-3">
-        <div className="relative w-16 h-16 sm:w-20 sm:h-20 mx-auto mb-2">
+      <div className="relative overflow-hidden p-2">
+        <div className="relative w-12 h-12 sm:w-16 sm:h-16 mx-auto mb-2">
           <img
             src={getImageUrl(person.profile_path)}
             alt={person.name}
@@ -45,14 +45,14 @@ export function TrendingPersonCard({ person, onClick }: TrendingPersonCardProps)
         </div>
         
         {/* Popularity Badge */}
-        <div className="absolute top-2 right-2 bg-black/70 backdrop-blur-sm text-purple-400 px-2 py-1 rounded-full text-xs font-semibold flex items-center gap-1">
+        <div className="absolute top-1 right-1 bg-black/70 backdrop-blur-sm text-purple-400 px-1.5 py-0.5 rounded-full text-xs font-semibold flex items-center gap-1">
           <span>🔥</span>
           {person.popularity.toFixed(0)}
         </div>
       </div>
 
-      <div className="px-2 pb-3 text-center">
-        <h3 className="text-white font-semibold text-sm mb-1 line-clamp-2 group-hover:text-purple-400 group-active:text-purple-400 transition-colors">
+      <div className="px-2 pb-2 text-center">
+        <h3 className="text-white font-semibold text-xs mb-1 line-clamp-2 group-hover:text-purple-400 group-active:text-purple-400 transition-colors">
           {person.name}
         </h3>
         <p className="text-gray-400 text-xs mb-1">

@@ -34,7 +34,7 @@ export function TrendingTVCard({ tvShow, onClick }: TrendingTVCardProps) {
         <img
           src={getImageUrl(tvShow.poster_path)}
           alt={tvShow.name}
-          className="w-full h-[180px] sm:h-[200px] md:h-[220px] object-cover group-hover:scale-105 group-active:scale-105 transition-transform duration-500"
+          className="w-full h-[140px] sm:h-[160px] md:h-[180px] object-cover group-hover:scale-105 group-active:scale-105 transition-transform duration-500"
           loading="lazy"
         />
         <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 group-active:opacity-100 transition-opacity duration-300" />
@@ -46,14 +46,14 @@ export function TrendingTVCard({ tvShow, onClick }: TrendingTVCardProps) {
         </div>
       </div>
 
-      <div className="p-3">
-        <h3 className="text-white font-semibold text-sm sm:text-base mb-1 line-clamp-2 group-hover:text-cyan-400 group-active:text-cyan-400 transition-colors">
+      <div className="p-2">
+        <h3 className="text-white font-semibold text-xs sm:text-sm mb-1 line-clamp-2 group-hover:text-cyan-400 group-active:text-cyan-400 transition-colors">
           {tvShow.name}
         </h3>
-        <p className="text-gray-400 text-xs sm:text-sm mb-1">
+        <p className="text-gray-400 text-xs mb-1">
           {getReleaseYear(tvShow.first_air_date)}
         </p>
-        <p className="text-gray-500 text-xs line-clamp-2 hidden sm:block">
+        <p className="text-gray-500 text-xs line-clamp-1 hidden sm:block">
           {tvShow.overview}
         </p>
       </div>

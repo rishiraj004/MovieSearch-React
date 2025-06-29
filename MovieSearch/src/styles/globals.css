@@ -1,5 +1,7 @@
 @import 'tailwindcss';
 @import 'tw-animate-css';
+@import './trending.css';
+@import './touch.css';
 
 @custom-variant dark (&:is(.dark *));
 
@@ -119,77 +121,21 @@
   }
 }
 
-/* Custom scrollbar styles - Enhanced */
-.scrollbar-hide {
-  -ms-overflow-style: none;  /* Internet Explorer 10+ */
-  scrollbar-width: none;     /* Firefox */
-}
-
-.scrollbar-hide::-webkit-scrollbar {
-  display: none;             /* Safari and Chrome */
-  width: 0;
-  height: 0;
-}
-
-/* Trending section specific styles */
-.trending-scroll-container {
-  overflow-x: auto;
-  overflow-y: hidden;
-  scrollbar-width: none;
-  -ms-overflow-style: none;
-}
-
-.trending-scroll-container::-webkit-scrollbar {
-  display: none;
-  width: 0;
-  height: 0;
-}
-
-/* Prevent page scroll when interacting with trending sections */
-.trending-section {
-  touch-action: pan-x;
-}
-
-/* Enhanced smooth scrolling */
-.smooth-scroll {
-  scroll-behavior: smooth;
-  scroll-snap-type: x mandatory;
-}
-
-/* Improved card animations */
-.trending-card {
-  scroll-snap-align: start;
-  scroll-snap-stop: always;
-}
-
-/* Touch improvements for mobile */
-@media (max-width: 768px) {
-  .touch-card {
-    -webkit-tap-highlight-color: transparent;
-    touch-action: manipulation;
-  }
-  
-  .touch-card:active {
-    transform: scale(0.95);
-    transition: transform 0.1s ease-out;
-  }
-  
-  /* Ensure mobile cards have proper touch feedback */
-  .touch-card:active .group-active\:scale-105 {
-    transform: scale(1.05);
-  }
-  
-  .touch-card:active .group-active\:opacity-100 {
-    opacity: 1;
-  }
-}
-
 /* Hide scrollbars globally but maintain functionality */
 html {
-  scrollbar-width: thin;
-  scrollbar-color: rgba(156, 163, 175, 0.3) transparent;
+  /* Fallback for older browsers */
+  overflow: auto;
 }
 
+/* Modern browsers with scrollbar-width support */
+@supports (scrollbar-width: thin) {
+  html {
+    scrollbar-width: thin;
+    scrollbar-color: rgba(156, 163, 175, 0.3) transparent;
+  }
+}
+
+/* Webkit browsers */
 html::-webkit-scrollbar {
   width: 8px;
 }
