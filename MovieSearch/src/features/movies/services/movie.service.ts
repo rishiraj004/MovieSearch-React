@@ -219,6 +219,14 @@ class MovieService {
     return this.fetchFromApi<MovieSearchResponse>(endpoint)
   }
 
+  async getTopRatedMovies(
+    page = 1,
+    language = API_CONFIG.DEFAULT_LANGUAGE
+  ): Promise<MovieSearchResponse> {
+    const endpoint = `/movie/top_rated?page=${page}&language=${language}`
+    return this.fetchFromApi<MovieSearchResponse>(endpoint)
+  }
+
   async getTrendingMovies(
     timeWindow: 'day' | 'week' = 'week'
   ): Promise<MovieSearchResponse> {

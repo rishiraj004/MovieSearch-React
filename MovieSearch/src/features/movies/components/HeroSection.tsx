@@ -1,5 +1,5 @@
 import { ChevronLeft, ChevronRight, Play, Info, Star, Menu, X, Search } from 'lucide-react'
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef, useCallback } from 'react'
 
 import { movieService } from '../services/movie.service'
 import type { Movie } from '../types/movie.types'
@@ -9,16 +9,72 @@ import { API_CONFIG, IMAGE_SIZES } from '@/shared/constants/api.constants'
 
 interface HeroSectionProps {
   onSearchClick?: () => void
+  onTrendingClick?: () => void
+  onTopRatedClick?: () => void
+  onGenresClick?: () => void
 }
 
-export function HeroSection({ onSearchClick }: HeroSectionProps) {
+export function HeroSection({ onSearchClick, onTrendingClick, onTopRatedClick, onGenresClick }: HeroSectionProps) {
   const [movies, setMovies] = useState<Movie[]>([])
   const [currentIndex, setCurrentIndex] = useState(0)
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const [isSidebarOpen, setIsSidebarOpen] = useState(false)
+  const [isInView, setIsInView] = useState(true)
+  const [isPaused, setIsPaused] = useState(false)
+  const [isTransitioning, setIsTransitioning] = useState(false)
 
   const currentMovie = movies[currentIndex]
+  const heroRef = useRef<HTMLDivElement>(null)
+  const intervalRef = useRef<NodeJS.Timeout | null>(null)
+
+  const nextMovie = useCallback(() => {
+    if (isTransitioning) return
+    setIsTransitioning(true)
+    
+    setTimeout(() => {
+      setCurrentIndex((prev) => (prev + 1) % movies.length)
+      setTimeout(() => setIsTransitioning(false), 100) // Allow content to settle
+    }, 150) // Half of transition duration
+    
+    // Reset auto-carousel timer when manually navigating
+    if (intervalRef.current) {
+      clearInterval(intervalRef.current)
+      intervalRef.current = setInterval(() => {
+        if (!isTransitioning) {
+          setIsTransitioning(true)
+          setTimeout(() => {
+            setCurrentIndex((prev) => (prev + 1) % movies.length)
+            setTimeout(() => setIsTransitioning(false), 100)
+          }, 150)
+        }
+      }, 3000)
+    }
+  }, [movies.length, isTransitioning])
+
+  const prevMovie = useCallback(() => {
+    if (isTransitioning) return
+    setIsTransitioning(true)
+    
+    setTimeout(() => {
+      setCurrentIndex((prev) => (prev - 1 + movies.length) % movies.length)
+      setTimeout(() => setIsTransitioning(false), 100) // Allow content to settle
+    }, 150) // Half of transition duration
+    
+    // Reset auto-carousel timer when manually navigating
+    if (intervalRef.current) {
+      clearInterval(intervalRef.current)
+      intervalRef.current = setInterval(() => {
+        if (!isTransitioning) {
+          setIsTransitioning(true)
+          setTimeout(() => {
+            setCurrentIndex((prev) => (prev + 1) % movies.length)
+            setTimeout(() => setIsTransitioning(false), 100)
+          }, 150)
+        }
+      }, 3000)
+    }
+  }, [movies.length, isTransitioning])
 
   useEffect(() => {
     const fetchPopularMovies = async () => {
@@ -37,16 +93,78 @@ export function HeroSection({ onSearchClick }: HeroSectionProps) {
     fetchPopularMovies()
   }, [])
 
-  const nextMovie = () => {
-    setCurrentIndex((prev) => (prev + 1) % movies.length)
-  }
+  // Auto-carousel functionality
+  useEffect(() => {
+    if (!movies.length || isPaused || !isInView || isTransitioning) return
 
-  const prevMovie = () => {
-    setCurrentIndex((prev) => (prev - 1 + movies.length) % movies.length)
-  }
+    intervalRef.current = setInterval(() => {
+      setIsTransitioning(true)
+      setTimeout(() => {
+        setCurrentIndex((prev) => (prev + 1) % movies.length)
+        setTimeout(() => setIsTransitioning(false), 100)
+      }, 150)
+    }, 3000) // Change every 3 seconds
+
+    return () => {
+      if (intervalRef.current) {
+        clearInterval(intervalRef.current)
+        intervalRef.current = null
+      }
+    }
+  }, [movies.length, isPaused, isInView, isTransitioning])
+
+  // Intersection Observer to detect if hero section is in view
+  useEffect(() => {
+    if (!heroRef.current) return
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        setIsInView(entry.isIntersecting)
+      },
+      {
+        threshold: 0.5, // At least 50% of the component should be visible
+      }
+    )
+
+    observer.observe(heroRef.current)
+
+    return () => {
+      observer.disconnect()
+    }
+  }, [])
+
+  // Keyboard navigation
+  useEffect(() => {
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (!isInView || movies.length <= 1) return
+
+      if (event.key === 'ArrowLeft') {
+        event.preventDefault()
+        prevMovie()
+      } else if (event.key === 'ArrowRight') {
+        event.preventDefault()
+        nextMovie()
+      }
+    }
+
+    window.addEventListener('keydown', handleKeyDown)
+    return () => {
+      window.removeEventListener('keydown', handleKeyDown)
+    }
+  }, [isInView, movies.length, nextMovie, prevMovie])
 
   const goToMovie = (index: number) => {
-    setCurrentIndex(index)
+    if (isTransitioning || index === currentIndex) return
+    setIsTransitioning(true)
+    
+    setTimeout(() => {
+      setCurrentIndex(index)
+      setTimeout(() => setIsTransitioning(false), 100)
+    }, 150)
+    
+    // Pause auto-carousel when manually selecting a movie
+    setIsPaused(true)
+    setTimeout(() => setIsPaused(false), 5000) // Resume after 5 seconds
   }
 
   const getBackdropUrl = (backdropPath: string | null) => {
@@ -76,13 +194,20 @@ export function HeroSection({ onSearchClick }: HeroSectionProps) {
   }
 
   return (
-    <div className="relative w-full h-screen overflow-hidden">
+    <div 
+      ref={heroRef}
+      className="relative w-full h-screen overflow-hidden"
+      onMouseEnter={() => setIsPaused(true)}
+      onMouseLeave={() => setIsPaused(false)}
+    >
       {/* Background Image */}
       <div className="absolute inset-0">
         <img
           src={getBackdropUrl(currentMovie.backdrop_path)}
           alt={currentMovie.title}
-          className="w-full h-full object-cover transition-opacity duration-700"
+          className={`w-full h-full object-cover transition-all duration-300 ${
+            isTransitioning ? 'opacity-80 scale-105' : 'opacity-100 scale-100'
+          }`}
         />
         {/* Dark overlay for better text readability */}
         <div className="absolute inset-0 bg-gradient-to-r from-black/80 via-black/40 to-transparent"></div>
@@ -114,19 +239,28 @@ export function HeroSection({ onSearchClick }: HeroSectionProps) {
             
             <nav className="space-y-4">
               <button 
-                onClick={() => setIsSidebarOpen(false)}
+                onClick={() => {
+                  setIsSidebarOpen(false)
+                  onTrendingClick?.()
+                }}
                 className="w-full text-left text-white/90 hover:text-white hover:bg-white/10 px-4 py-3 rounded-lg transition-all"
               >
                 Trending
               </button>
               <button 
-                onClick={() => setIsSidebarOpen(false)}
+                onClick={() => {
+                  setIsSidebarOpen(false)
+                  onTopRatedClick?.()
+                }}
                 className="w-full text-left text-white/90 hover:text-white hover:bg-white/10 px-4 py-3 rounded-lg transition-all"
               >
                 Top Rated
               </button>
               <button 
-                onClick={() => setIsSidebarOpen(false)}
+                onClick={() => {
+                  setIsSidebarOpen(false)
+                  onGenresClick?.()
+                }}
                 className="w-full text-left text-white/90 hover:text-white hover:bg-white/10 px-4 py-3 rounded-lg transition-all"
               >
                 Genres
@@ -165,13 +299,22 @@ export function HeroSection({ onSearchClick }: HeroSectionProps) {
           
           {/* Navigation Links - Hidden on mobile */}
           <div className="hidden md:flex items-center space-x-6">
-            <button className="text-white/90 hover:text-white transition-colors">
+            <button 
+              onClick={onTrendingClick}
+              className="text-white/90 hover:text-white transition-colors"
+            >
               Trending
             </button>
-            <button className="text-white/90 hover:text-white transition-colors">
+            <button 
+              onClick={onTopRatedClick}
+              className="text-white/90 hover:text-white transition-colors"
+            >
               Top Rated
             </button>
-            <button className="text-white/90 hover:text-white transition-colors">
+            <button 
+              onClick={onGenresClick}
+              className="text-white/90 hover:text-white transition-colors"
+            >
               Genres
             </button>
           </div>
@@ -200,7 +343,11 @@ export function HeroSection({ onSearchClick }: HeroSectionProps) {
 
       {/* Hero Content */}
       <div className="relative z-10 flex flex-col justify-center h-full px-8 md:px-16 lg:px-24">
-        <div className="max-w-2xl">
+        <div className={`max-w-2xl transition-all duration-300 ${
+          isTransitioning 
+            ? 'opacity-0 transform translate-x-8' 
+            : 'opacity-100 transform translate-x-0'
+        }`}>
           {/* Now Playing Badge */}
           <div className="inline-flex items-center bg-red-600 text-white px-3 py-1 rounded-full text-sm font-medium mb-4">
             Now Playing

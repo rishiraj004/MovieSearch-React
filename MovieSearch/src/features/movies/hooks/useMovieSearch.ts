@@ -19,6 +19,9 @@ interface UseMovieSearchActions {
   loadNextPage: () => Promise<void>
   clearSearch: () => void
   debouncedSearch: (query: string) => void
+  loadTrendingMovies: (page?: number) => Promise<void>
+  loadTopRatedMovies: (page?: number) => Promise<void>
+  loadPopularMovies: (page?: number) => Promise<void>
 }
 
 type UseMovieSearchReturn = UseMovieSearchState & UseMovieSearchActions
@@ -146,6 +149,141 @@ export function useMovieSearch(): UseMovieSearchReturn {
     })
   }, [])
 
+  const loadTrendingMovies = useCallback(async (page = 1) => {
+    // Cancel previous request
+    if (abortControllerRef.current) {
+      abortControllerRef.current.abort()
+    }
+    abortControllerRef.current = new AbortController()
+    
+    setState(prev => ({
+      ...prev,
+      isLoading: true,
+      error: null,
+      hasSearched: true,
+      ...(page === 1 && { movies: [] }),
+    }))
+    
+    try {
+      const response: MovieSearchResponse = await movieService.getTrendingMovies('week')
+
+      // Check if request was aborted
+      if (abortControllerRef.current?.signal.aborted) {
+        return
+      }
+
+      setState(prev => ({
+        ...prev,
+        movies: page === 1 ? response.results : [...prev.movies, ...response.results],
+        totalPages: response.total_pages,
+        currentPage: page,
+        query: 'Trending Movies',
+        isLoading: false,
+        hasSearched: true,
+      }))
+    } catch (error) {
+      if (abortControllerRef.current?.signal.aborted) {
+        return
+      }
+
+      setState(prev => ({
+        ...prev,
+        error: error instanceof Error ? error.message : 'Failed to load trending movies',
+        isLoading: false,
+      }))
+    }
+  }, [])
+
+  const loadTopRatedMovies = useCallback(async (page = 1) => {
+    // Cancel previous request
+    if (abortControllerRef.current) {
+      abortControllerRef.current.abort()
+    }
+    abortControllerRef.current = new AbortController()
+    
+    setState(prev => ({
+      ...prev,
+      isLoading: true,
+      error: null,
+      hasSearched: true,
+      ...(page === 1 && { movies: [] }),
+    }))
+    
+    try {
+      const response: MovieSearchResponse = await movieService.getTopRatedMovies(page)
+
+      // Check if request was aborted
+      if (abortControllerRef.current?.signal.aborted) {
+        return
+      }
+
+      setState(prev => ({
+        ...prev,
+        movies: page === 1 ? response.results : [...prev.movies, ...response.results],
+        totalPages: response.total_pages,
+        currentPage: page,
+        query: 'Top Rated Movies',
+        isLoading: false,
+        hasSearched: true,
+      }))
+    } catch (error) {
+      if (abortControllerRef.current?.signal.aborted) {
+        return
+      }
+
+      setState(prev => ({
+        ...prev,
+        error: error instanceof Error ? error.message : 'Failed to load top rated movies',
+        isLoading: false,
+      }))
+    }
+  }, [])
+
+  const loadPopularMovies = useCallback(async (page = 1) => {
+    // Cancel previous request
+    if (abortControllerRef.current) {
+      abortControllerRef.current.abort()
+    }
+    abortControllerRef.current = new AbortController()
+    
+    setState(prev => ({
+      ...prev,
+      isLoading: true,
+      error: null,
+      hasSearched: true,
+      ...(page === 1 && { movies: [] }),
+    }))
+    
+    try {
+      const response: MovieSearchResponse = await movieService.getPopularMovies(page)
+
+      // Check if request was aborted
+      if (abortControllerRef.current?.signal.aborted) {
+        return
+      }
+
+      setState(prev => ({
+        ...prev,
+        movies: page === 1 ? response.results : [...prev.movies, ...response.results],
+        totalPages: response.total_pages,
+        currentPage: page,
+        query: 'Popular Movies',
+        isLoading: false,
+        hasSearched: true,
+      }))
+    } catch (error) {
+      if (abortControllerRef.current?.signal.aborted) {
+        return
+      }
+
+      setState(prev => ({
+        ...prev,
+        error: error instanceof Error ? error.message : 'Failed to load popular movies',
+        isLoading: false,
+      }))
+    }
+  }, [])
+
   // Cleanup on unmount
   useEffect(() => () => {
     if (debounceRef.current) {
@@ -162,5 +300,8 @@ export function useMovieSearch(): UseMovieSearchReturn {
     loadNextPage,
     clearSearch,
     debouncedSearch,
+    loadTrendingMovies,
+    loadTopRatedMovies,
+    loadPopularMovies,
   }
 }

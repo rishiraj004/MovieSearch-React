@@ -21,6 +21,9 @@ export function HomePage() {
     totalPages,
     debouncedSearch,
     hasSearched,
+    loadTrendingMovies,
+    loadTopRatedMovies,
+    loadPopularMovies,
   } = useMovieSearch()
   const [selectedMovie, setSelectedMovie] = useState<Movie | null>(null)
   const [showSearchSection, setShowSearchSection] = useState(false)
@@ -51,12 +54,44 @@ export function HomePage() {
     }, 100)
   }, [])
 
+  const handleTrendingClick = useCallback(() => {
+    // Load trending movies
+    loadTrendingMovies()
+    setShowSearchSection(true)
+    setTimeout(() => {
+      searchSectionRef.current?.scrollIntoView({ behavior: 'smooth' })
+    }, 100)
+  }, [loadTrendingMovies])
+
+  const handleTopRatedClick = useCallback(() => {
+    // Load top rated movies
+    loadTopRatedMovies()
+    setShowSearchSection(true)
+    setTimeout(() => {
+      searchSectionRef.current?.scrollIntoView({ behavior: 'smooth' })
+    }, 100)
+  }, [loadTopRatedMovies])
+
+  const handleGenresClick = useCallback(() => {
+    // Show popular movies
+    loadPopularMovies()
+    setShowSearchSection(true)
+    setTimeout(() => {
+      searchSectionRef.current?.scrollIntoView({ behavior: 'smooth' })
+    }, 100)
+  }, [loadPopularMovies])
+
   const hasMorePages = currentPage < totalPages
 
   return (
     <>
       {/* Hero Section */}
-      <HeroSection onSearchClick={handleSearchClick} />
+      <HeroSection 
+        onSearchClick={handleSearchClick}
+        onTrendingClick={handleTrendingClick}
+        onTopRatedClick={handleTopRatedClick}
+        onGenresClick={handleGenresClick}
+      />
       
       {/* Search and Results Section */}
       {showSearchSection && (
