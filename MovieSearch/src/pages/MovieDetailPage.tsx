@@ -3,18 +3,20 @@ import { ArrowLeft, Calendar, Clock, Star, Play } from 'lucide-react'
 import { useState, useEffect } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 
-import { CastCard, MovieCard, ProductionLogo } from './components'
+import { CastCard, MovieCard, ProductionLogo, MovieDetailsGrid, CollectionSection } from './components'
 
 import { movieService } from '@/features/movies/services/movie.service'
-import type { MovieDetails, Cast, Movie } from '@/features/movies/types/movie.types'
+import type { MovieDetailsExtended, Cast, Movie, CollectionDetails } from '@/features/movies/types/movie.types'
 import { getImageUrl, getBackdropUrl } from '@/features/movies/utils/imageUtils'
 
 export function MovieDetailPage() {
   const { id } = useParams<{ id: string }>()
   const navigate = useNavigate()
-  const [movie, setMovie] = useState<MovieDetails | null>(null)
+  const [movie, setMovie] = useState<MovieDetailsExtended | null>(null)
   const [credits, setCredits] = useState<{ cast: Cast[] } | null>(null)
   const [recommendations, setRecommendations] = useState<Movie[]>([])
+  const [collection, setCollection] = useState<CollectionDetails | null>(null)
+  const [loadingCollection, setLoadingCollection] = useState(false)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
 
@@ -29,6 +31,9 @@ export function MovieDetailPage() {
       try {
         setLoading(true)
         setError(null)
+        // Reset collection state when fetching new movie data
+        setCollection(null)
+        setLoadingCollection(false)
 
         const movieId = parseInt(id, 10)
         if (isNaN(movieId)) {
@@ -36,7 +41,7 @@ export function MovieDetailPage() {
         }
 
         const [movieDetails, movieCredits, movieRecommendations] = await Promise.all([
-          movieService.getMovieDetails(movieId),
+          movieService.getMovieDetailsExtended(movieId),
           movieService.getMovieCredits(movieId),
           movieService.getMovieRecommendations(movieId)
         ])
@@ -71,6 +76,22 @@ export function MovieDetailPage() {
     // In a real app, you might open a modal with the trailer
     if (movie?.homepage) {
       window.open(movie.homepage, '_blank')
+    }
+  }
+
+  const handleFetchCollection = async () => {
+    if (!movie?.belongs_to_collection) return
+
+    try {
+      setLoadingCollection(true)
+      const collectionData = await movieService.getCollection(movie.belongs_to_collection.id)
+      setCollection(collectionData)
+    } catch {
+      // Reset collection state on error
+      setCollection(null)
+      // In a production app, you might want to show a toast notification or error message
+    } finally {
+      setLoadingCollection(false)
     }
   }
 
@@ -208,7 +229,7 @@ export function MovieDetailPage() {
                     {movie.genres.map((genre) => (
                       <span
                         key={genre.id}
-                        className="px-3 py-1 bg-blue-600/20 text-blue-300 rounded-full text-sm border border-blue-600/30"
+                        className="px-3 py-1 bg-red-600/90 text-white rounded-full text-sm border border-blue-600/30"
                       >
                         {genre.name}
                       </span>
@@ -249,11 +270,96 @@ export function MovieDetailPage() {
             transition={{ duration: 0.6, delay: 0.2 }}
           >
             <h2 className="text-3xl font-bold mb-6">Overview</h2>
-            <p className="text-gray-300 text-lg leading-relaxed max-w-4xl">
-              {movie.overview}
-            </p>
+            <div className="bg-gray-800 rounded-lg p-8 mx-4 shadow-lg border border-gray-700">
+              <p className="text-gray-300 text-lg leading-relaxed">
+                {movie.overview}
+              </p>
+            </div>
           </motion.section>
         )}
+
+        {/* Collection Section */}
+        {movie.belongs_to_collection && (
+          <motion.section
+            className="mb-12"
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: 0.25 }}
+          >
+            <div className="flex items-center justify-between mb-6">
+              <h2 className="text-3xl font-bold">Part of Collection</h2>
+            </div>
+            
+            {!collection ? (
+              <div className="relative rounded-xl overflow-hidden border border-purple-500/20">
+                {/* Backdrop Image with Blur */}
+                {movie.belongs_to_collection.backdrop_path && (
+                  <div className="absolute inset-0">
+                    <img
+                      src={getBackdropUrl(movie.belongs_to_collection.backdrop_path, 'W1280')}
+                      alt={movie.belongs_to_collection.name}
+                      className="w-full h-full object-cover"
+                    />
+                    <div className="absolute inset-0 bg-black/70 backdrop-blur-sm" />
+                  </div>
+                )}
+                
+                {/* Fallback gradient background */}
+                {!movie.belongs_to_collection.backdrop_path && (
+                  <div className="absolute inset-0 bg-gradient-to-r from-purple-900/40 to-blue-900/40" />
+                )}
+                
+                {/* Content overlay */}
+                <div className="relative z-10 p-8 bg-gradient-to-r from-purple-900/20 to-blue-900/20">
+                  <div className="flex items-center gap-4 mb-4">
+                    {movie.belongs_to_collection.poster_path && (
+                      <img
+                        src={getImageUrl(movie.belongs_to_collection.poster_path, 'W185')}
+                        alt={movie.belongs_to_collection.name}
+                        className="w-16 h-24 object-cover rounded-lg shadow-2xl border-2 border-white/20"
+                      />
+                    )}
+                    <div className="flex-1">
+                      <h3 className="text-2xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-blue-400 mb-2 drop-shadow-lg">
+                        {movie.belongs_to_collection.name}
+                      </h3>
+                      <p className="text-gray-200 mb-4 drop-shadow-sm">
+                        This movie is part of the {movie.belongs_to_collection.name} collection.
+                      </p>
+                      <button
+                        onClick={handleFetchCollection}
+                        disabled={loadingCollection}
+                        className="bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 disabled:from-gray-600 disabled:to-gray-600 text-white px-6 py-3 rounded-lg transition-all duration-300 font-semibold shadow-lg hover:shadow-xl disabled:cursor-not-allowed backdrop-blur-sm"
+                      >
+                        {loadingCollection ? (
+                          <div className="flex items-center gap-2">
+                            <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
+                            Loading Collection...
+                          </div>
+                        ) : (
+                          'View All Movies'
+                        )}
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            ) : (
+              <CollectionSection collection={collection} onMovieClick={handleMovieClick} />
+            )}
+          </motion.section>
+        )}
+
+        {/* Movie Details Grid */}
+        <motion.section
+          className="mb-12"
+          initial={{ opacity: 0, y: 30 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, delay: 0.4 }}
+        >
+          <h2 className="text-3xl font-bold mb-6">Movie Details</h2>
+          <MovieDetailsGrid movie={movie} />
+        </motion.section>
 
         {/* Cast Section */}
         {topCast.length > 0 && (
@@ -264,7 +370,7 @@ export function MovieDetailPage() {
             transition={{ duration: 0.6, delay: 0.4 }}
           >
             <h2 className="text-3xl font-bold mb-6">Cast</h2>
-            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6">
+            <div className="grid grid-cols-4 md:grid-cols-6 lg:grid-cols-10 gap-6">
               {topCast.map((actor) => (
                 <CastCard
                   key={actor.id}

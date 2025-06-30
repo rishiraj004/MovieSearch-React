@@ -95,6 +95,11 @@ export interface Collection {
   backdrop_path: string | null
 }
 
+export interface CollectionDetails extends Collection {
+  overview: string
+  parts: Movie[]
+}
+
 export interface Cast {
   id: number
   name: string

@@ -1,4 +1,4 @@
-import type { MovieDetails, MovieSearchResponse, TVShowSearchResponse, PersonSearchResponse, Credits, MovieDetailsExtended } from '../types/movie.types'
+import type { MovieDetails, MovieSearchResponse, TVShowSearchResponse, PersonSearchResponse, Credits, MovieDetailsExtended, CollectionDetails } from '../types/movie.types'
 
 import { API_CONFIG } from '@/shared/constants/api.constants'
 import type { SearchParams } from '@/shared/types/common.types'
@@ -292,6 +292,11 @@ class MovieService {
   ): Promise<MovieDetailsExtended> {
     const endpoint = `/movie/${movieId}?language=${language}&append_to_response=credits,recommendations`
     return this.fetchFromApi<MovieDetailsExtended>(endpoint)
+  }
+
+  async getCollection(collectionId: number): Promise<CollectionDetails> {
+    const endpoint = `/collection/${collectionId}?language=${API_CONFIG.DEFAULT_LANGUAGE}`
+    return this.fetchFromApi<CollectionDetails>(endpoint)
   }
 
   // Performance optimization methods
