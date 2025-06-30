@@ -1,21 +1,21 @@
 import { motion } from 'framer-motion'
 
-import type { Movie } from '../../features/movies/types/movie.types'
-import { getImageUrl } from '../../features/movies/utils/imageUtils'
+import type { TVShow } from '@/features/movies/types/movie.types'
+import { getImageUrl } from '@/features/movies/utils/imageUtils'
 
-interface MovieCardProps {
-  movie: Movie
-  onClick?: (movie: Movie) => void
+interface TVShowCardProps {
+  tvShow: TVShow
+  onClick?: (tvShow: TVShow) => void
 }
 
-export function MovieCard({ movie, onClick }: MovieCardProps) {
-  const year = movie.release_date ? new Date(movie.release_date).getFullYear() : ''
-  const rating = movie.vote_average ? movie.vote_average.toFixed(1) : 'N/A'
+export function TVShowCard({ tvShow, onClick }: TVShowCardProps) {
+  const year = tvShow.first_air_date ? new Date(tvShow.first_air_date).getFullYear() : ''
+  const rating = tvShow.vote_average ? tvShow.vote_average.toFixed(1) : 'N/A'
 
   return (
     <motion.div
       className="flex-shrink-0 cursor-pointer group"
-      onClick={() => onClick?.(movie)}
+      onClick={() => onClick?.(tvShow)}
       whileHover={{ scale: 1.05 }}
       whileTap={{ scale: 0.95 }}
       initial={{ opacity: 0, y: 20 }}
@@ -26,8 +26,8 @@ export function MovieCard({ movie, onClick }: MovieCardProps) {
         {/* Poster with consistent 2:3 aspect ratio */}
         <div className="relative aspect-[2/3] bg-gray-800 rounded-lg overflow-hidden mb-3 group-hover:ring-2 group-hover:ring-blue-400 transition-all duration-300">
           <img
-            src={getImageUrl(movie.poster_path, 'W342')}
-            alt={movie.title}
+            src={getImageUrl(tvShow.poster_path, 'W342')}
+            alt={tvShow.name}
             className="w-full h-full object-cover"
             loading="lazy"
           />
@@ -38,14 +38,14 @@ export function MovieCard({ movie, onClick }: MovieCardProps) {
           </div>
         </div>
 
-        {/* Movie Info */}
+        {/* TV Show Info */}
         <div className="space-y-1">
           <h3 className="text-white font-semibold text-sm line-clamp-1 card-title-height group-hover:text-blue-400 transition-colors">
-            {movie.title}
+            {tvShow.name}
           </h3>
           <p className="text-gray-400 text-xs">{year}</p>
-          {movie.overview && (
-            <p className="text-gray-500 text-xs line-clamp-2">{movie.overview}</p>
+          {tvShow.overview && (
+            <p className="text-gray-500 text-xs line-clamp-2">{tvShow.overview}</p>
           )}
         </div>
       </div>

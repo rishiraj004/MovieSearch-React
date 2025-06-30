@@ -15,8 +15,8 @@ export function TopRatedContainer() {
 
   const handleTVClick = (item: Movie | TVShow) => {
     if ('name' in item) {
-      // It's a TV Show - in a real app, you might navigate to a TV show details page
-      void item // Silence the unused variable warning
+      // It's a TV Show
+      navigate(`/tv/${item.id}`)
     }
   }
 

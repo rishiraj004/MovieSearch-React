@@ -1,4 +1,4 @@
-import type { MovieDetails, MovieSearchResponse, TVShowSearchResponse, PersonSearchResponse, Credits, MovieDetailsExtended, CollectionDetails, ProductionCompanyDetails, ReviewsResponse, VideosResponse, WatchProvidersResponse, Country } from '../types/movie.types'
+import type { MovieDetails, MovieSearchResponse, TVShowSearchResponse, PersonSearchResponse, Credits, MovieDetailsExtended, CollectionDetails, ProductionCompanyDetails, ReviewsResponse, VideosResponse, WatchProvidersResponse, Country, TVShowDetails, TVShowDetailsExtended, SeasonDetails } from '../types/movie.types'
 
 import { API_CONFIG } from '@/shared/constants/api.constants'
 import type { SearchParams } from '@/shared/types/common.types'
@@ -330,6 +330,66 @@ class MovieService {
     return this.fetchFromApi<VideosResponse>(endpoint)
   }
 
+  // TV Show methods
+  async getTVShowDetails(
+    tvId: number,
+    language = API_CONFIG.DEFAULT_LANGUAGE
+  ): Promise<TVShowDetails> {
+    const endpoint = `/tv/${tvId}?language=${language}`
+    return this.fetchFromApi<TVShowDetails>(endpoint)
+  }
+
+  async getTVShowDetailsExtended(
+    tvId: number,
+    language = API_CONFIG.DEFAULT_LANGUAGE
+  ): Promise<TVShowDetailsExtended> {
+    const endpoint = `/tv/${tvId}?language=${language}&append_to_response=credits,recommendations`
+    return this.fetchFromApi<TVShowDetailsExtended>(endpoint)
+  }
+
+  async getTVShowCredits(
+    tvId: number,
+    language = API_CONFIG.DEFAULT_LANGUAGE
+  ): Promise<Credits> {
+    const endpoint = `/tv/${tvId}/credits?language=${language}`
+    return this.fetchFromApi<Credits>(endpoint)
+  }
+
+  async getTVShowRecommendations(
+    tvId: number,
+    page = 1,
+    language = API_CONFIG.DEFAULT_LANGUAGE
+  ): Promise<TVShowSearchResponse> {
+    const endpoint = `/tv/${tvId}/recommendations?language=${language}&page=${page}`
+    return this.fetchFromApi<TVShowSearchResponse>(endpoint)
+  }
+
+  async getSimilarTVShows(
+    tvId: number,
+    page = 1,
+    language = API_CONFIG.DEFAULT_LANGUAGE
+  ): Promise<TVShowSearchResponse> {
+    const endpoint = `/tv/${tvId}/similar?language=${language}&page=${page}`
+    return this.fetchFromApi<TVShowSearchResponse>(endpoint)
+  }
+
+  async getTVShowReviews(
+    tvId: number,
+    page = 1,
+    language = API_CONFIG.DEFAULT_LANGUAGE
+  ): Promise<ReviewsResponse> {
+    const endpoint = `/tv/${tvId}/reviews?language=${language}&page=${page}`
+    return this.fetchFromApi<ReviewsResponse>(endpoint)
+  }
+
+  async getTVShowVideos(
+    tvId: number,
+    language = API_CONFIG.DEFAULT_LANGUAGE
+  ): Promise<VideosResponse> {
+    const endpoint = `/tv/${tvId}/videos?language=${language}`
+    return this.fetchFromApi<VideosResponse>(endpoint)
+  }
+
   // Performance optimization methods
   async preloadData(): Promise<void> {
     try {
@@ -357,6 +417,15 @@ class MovieService {
   // Watch Providers
   async getMovieWatchProviders(movieId: number): Promise<WatchProvidersResponse> {
     return this.fetchFromApi<WatchProvidersResponse>(`/movie/${movieId}/watch/providers`)
+  }
+
+  async getTVShowWatchProviders(tvId: number): Promise<WatchProvidersResponse> {
+    return this.fetchFromApi<WatchProvidersResponse>(`/tv/${tvId}/watch/providers`)
+  }
+
+  // Get TV show season details
+  async getTVShowSeasonDetails(tvId: number, seasonNumber: number): Promise<SeasonDetails> {
+    return this.fetchFromApi<SeasonDetails>(`/tv/${tvId}/season/${seasonNumber}`)
   }
 
   // Get available countries for watch providers

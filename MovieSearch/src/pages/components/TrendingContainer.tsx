@@ -15,8 +15,8 @@ export function TrendingContainer() {
 
   const handleTVClick = (item: Movie | TVShow | Person) => {
     if ('name' in item && 'first_air_date' in item) {
-      // It's a TV Show - in a real app, you might navigate to a TV show details page
-      void item // Silence the unused variable warning
+      // It's a TV Show
+      navigate(`/tv/${item.id}`)
     }
   }
 

@@ -60,6 +60,76 @@ export interface MovieDetails extends Movie {
   spoken_languages: SpokenLanguage[]
 }
 
+// TV Show Details (similar to MovieDetails but with TV-specific fields)
+export interface TVShowDetails extends TVShow {
+  genres: Genre[]
+  episode_run_time: number[]
+  status: string
+  tagline: string
+  homepage: string
+  production_companies: ProductionCompany[]
+  production_countries: ProductionCountry[]
+  spoken_languages: SpokenLanguage[]
+  number_of_episodes: number
+  number_of_seasons: number
+  seasons: Season[]
+  networks: Network[]
+  created_by: CreatedBy[]
+  in_production: boolean
+  languages: string[]
+  last_air_date: string | null
+  next_episode_to_air: Episode | null
+  last_episode_to_air: Episode | null
+  type: string
+}
+
+export interface Season {
+  id: number
+  air_date: string | null
+  episode_count: number
+  name: string
+  overview: string
+  poster_path: string | null
+  season_number: number
+  vote_average: number
+}
+
+export interface SeasonDetails extends Season {
+  episodes: Episode[]
+}
+
+export interface Episode {
+  id: number
+  air_date: string | null
+  episode_number: number
+  name: string
+  overview: string
+  runtime: number | null
+  season_number: number
+  still_path: string | null
+  vote_average: number
+  vote_count: number
+  production_code: string
+  show_id: number
+  crew: Crew[]
+  guest_stars: Cast[]
+}
+
+export interface Network {
+  id: number
+  logo_path: string | null
+  name: string
+  origin_country: string
+}
+
+export interface CreatedBy {
+  id: number
+  credit_id: string
+  name: string
+  gender: number
+  profile_path: string | null
+}
+
 export interface Genre {
   id: number
   name: string
@@ -94,6 +164,9 @@ export interface SpokenLanguage {
 export interface MovieDetailsExtended extends MovieDetails {
   belongs_to_collection: Collection | null
 }
+
+// Extended types for TV show detail page (currently alias, can be extended later)
+export type TVShowDetailsExtended = TVShowDetails
 
 export interface Collection {
   id: number

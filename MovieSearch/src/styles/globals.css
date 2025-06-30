@@ -4,6 +4,21 @@
 @import './touch.css';
 @import './card-scroll-fix.css';
 
+/* Ensure line-clamp works properly */
+.line-clamp-1 {
+  display: -webkit-box;
+  -webkit-line-clamp: 1;
+  line-clamp: 1;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Card title consistent height */
+.card-title-height {
+  min-height: 1.25rem; /* Ensure consistent height for titles */
+}
+
 @custom-variant dark (&:is(.dark *));
 
 @theme inline {
