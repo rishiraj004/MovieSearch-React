@@ -163,7 +163,7 @@ export function MovieDetailPage() {
     <div className="min-h-screen bg-gray-900 text-white">
       {/* Hero Section */}
       <motion.section
-        className="relative h-[85vh] overflow-hidden"
+        className="relative min-h-[85vh] sm:min-h-[80vh] lg:min-h-[95vh] overflow-hidden"
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ duration: 0.8 }}
@@ -192,15 +192,15 @@ export function MovieDetailPage() {
         )}
         
         {/* Dark Overlay - lighter so we can see the image */}
-        <div className="absolute inset-0 z-10 bg-black/30" />
+        <div className="absolute inset-0 z-10 bg-black/40 sm:bg-black/30" />
         
         {/* Content Container - highest z-index */}
         <div className="absolute inset-0 z-20 flex items-end">
-          <div className="container mx-auto px-6 pb-8">
-            <div className="flex items-end gap-8">
+          <div className="container mx-auto px-4 sm:px-6 pb-6 sm:pb-8">
+            <div className="flex flex-col sm:flex-row items-center sm:items-end gap-4 sm:gap-6 lg:gap-8">
               {/* Movie Poster */}
               <motion.div
-                className="flex-shrink-0"
+                className="flex-shrink-0 order-1 sm:order-none"
                 initial={{ opacity: 0, x: -50 }}
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ duration: 0.6, delay: 0.2 }}
@@ -208,43 +208,43 @@ export function MovieDetailPage() {
                 <img
                   src={movie.poster_path ? getImageUrl(movie.poster_path, 'W500') : '/placeholder-movie.jpg'}
                   alt={movie.title}
-                  className="w-64 h-96 object-cover rounded-lg shadow-2xl"
+                  className="w-40 h-60 sm:w-48 sm:h-72 lg:w-64 lg:h-96 object-cover rounded-lg shadow-2xl mx-auto sm:mx-0"
                 />
               </motion.div>
 
               {/* Movie Info */}
               <motion.div
-                className="flex-1 max-w-2xl"
+                className="flex-1 max-w-full sm:max-w-2xl text-center sm:text-left order-2 sm:order-none"
                 initial={{ opacity: 0, y: 50 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.6, delay: 0.4 }}
               >
-                <h1 className="text-5xl font-bold mb-2">{movie.title}</h1>
+                <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold mb-2 leading-tight">{movie.title}</h1>
                 {movie.tagline && (
-                  <p className="text-xl text-gray-300 italic mb-4">{movie.tagline}</p>
+                  <p className="text-base sm:text-lg lg:text-xl text-gray-300 italic mb-3 sm:mb-4">{movie.tagline}</p>
                 )}
                 
-                <div className="flex items-center gap-6 mb-6">
+                <div className="flex flex-wrap justify-center sm:justify-start items-center gap-3 sm:gap-4 lg:gap-6 mb-4 sm:mb-6">
                   <div className="flex items-center gap-2">
-                    <Calendar className="w-5 h-5 text-gray-400" />
-                    <span className="text-gray-300">{year}</span>
+                    <Calendar className="w-4 h-4 sm:w-5 sm:h-5 text-gray-400" />
+                    <span className="text-sm sm:text-base text-gray-300">{year}</span>
                   </div>
                   <div className="flex items-center gap-2">
-                    <Clock className="w-5 h-5 text-gray-400" />
-                    <span className="text-gray-300">{runtime}</span>
+                    <Clock className="w-4 h-4 sm:w-5 sm:h-5 text-gray-400" />
+                    <span className="text-sm sm:text-base text-gray-300">{runtime}</span>
                   </div>
                   <div className="flex items-center gap-2">
-                    <Star className="w-5 h-5 text-yellow-400" />
-                    <span className="text-gray-300">{rating}/10</span>
+                    <Star className="w-4 h-4 sm:w-5 sm:h-5 text-yellow-400" />
+                    <span className="text-sm sm:text-base text-gray-300">{rating}/10</span>
                   </div>
                 </div>
 
                 {movie.genres && movie.genres.length > 0 && (
-                  <div className="flex flex-wrap gap-2 mb-6">
+                  <div className="flex flex-wrap justify-center sm:justify-start gap-2 mb-4 sm:mb-6">
                     {movie.genres.map((genre) => (
                       <span
                         key={genre.id}
-                        className="px-3 py-1 bg-red-600/90 text-white rounded-full text-sm border border-blue-600/30"
+                        className="px-2 py-1 sm:px-3 sm:py-1 bg-red-600/90 text-white rounded-full text-xs sm:text-sm border border-blue-600/30"
                       >
                         {genre.name}
                       </span>
@@ -252,19 +252,19 @@ export function MovieDetailPage() {
                   </div>
                 )}
 
-                <div className="flex items-center gap-4">
+                <div className="flex flex-col sm:flex-row items-center gap-3 sm:gap-4">
                   <button
                     onClick={handleTrailerClick}
-                    className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg transition-colors inline-flex items-center gap-2 font-semibold"
+                    className="w-full sm:w-auto bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 sm:px-6 sm:py-3 rounded-lg transition-colors inline-flex items-center justify-center gap-2 font-semibold text-sm sm:text-base"
                   >
-                    <Play className="w-5 h-5" />
+                    <Play className="w-4 h-4 sm:w-5 sm:h-5" />
                     Watch Trailer
                   </button>
                   <button
                     onClick={handleBack}
-                    className="bg-gray-700 hover:bg-gray-600 text-white px-6 py-3 rounded-lg transition-colors inline-flex items-center gap-2"
+                    className="w-full sm:w-auto bg-gray-700 hover:bg-gray-600 text-white px-4 py-2 sm:px-6 sm:py-3 rounded-lg transition-colors inline-flex items-center justify-center gap-2 text-sm sm:text-base"
                   >
-                    <ArrowLeft className="w-5 h-5" />
+                    <ArrowLeft className="w-4 h-4 sm:w-5 sm:h-5" />
                     Back
                   </button>
                 </div>
@@ -275,18 +275,18 @@ export function MovieDetailPage() {
       </motion.section>
 
       {/* Main Content */}
-      <div className="container mx-auto px-6 py-12">
+      <div className="container mx-auto px-4 sm:px-6 py-8 sm:py-12">
         {/* Overview Section */}
         {movie.overview && (
           <motion.section
-            className="mb-12"
+            className="mb-8 sm:mb-12"
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.2 }}
           >
-            <h2 className="text-3xl font-bold mb-6">Overview</h2>
-            <div className="bg-gray-800 rounded-lg p-8 mx-4 shadow-lg border border-gray-700">
-              <p className="text-gray-300 text-lg leading-relaxed">
+            <h2 className="text-2xl sm:text-3xl font-bold mb-4 sm:mb-6 text-center sm:text-left">Overview</h2>
+            <div className="bg-gray-800 rounded-lg p-4 sm:p-6 lg:p-8 mx-0 sm:mx-4 shadow-lg border border-gray-700">
+              <p className="text-gray-300 text-sm sm:text-base lg:text-lg leading-relaxed">
                 {movie.overview}
               </p>
             </div>
@@ -301,8 +301,8 @@ export function MovieDetailPage() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.25 }}
           >
-            <div className="flex items-center justify-between mb-6">
-              <h2 className="text-3xl font-bold">Part of Collection</h2>
+            <div className="flex items-center justify-between mb-4 sm:mb-6">
+              <h2 className="text-2xl sm:text-3xl font-bold text-center sm:text-left">Part of Collection</h2>
             </div>
             
             {!collection ? (
@@ -367,25 +367,25 @@ export function MovieDetailPage() {
 
         {/* Movie Details Grid */}
         <motion.section
-          className="mb-12"
+          className="mb-8 sm:mb-12"
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: 0.4 }}
         >
-          <h2 className="text-3xl font-bold mb-6">Movie Details</h2>
+          <h2 className="text-2xl sm:text-3xl font-bold mb-4 sm:mb-6 text-center sm:text-left">Movie Details</h2>
           <MovieDetailsGrid movie={movie} />
         </motion.section>
 
         {/* Cast Section */}
         {topCast.length > 0 && (
           <motion.section
-            className="mb-12"
+            className="mb-8 sm:mb-12"
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.4 }}
           >
-            <div className="flex items-center justify-between mb-6">
-              <h2 className="text-3xl font-bold">Cast</h2>
+            <div className="flex flex-col sm:flex-row items-center sm:items-center justify-between gap-4 sm:gap-0 mb-4 sm:mb-6">
+              <h2 className="text-2xl sm:text-3xl font-bold text-center sm:text-left">Cast</h2>
               {credits && (
                 <CastCrewDropdown 
                   cast={credits.cast} 
@@ -397,7 +397,7 @@ export function MovieDetailPage() {
                 />
               )}
             </div>
-            <div className="grid grid-cols-4 md:grid-cols-6 lg:grid-cols-10 gap-6">
+            <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 lg:grid-cols-8 xl:grid-cols-10 gap-3 sm:gap-4 lg:gap-6">
               {topCast.map((actor) => (
                 <CastCard
                   key={actor.id}
@@ -412,13 +412,13 @@ export function MovieDetailPage() {
         {/* Crew Section */}
         {credits && (directors.length > 0 || producers.length > 0 || writers.length > 0) && (
           <motion.section
-            className="mb-12"
+            className="mb-8 sm:mb-12"
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.5 }}
           >
-            <h2 className="text-3xl font-bold mb-8">Key Crew</h2>
-            <div className="space-y-6">
+            <h2 className="text-2xl sm:text-3xl font-bold mb-6 sm:mb-8 text-center sm:text-left">Key Crew</h2>
+            <div className="space-y-4 sm:space-y-6">
               <CrewSection 
                 title="Directors" 
                 crew={directors} 
@@ -471,13 +471,13 @@ export function MovieDetailPage() {
         {/* Production Companies */}
         {movie.production_companies && movie.production_companies.length > 0 && (
           <motion.section
-            className="mb-12"
+            className="mb-8 sm:mb-12"
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.6 }}
           >
-            <h2 className="text-3xl font-bold mb-6">Production Companies</h2>
-            <div className="flex flex-wrap gap-8">
+            <h2 className="text-2xl sm:text-3xl font-bold mb-4 sm:mb-6 text-center sm:text-left">Production Companies</h2>
+            <div className="flex flex-wrap justify-center sm:justify-start gap-4 sm:gap-6 lg:gap-8">
               {movie.production_companies.map((company) => (
                 <ProductionLogo key={company.id} company={company} />
               ))}

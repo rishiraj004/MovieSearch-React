@@ -146,14 +146,14 @@ export function MovieDetailsGrid({ movie }: MovieDetailsGridProps) {
   }
 
   return (
-    <div className="mx-4">
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+    <div className="mx-0 sm:mx-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
         {detailsData.map((detail, index) => (
           <div
             key={index}
-            className="bg-gray-800 rounded-lg p-6 shadow-lg border border-gray-700 hover:bg-gray-750 transition-colors duration-200"
+            className="bg-gray-800 rounded-lg p-4 sm:p-5 lg:p-6 shadow-lg border border-gray-700 hover:bg-gray-750 transition-colors duration-200"
           >
-            <h3 className="text-sm font-semibold text-gray-400 uppercase tracking-wide mb-2">
+            <h3 className="text-xs sm:text-sm font-semibold text-gray-400 uppercase tracking-wide mb-2">
               {detail.title}
             </h3>
             {renderValue(detail)}
