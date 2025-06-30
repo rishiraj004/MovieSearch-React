@@ -80,8 +80,7 @@ export function MovieDetailPage() {
   }
 
   const handleCastClick = (cast: Cast) => {
-    // In a real app, you might navigate to a person details page
-    void cast
+    navigate(`/person/${cast.id}`)
   }
 
   const handleTrailerClick = () => {
@@ -425,8 +424,7 @@ export function MovieDetailPage() {
                   cast={credits.cast} 
                   crew={credits.crew}
                   onPersonClick={(person) => {
-                    // In a real app, you might navigate to a person details page
-                    void person
+                    navigate(`/person/${person.id}`)
                   }}
                 />
               )}
@@ -458,18 +456,21 @@ export function MovieDetailPage() {
                 crew={directors} 
                 icon={Camera}
                 color="blue"
+                onPersonClick={(person) => navigate(`/person/${person.id}`)}
               />
               <CrewSection 
                 title="Producers" 
                 crew={producers} 
                 icon={Megaphone}
                 color="purple"
+                onPersonClick={(person) => navigate(`/person/${person.id}`)}
               />
               <CrewSection 
                 title="Writers" 
                 crew={writers} 
                 icon={Edit}
                 color="green"
+                onPersonClick={(person) => navigate(`/person/${person.id}`)}
               />
             </div>
           </motion.section>

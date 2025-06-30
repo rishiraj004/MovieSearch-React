@@ -9,9 +9,10 @@ interface CrewSectionProps {
   crew: Crew[]
   icon?: React.ComponentType<{ className?: string }>
   color?: string
+  onPersonClick?: (person: Crew) => void
 }
 
-export function CrewSection({ title, crew, icon: Icon = Users, color = 'blue' }: CrewSectionProps) {
+export function CrewSection({ title, crew, icon: Icon = Users, color = 'blue', onPersonClick }: CrewSectionProps) {
   if (crew.length === 0) return null
 
   const colorClasses = {
@@ -35,9 +36,13 @@ export function CrewSection({ title, crew, icon: Icon = Users, color = 'blue' }:
       
       <div className="flex flex-wrap gap-4">
         {crew.slice(0, 6).map((person) => (
-          <div
+          <button
             key={`${person.id}-${person.credit_id}`}
-            className={`flex items-center gap-3 px-4 py-3 rounded-lg border ${colorClasses[color as keyof typeof colorClasses]}`}
+            className={`flex items-center gap-3 px-4 py-3 rounded-lg border ${colorClasses[color as keyof typeof colorClasses]} ${
+              onPersonClick ? 'cursor-pointer hover:opacity-80 transition-opacity' : ''
+            }`}
+            onClick={() => onPersonClick?.(person)}
+            disabled={!onPersonClick}
           >
             <img
               src={getPersonImageUrl(person.profile_path)}
@@ -50,7 +55,7 @@ export function CrewSection({ title, crew, icon: Icon = Users, color = 'blue' }:
                 <p className="text-sm text-gray-400">{person.job}</p>
               )}
             </div>
-          </div>
+          </button>
         ))}
       </div>
       

@@ -6,9 +6,10 @@ import { getPersonImageUrl } from '@/features/movies/utils/imageUtils'
 
 interface CreatedBySectionProps {
   createdBy: CreatedBy[]
+  onCreatorClick?: (creator: CreatedBy) => void
 }
 
-export function CreatedBySection({ createdBy }: CreatedBySectionProps) {
+export function CreatedBySection({ createdBy, onCreatorClick }: CreatedBySectionProps) {
   if (createdBy.length === 0) return null
 
   return (
@@ -25,9 +26,13 @@ export function CreatedBySection({ createdBy }: CreatedBySectionProps) {
       
       <div className="flex flex-wrap gap-4">
         {createdBy.map((creator) => (
-          <div
+          <button
             key={creator.id}
-            className="flex items-center gap-3 px-4 py-3 rounded-lg border text-yellow-400 border-yellow-500/30 bg-yellow-600/10"
+            className={`flex items-center gap-3 px-4 py-3 rounded-lg border text-yellow-400 border-yellow-500/30 bg-yellow-600/10 ${
+              onCreatorClick ? 'cursor-pointer hover:bg-yellow-600/20 transition-colors' : ''
+            }`}
+            onClick={() => onCreatorClick?.(creator)}
+            disabled={!onCreatorClick}
           >
             <img
               src={getPersonImageUrl(creator.profile_path)}
@@ -38,7 +43,7 @@ export function CreatedBySection({ createdBy }: CreatedBySectionProps) {
               <p className="font-medium text-white">{creator.name}</p>
               <p className="text-sm text-gray-400">Creator</p>
             </div>
-          </div>
+          </button>
         ))}
       </div>
     </motion.div>
