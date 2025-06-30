@@ -1,8 +1,6 @@
 import { motion } from 'framer-motion'
 import { ArrowLeft } from 'lucide-react'
-import { useEffect, useState } from 'react'
 
-import { movieService } from '../features/movies/services/movie.service'
 import type { Movie, TVShow, Person } from '../features/movies/types/movie.types'
 
 import { TrendingSection } from '@/features/movies/components/TrendingSection'
@@ -12,52 +10,6 @@ interface TrendingPageProps {
 }
 
 export function TrendingPage({ onBackToHome }: TrendingPageProps) {
-  const [trendingMovies, setTrendingMovies] = useState<Movie[]>([])
-  const [trendingTVShows, setTrendingTVShows] = useState<TVShow[]>([])
-  const [trendingPeople, setTrendingPeople] = useState<Person[]>([])
-  
-  const [loadingMovies, setLoadingMovies] = useState(true)
-  const [loadingTVShows, setLoadingTVShows] = useState(true)
-  const [loadingPeople, setLoadingPeople] = useState(true)
-
-  useEffect(() => {
-    const fetchTrendingData = async () => {
-      try {
-        // Fetch trending movies
-        setLoadingMovies(true)
-        const moviesResponse = await movieService.getTrendingMovies('week')
-        setTrendingMovies(moviesResponse.results)
-      } catch {
-        // Handle error silently
-      } finally {
-        setLoadingMovies(false)
-      }
-
-      try {
-        // Fetch trending TV shows
-        setLoadingTVShows(true)
-        const tvResponse = await movieService.getTrendingTVShows('week')
-        setTrendingTVShows(tvResponse.results)
-      } catch {
-        // Handle error silently
-      } finally {
-        setLoadingTVShows(false)
-      }
-
-      try {
-        // Fetch trending people
-        setLoadingPeople(true)
-        const peopleResponse = await movieService.getTrendingPeople('week')
-        setTrendingPeople(peopleResponse.results)
-      } catch {
-        // Handle error silently
-      } finally {
-        setLoadingPeople(false)
-      }
-    }
-
-    fetchTrendingData()
-  }, [])
 
   const handleItemClick = (item: Movie | TVShow | Person) => {
     // Handle item click based on type
@@ -139,24 +91,18 @@ export function TrendingPage({ onBackToHome }: TrendingPageProps) {
         <TrendingSection
           title="Trending Movies"
           type="movie"
-          data={trendingMovies}
-          isLoading={loadingMovies}
           onItemClick={handleItemClick}
         />
 
         <TrendingSection
           title="Trending TV Shows"
           type="tv"
-          data={trendingTVShows}
-          isLoading={loadingTVShows}
           onItemClick={handleItemClick}
         />
 
         <TrendingSection
           title="Trending People"
           type="person"
-          data={trendingPeople}
-          isLoading={loadingPeople}
           onItemClick={handleItemClick}
         />
       </div>

@@ -1,10 +1,9 @@
 import { useRef, useCallback } from 'react'
 
 interface UseHorizontalScrollReturn {
-  scrollRef: React.RefObject<HTMLDivElement>
+  scrollRef: React.RefObject<HTMLDivElement | null>
   scrollLeft: () => void
   scrollRight: () => void
-  handleWheel: (e: React.WheelEvent) => void
 }
 
 export function useHorizontalScroll(scrollAmount = 300): UseHorizontalScrollReturn {
@@ -22,17 +21,9 @@ export function useHorizontalScroll(scrollAmount = 300): UseHorizontalScrollRetu
     }
   }, [scrollAmount])
 
-  const handleWheel = useCallback((e: React.WheelEvent) => {
-    if (scrollRef.current && Math.abs(e.deltaY) > Math.abs(e.deltaX)) {
-      e.preventDefault()
-      scrollRef.current.scrollLeft += e.deltaY * 0.5
-    }
-  }, [])
-
   return {
     scrollRef,
     scrollLeft,
-    scrollRight,
-    handleWheel
+    scrollRight
   }
 }

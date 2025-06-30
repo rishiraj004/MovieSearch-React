@@ -1,8 +1,8 @@
 import { motion } from 'framer-motion'
+import { useState } from 'react'
 
 import type { Person } from '../types/movie.types'
-
-import { API_CONFIG, IMAGE_SIZES } from '@/shared/constants/api.constants'
+import { getPersonImageUrl } from '../utils/imageUtils'
 
 interface TrendingPersonCardProps {
   person: Person
@@ -10,58 +10,39 @@ interface TrendingPersonCardProps {
 }
 
 export function TrendingPersonCard({ person, onClick }: TrendingPersonCardProps) {
-  const getImageUrl = (path: string | null) => {
-    if (!path) return '/placeholder-person.jpg'
-    return `${API_CONFIG.IMAGE_BASE_URL}/${IMAGE_SIZES.POSTER.W500}${path}`
+  const [imageError, setImageError] = useState(false)
+  
+  const handleImageError = () => {
+    setImageError(true)
   }
 
-  const getKnownForTitles = () => {
-    if (!person.known_for || person.known_for.length === 0) return 'Various projects'
-    return person.known_for
-      .slice(0, 2)
-      .map(item => 'title' in item ? item.title : item.name)
-      .join(', ')
+  const getImageSrc = () => {
+    if (imageError || !person.profile_path) {
+      // Use the same modern placeholder design as the utility function
+      return 'data:image/svg+xml;charset=utf-8,%3Csvg xmlns="http://www.w3.org/2000/svg" width="128" height="128" viewBox="0 0 128 128"%3E%3Cdefs%3E%3ClinearGradient id="bg" x1="0%25" y1="0%25" x2="100%25" y2="100%25"%3E%3Cstop offset="0%25" style="stop-color:%234B5563"/%3E%3Cstop offset="100%25" style="stop-color:%23374151"/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width="128" height="128" fill="url(%23bg)"/%3E%3Cg fill="%23D1D5DB" opacity="0.8"%3E%3Ccircle cx="64" cy="45" r="18"/%3E%3Cpath d="M35 96c0-16 13-29 29-29h0c16 0 29 13 29 29v32H35z"/%3E%3C/g%3E%3C/svg%3E'
+    }
+    return getPersonImageUrl(person.profile_path)
   }
 
   return (
-    <motion.div
-      className="bg-gray-900/50 backdrop-blur-sm border border-white/10 rounded-2xl overflow-hidden cursor-pointer group hover:shadow-2xl hover:shadow-purple-500/20 active:shadow-2xl active:shadow-purple-500/30 transition-all duration-300 touch-card w-[100px] sm:w-[120px] mx-auto"
-      onClick={() => onClick?.(person)}
-      whileHover={{ scale: 1.05, y: -4 }}
-      whileTap={{ scale: 0.95 }}
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.3 }}
-    >
-      <div className="relative overflow-hidden p-2">
-        <div className="relative w-12 h-12 sm:w-16 sm:h-16 mx-auto mb-2">
-          <img
-            src={getImageUrl(person.profile_path)}
-            alt={person.name}
-            className="w-full h-full object-cover rounded-full group-hover:scale-110 group-active:scale-110 transition-transform duration-500 border-2 border-purple-400/20 group-hover:border-purple-400/50 group-active:border-purple-400/50"
-            loading="lazy"
-          />
-          <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent opacity-0 group-hover:opacity-100 group-active:opacity-100 rounded-full transition-opacity duration-300" />
-        </div>
-        
-        {/* Popularity Badge */}
-        <div className="absolute top-1 right-1 bg-black/70 backdrop-blur-sm text-purple-400 px-1.5 py-0.5 rounded-full text-xs font-semibold flex items-center gap-1">
-          <span>🔥</span>
-          {person.popularity.toFixed(0)}
-        </div>
+    <div className="flex flex-col items-center">
+      <motion.div
+        className="bg-gray-800 rounded-full overflow-hidden cursor-pointer hover:scale-105 transition-transform duration-300 w-[92px] h-[92px] flex-shrink-0"
+        onClick={() => onClick?.(person)}
+        whileHover={{ scale: 1.05 }}
+        whileTap={{ scale: 0.95 }}
+      >
+        <img
+          src={getImageSrc()}
+          alt={person.name}
+          className="w-full h-full object-cover"
+          loading="lazy"
+          onError={handleImageError}
+        />
+      </motion.div>
+      <div className="mt-3 text-center max-w-[92px]">
+        <h3 className="text-white font-semibold text-sm mb-1 line-clamp-2">{person.name}</h3>
       </div>
-
-      <div className="px-2 pb-2 text-center">
-        <h3 className="text-white font-semibold text-xs mb-1 line-clamp-2 group-hover:text-purple-400 group-active:text-purple-400 transition-colors">
-          {person.name}
-        </h3>
-        <p className="text-gray-400 text-xs mb-1">
-          {person.known_for_department}
-        </p>
-        <p className="text-gray-500 text-xs line-clamp-1 hidden sm:block">
-          {getKnownForTitles()}
-        </p>
-      </div>
-    </motion.div>
+    </div>
   )
 }
