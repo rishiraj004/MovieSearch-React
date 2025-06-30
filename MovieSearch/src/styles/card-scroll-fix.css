@@ -1,0 +1,32 @@
+/* Fix for card scroll interference */
+.trending-card-container {
+  touch-action: manipulation;
+  pointer-events: auto;
+}
+
+.trending-card-container:hover {
+  overflow: visible !important;
+}
+
+/* Ensure cards don't capture scroll events when scaled */
+.trending-card {
+  touch-action: manipulation;
+}
+
+.trending-card:hover {
+  overflow: visible;
+}
+
+/* Prevent any scrollable behavior on scaled cards */
+.trending-card * {
+  overflow: visible !important;
+}
+
+/* Additional fix for framer motion scaling */
+.trending-card-container > div {
+  overflow: visible !important;
+}
+
+.trending-card-container:hover > div {
+  overflow: visible !important;
+}
