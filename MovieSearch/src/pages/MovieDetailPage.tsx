@@ -1,19 +1,20 @@
 import { motion } from 'framer-motion'
-import { ArrowLeft, Calendar, Clock, Star, Play } from 'lucide-react'
+import { ArrowLeft, Calendar, Clock, Star, Play, Camera, Edit, Megaphone } from 'lucide-react'
 import { useState, useEffect } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 
-import { CastCard, MovieCard, ProductionLogo, MovieDetailsGrid, CollectionSection } from './components'
+import { CastCard, MovieCard, ProductionLogo, MovieDetailsGrid, CollectionSection, CrewSection, CastCrewDropdown } from './components'
 
 import { movieService } from '@/features/movies/services/movie.service'
-import type { MovieDetailsExtended, Cast, Movie, CollectionDetails } from '@/features/movies/types/movie.types'
+import type { MovieDetailsExtended, Cast, Movie, CollectionDetails, Credits } from '@/features/movies/types/movie.types'
+import { filterCrewByJob } from '@/features/movies/utils/crewUtils'
 import { getImageUrl, getBackdropUrl } from '@/features/movies/utils/imageUtils'
 
 export function MovieDetailPage() {
   const { id } = useParams<{ id: string }>()
   const navigate = useNavigate()
   const [movie, setMovie] = useState<MovieDetailsExtended | null>(null)
-  const [credits, setCredits] = useState<{ cast: Cast[] } | null>(null)
+  const [credits, setCredits] = useState<Credits | null>(null)
   const [recommendations, setRecommendations] = useState<Movie[]>([])
   const [collection, setCollection] = useState<CollectionDetails | null>(null)
   const [loadingCollection, setLoadingCollection] = useState(false)
@@ -139,6 +140,9 @@ export function MovieDetailPage() {
   const rating = movie.vote_average ? movie.vote_average.toFixed(1) : 'N/A'
   const runtime = movie.runtime ? `${Math.floor(movie.runtime / 60)}h ${movie.runtime % 60}m` : 'N/A'
   const topCast = credits?.cast.slice(0, 10) || []
+  
+  // Get filtered crew members
+  const { directors, producers, writers } = credits ? filterCrewByJob(credits.crew) : { directors: [], producers: [], writers: [] }
 
   const backdropUrl = movie.backdrop_path 
     ? getBackdropUrl(movie.backdrop_path, 'ORIGINAL')
@@ -369,7 +373,19 @@ export function MovieDetailPage() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.4 }}
           >
-            <h2 className="text-3xl font-bold mb-6">Cast</h2>
+            <div className="flex items-center justify-between mb-6">
+              <h2 className="text-3xl font-bold">Cast</h2>
+              {credits && (
+                <CastCrewDropdown 
+                  cast={credits.cast} 
+                  crew={credits.crew}
+                  onPersonClick={(person) => {
+                    // In a real app, you might navigate to a person details page
+                    void person
+                  }}
+                />
+              )}
+            </div>
             <div className="grid grid-cols-4 md:grid-cols-6 lg:grid-cols-10 gap-6">
               {topCast.map((actor) => (
                 <CastCard
@@ -378,6 +394,38 @@ export function MovieDetailPage() {
                   onClick={handleCastClick}
                 />
               ))}
+            </div>
+          </motion.section>
+        )}
+
+        {/* Crew Section */}
+        {credits && (directors.length > 0 || producers.length > 0 || writers.length > 0) && (
+          <motion.section
+            className="mb-12"
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: 0.5 }}
+          >
+            <h2 className="text-3xl font-bold mb-8">Key Crew</h2>
+            <div className="space-y-6">
+              <CrewSection 
+                title="Directors" 
+                crew={directors} 
+                icon={Camera}
+                color="blue"
+              />
+              <CrewSection 
+                title="Producers" 
+                crew={producers} 
+                icon={Megaphone}
+                color="purple"
+              />
+              <CrewSection 
+                title="Writers" 
+                crew={writers} 
+                icon={Edit}
+                color="green"
+              />
             </div>
           </motion.section>
         )}

@@ -1,5 +1,7 @@
 export { CastCard } from './CastCard'
+export { CastCrewDropdown } from './CastCrewDropdown'
 export { CollectionSection } from './CollectionSection'
+export { CrewSection } from './CrewSection'
 export { EmptySearchState } from './EmptySearchState'
 export { ErrorDisplay } from './ErrorDisplay'
 export { HeroSectionContainer } from './HeroSectionContainer'

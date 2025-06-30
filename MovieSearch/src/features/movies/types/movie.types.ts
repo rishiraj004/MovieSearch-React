@@ -72,6 +72,13 @@ export interface ProductionCompany {
   origin_country: string
 }
 
+export interface ProductionCompanyDetails extends ProductionCompany {
+  description: string
+  headquarters: string
+  homepage: string
+  parent_company: ProductionCompany | null
+}
+
 export interface ProductionCountry {
   iso_3166_1: string
   name: string
