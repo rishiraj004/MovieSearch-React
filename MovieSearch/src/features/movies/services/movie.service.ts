@@ -1,4 +1,4 @@
-import type { MovieDetails, MovieSearchResponse, TVShowSearchResponse, PersonSearchResponse, Credits, MovieDetailsExtended, CollectionDetails, ProductionCompanyDetails, ReviewsResponse, VideosResponse, WatchProvidersResponse, Country, TVShowDetails, TVShowDetailsExtended, SeasonDetails } from '../types/movie.types'
+import type { MovieDetails, MovieSearchResponse, TVShowSearchResponse, PersonSearchResponse, Credits, MovieDetailsExtended, CollectionDetails, ProductionCompanyDetails, ReviewsResponse, VideosResponse, WatchProvidersResponse, Country, TVShowDetails, TVShowDetailsExtended, SeasonDetails, PersonDetails, PersonMovieCredits, PersonTVCredits, PersonImagesResponse } from '../types/movie.types'
 
 import { API_CONFIG } from '@/shared/constants/api.constants'
 import type { SearchParams } from '@/shared/types/common.types'
@@ -459,6 +459,23 @@ class MovieService {
         { iso_3166_1: 'DK', english_name: 'Denmark', native_name: 'Danmark' },
       ]
     }
+  }
+
+  // Person API methods
+  async getPersonDetails(personId: number): Promise<PersonDetails> {
+    return this.fetchFromApi<PersonDetails>(`/person/${personId}`)
+  }
+
+  async getPersonMovieCredits(personId: number): Promise<PersonMovieCredits> {
+    return this.fetchFromApi<PersonMovieCredits>(`/person/${personId}/movie_credits`)
+  }
+
+  async getPersonTVCredits(personId: number): Promise<PersonTVCredits> {
+    return this.fetchFromApi<PersonTVCredits>(`/person/${personId}/tv_credits`)
+  }
+
+  async getPersonImages(personId: number): Promise<PersonImagesResponse> {
+    return this.fetchFromApi<PersonImagesResponse>(`/person/${personId}/images`)
   }
 
   getImageUrl(path: string | null, size = 'w500'): string {

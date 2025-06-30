@@ -22,8 +22,8 @@ export function TrendingContainer() {
 
   const handlePersonClick = (item: Movie | TVShow | Person) => {
     if ('name' in item && 'profile_path' in item) {
-      // It's a Person - in a real app, you might navigate to a person details page
-      void item // Silence the unused variable warning
+      // It's a Person
+      navigate(`/person/${item.id}`)
     }
   }
 

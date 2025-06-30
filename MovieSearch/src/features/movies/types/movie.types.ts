@@ -46,6 +46,124 @@ export interface Person {
   gender: number
 }
 
+export interface PersonDetails extends Person {
+  also_known_as: string[]
+  biography: string
+  birthday: string | null
+  deathday: string | null
+  homepage: string | null
+  imdb_id: string | null
+  place_of_birth: string | null
+}
+
+export interface PersonMovieCredits {
+  id: number
+  cast: PersonMovieCast[]
+  crew: PersonMovieCrew[]
+}
+
+export interface PersonTVCredits {
+  id: number
+  cast: PersonTVCast[]
+  crew: PersonTVCrew[]
+}
+
+export interface PersonMovieCast {
+  id: number
+  title: string
+  character: string
+  credit_id: string
+  order: number
+  adult: boolean
+  backdrop_path: string | null
+  genre_ids: number[]
+  original_language: string
+  original_title: string
+  overview: string
+  popularity: number
+  poster_path: string | null
+  release_date: string
+  video: boolean
+  vote_average: number
+  vote_count: number
+}
+
+export interface PersonMovieCrew {
+  id: number
+  title: string
+  job: string
+  department: string
+  credit_id: string
+  adult: boolean
+  backdrop_path: string | null
+  genre_ids: number[]
+  original_language: string
+  original_title: string
+  overview: string
+  popularity: number
+  poster_path: string | null
+  release_date: string
+  video: boolean
+  vote_average: number
+  vote_count: number
+}
+
+export interface PersonTVCast {
+  id: number
+  name: string
+  character: string
+  credit_id: string
+  order: number
+  adult: boolean
+  backdrop_path: string | null
+  genre_ids: number[]
+  original_language: string
+  original_name: string
+  overview: string
+  popularity: number
+  poster_path: string | null
+  first_air_date: string
+  vote_average: number
+  vote_count: number
+  origin_country: string[]
+  episode_count: number
+}
+
+export interface PersonTVCrew {
+  id: number
+  name: string
+  job: string
+  department: string
+  credit_id: string
+  adult: boolean
+  backdrop_path: string | null
+  genre_ids: number[]
+  original_language: string
+  original_name: string
+  overview: string
+  popularity: number
+  poster_path: string | null
+  first_air_date: string
+  vote_average: number
+  vote_count: number
+  origin_country: string[]
+  episode_count: number
+}
+
+export interface PersonImage {
+  aspect_ratio: number
+  file_path: string
+  height: number
+  width: number
+  vote_average: number
+  vote_count: number
+}
+
+export interface PersonImagesResponse {
+  id: number
+  profiles: PersonImage[]
+}
+
 export interface MovieDetails extends Movie {
   genres: Genre[]
   runtime: number
