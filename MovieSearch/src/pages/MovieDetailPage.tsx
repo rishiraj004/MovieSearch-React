@@ -3,10 +3,10 @@ import { ArrowLeft, Calendar, Clock, Star, Play, Camera, Edit, Megaphone } from 
 import { useState, useEffect } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 
-import { CastCard, MovieCard, ProductionLogo, MovieDetailsGrid, CollectionSection, CrewSection, CastCrewDropdown } from './components'
+import { CastCard, MovieCard, ProductionLogo, MovieDetailsGrid, CollectionSection, CrewSection, CastCrewDropdown, ReviewsSection } from './components'
 
 import { movieService } from '@/features/movies/services/movie.service'
-import type { MovieDetailsExtended, Cast, Movie, CollectionDetails, Credits } from '@/features/movies/types/movie.types'
+import type { MovieDetailsExtended, Cast, Movie, CollectionDetails, Credits, Review } from '@/features/movies/types/movie.types'
 import { filterCrewByJob } from '@/features/movies/utils/crewUtils'
 import { getImageUrl, getBackdropUrl } from '@/features/movies/utils/imageUtils'
 
@@ -16,6 +16,8 @@ export function MovieDetailPage() {
   const [movie, setMovie] = useState<MovieDetailsExtended | null>(null)
   const [credits, setCredits] = useState<Credits | null>(null)
   const [recommendations, setRecommendations] = useState<Movie[]>([])
+  const [reviews, setReviews] = useState<Review[]>([])
+  const [reviewsTotal, setReviewsTotal] = useState(0)
   const [collection, setCollection] = useState<CollectionDetails | null>(null)
   const [loadingCollection, setLoadingCollection] = useState(false)
   const [loading, setLoading] = useState(true)
@@ -41,15 +43,18 @@ export function MovieDetailPage() {
           throw new Error('Invalid movie ID')
         }
 
-        const [movieDetails, movieCredits, movieRecommendations] = await Promise.all([
+        const [movieDetails, movieCredits, movieRecommendations, movieReviews] = await Promise.all([
           movieService.getMovieDetailsExtended(movieId),
           movieService.getMovieCredits(movieId),
-          movieService.getMovieRecommendations(movieId)
+          movieService.getMovieRecommendations(movieId),
+          movieService.getMovieReviews(movieId)
         ])
 
         setMovie(movieDetails)
         setCredits(movieCredits)
         setRecommendations(movieRecommendations.results.slice(0, 10))
+        setReviews(movieReviews.results)
+        setReviewsTotal(movieReviews.total_results)
       } catch (err) {
         setError(err instanceof Error ? err.message : 'Failed to fetch movie details')
       } finally {
@@ -427,6 +432,21 @@ export function MovieDetailPage() {
                 color="green"
               />
             </div>
+          </motion.section>
+        )}
+
+        {/* Reviews Section */}
+        {reviews.length > 0 && (
+          <motion.section
+            className="mb-12"
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: 0.7 }}
+          >
+            <ReviewsSection 
+              reviews={reviews}
+              totalReviews={reviewsTotal}
+            />
           </motion.section>
         )}
 
