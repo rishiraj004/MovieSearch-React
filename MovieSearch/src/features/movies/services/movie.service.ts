@@ -1,4 +1,4 @@
-import type { MovieDetails, MovieSearchResponse, TVShowSearchResponse, PersonSearchResponse, Credits, MovieDetailsExtended, CollectionDetails, ProductionCompanyDetails, ReviewsResponse, VideosResponse } from '../types/movie.types'
+import type { MovieDetails, MovieSearchResponse, TVShowSearchResponse, PersonSearchResponse, Credits, MovieDetailsExtended, CollectionDetails, ProductionCompanyDetails, ReviewsResponse, VideosResponse, WatchProvidersResponse, Country } from '../types/movie.types'
 
 import { API_CONFIG } from '@/shared/constants/api.constants'
 import type { SearchParams } from '@/shared/types/common.types'
@@ -351,6 +351,44 @@ class MovieService {
     return {
       size: this.cache['cache'].size,
       keys: Array.from(this.cache['cache'].keys())
+    }
+  }
+
+  // Watch Providers
+  async getMovieWatchProviders(movieId: number): Promise<WatchProvidersResponse> {
+    return this.fetchFromApi<WatchProvidersResponse>(`/movie/${movieId}/watch/providers`)
+  }
+
+  // Get available countries for watch providers
+  async getAvailableCountries(): Promise<Country[]> {
+    // Fetch countries from TMDB configuration API
+    try {
+      const response = await this.fetchFromApi<Country[]>('/configuration/countries')
+      return response
+    } catch {
+      // Fallback to common countries if API fails
+      return [
+        { iso_3166_1: 'US', english_name: 'United States of America', native_name: 'United States' },
+        { iso_3166_1: 'GB', english_name: 'United Kingdom', native_name: 'United Kingdom' },
+        { iso_3166_1: 'CA', english_name: 'Canada', native_name: 'Canada' },
+        { iso_3166_1: 'AU', english_name: 'Australia', native_name: 'Australia' },
+        { iso_3166_1: 'DE', english_name: 'Germany', native_name: 'Deutschland' },
+        { iso_3166_1: 'FR', english_name: 'France', native_name: 'France' },
+        { iso_3166_1: 'IT', english_name: 'Italy', native_name: 'Italia' },
+        { iso_3166_1: 'ES', english_name: 'Spain', native_name: 'España' },
+        { iso_3166_1: 'NL', english_name: 'Netherlands', native_name: 'Nederland' },
+        { iso_3166_1: 'BR', english_name: 'Brazil', native_name: 'Brasil' },
+        { iso_3166_1: 'MX', english_name: 'Mexico', native_name: 'México' },
+        { iso_3166_1: 'JP', english_name: 'Japan', native_name: '日本' },
+        { iso_3166_1: 'KR', english_name: 'South Korea', native_name: '대한민국' },
+        { iso_3166_1: 'IN', english_name: 'India', native_name: 'भारत' },
+        { iso_3166_1: 'RU', english_name: 'Russia', native_name: 'Россия' },
+        { iso_3166_1: 'CN', english_name: 'China', native_name: '中国' },
+        { iso_3166_1: 'PL', english_name: 'Poland', native_name: 'Polska' },
+        { iso_3166_1: 'SE', english_name: 'Sweden', native_name: 'Sverige' },
+        { iso_3166_1: 'NO', english_name: 'Norway', native_name: 'Norge' },
+        { iso_3166_1: 'DK', english_name: 'Denmark', native_name: 'Danmark' },
+      ]
     }
   }
 

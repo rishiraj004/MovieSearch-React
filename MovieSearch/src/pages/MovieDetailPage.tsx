@@ -3,7 +3,7 @@ import { ArrowLeft, Calendar, Clock, Star, Play, Camera, Edit, Megaphone } from 
 import { useState, useEffect } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 
-import { CastCard, ProductionLogo, MovieDetailsGrid, CollectionSection, CrewSection, CastCrewDropdown, ReviewsSection, HorizontalMovieSection, VideosSection } from './components'
+import { CastCard, ProductionLogo, MovieDetailsGrid, CollectionSection, CrewSection, CastCrewDropdown, ReviewsSection, HorizontalMovieSection, VideosSection, WatchProvidersSection } from './components'
 
 import { movieService } from '@/features/movies/services/movie.service'
 import type { MovieDetailsExtended, Cast, Movie, CollectionDetails, Credits, Review, Video } from '@/features/movies/types/movie.types'
@@ -85,8 +85,31 @@ export function MovieDetailPage() {
   }
 
   const handleTrailerClick = () => {
-    // In a real app, you might open a modal with the trailer
-    if (movie?.homepage) {
+    // First, try to find an official trailer
+    const officialTrailer = videos.find(video => 
+      video.type === 'Trailer' && 
+      video.official === true && 
+      video.site === 'YouTube'
+    )
+    
+    // If no official trailer, find any trailer
+    const anyTrailer = videos.find(video => 
+      video.type === 'Trailer' && 
+      video.site === 'YouTube'
+    )
+    
+    // If no trailer, find any video
+    const anyVideo = videos.find(video => 
+      video.site === 'YouTube'
+    )
+    
+    const selectedVideo = officialTrailer || anyTrailer || anyVideo
+    
+    if (selectedVideo) {
+      const videoUrl = `https://www.youtube.com/watch?v=${selectedVideo.key}`
+      window.open(videoUrl, '_blank')
+    } else if (movie?.homepage) {
+      // Fallback to movie homepage if no videos available
       window.open(movie.homepage, '_blank')
     }
   }
@@ -151,6 +174,12 @@ export function MovieDetailPage() {
   const rating = movie.vote_average ? movie.vote_average.toFixed(1) : 'N/A'
   const runtime = movie.runtime ? `${Math.floor(movie.runtime / 60)}h ${movie.runtime % 60}m` : 'N/A'
   const topCast = credits?.cast.slice(0, 10) || []
+  
+  // Check if we have a trailer available
+  const hasTrailer = videos.some(video => 
+    (video.type === 'Trailer' || video.type === 'Teaser') && 
+    video.site === 'YouTube'
+  ) || movie?.homepage
   
   // Get filtered crew members
   const { directors, producers, writers } = credits ? filterCrewByJob(credits.crew) : { directors: [], producers: [], writers: [] }
@@ -255,10 +284,15 @@ export function MovieDetailPage() {
                 <div className="flex flex-col sm:flex-row items-center gap-3 sm:gap-4">
                   <button
                     onClick={handleTrailerClick}
-                    className="w-full sm:w-auto bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 sm:px-6 sm:py-3 rounded-lg transition-colors inline-flex items-center justify-center gap-2 font-semibold text-sm sm:text-base"
+                    disabled={!hasTrailer}
+                    className={`w-full sm:w-auto px-4 py-2 sm:px-6 sm:py-3 rounded-lg transition-colors inline-flex items-center justify-center gap-2 font-semibold text-sm sm:text-base ${
+                      hasTrailer 
+                        ? 'bg-blue-600 hover:bg-blue-700 text-white' 
+                        : 'bg-gray-600 text-gray-400 cursor-not-allowed'
+                    }`}
                   >
                     <Play className="w-4 h-4 sm:w-5 sm:h-5" />
-                    Watch Trailer
+                    {hasTrailer ? 'Watch Trailer' : 'No Trailer Available'}
                   </button>
                   <button
                     onClick={handleBack}
@@ -452,6 +486,9 @@ export function MovieDetailPage() {
             window.open(videoUrl, '_blank')
           }}
         />
+
+        {/* Watch Providers Section */}
+        <WatchProvidersSection movieId={parseInt(id!, 10)} />
 
         {/* Reviews Section */}
         {reviews.length > 0 && (

@@ -1,5 +1,6 @@
 import { ChevronLeft, ChevronRight, Play, Info, Star, Menu, X, Search } from 'lucide-react'
 import { useState, useEffect, useRef, useCallback } from 'react'
+import { useNavigate } from 'react-router-dom'
 
 import { movieService } from '../services/movie.service'
 import type { Movie } from '../types/movie.types'
@@ -27,6 +28,7 @@ export function HeroSection({ onSearchClick, onTrendingClick, onTopRatedClick, o
   const currentMovie = movies[currentIndex]
   const heroRef = useRef<HTMLDivElement>(null)
   const intervalRef = useRef<NodeJS.Timeout | null>(null)
+  const navigate = useNavigate()
 
   const nextMovie = useCallback(() => {
     if (isTransitioning) return
@@ -166,6 +168,50 @@ export function HeroSection({ onSearchClick, onTrendingClick, onTopRatedClick, o
     setIsPaused(true)
     setTimeout(() => setIsPaused(false), 5000) // Resume after 5 seconds
   }
+
+  // Handle trailer click
+  const handleTrailerClick = useCallback(async () => {
+    if (!currentMovie) return
+
+    try {
+      const videosResponse = await movieService.getMovieVideos(currentMovie.id)
+      const movieVideos = videosResponse.results
+
+      // First, try to find an official trailer
+      const officialTrailer = movieVideos.find(video => 
+        video.type === 'Trailer' && 
+        video.official === true && 
+        video.site === 'YouTube'
+      )
+      
+      // If no official trailer, find any trailer
+      const anyTrailer = movieVideos.find(video => 
+        video.type === 'Trailer' && 
+        video.site === 'YouTube'
+      )
+      
+      // If no trailer, find any video
+      const anyVideo = movieVideos.find(video => 
+        video.site === 'YouTube'
+      )
+      
+      const selectedVideo = officialTrailer || anyTrailer || anyVideo
+      
+      if (selectedVideo) {
+        const videoUrl = `https://www.youtube.com/watch?v=${selectedVideo.key}`
+        window.open(videoUrl, '_blank')
+      }
+    } catch {
+      // Silently handle error - trailer functionality is optional
+    }
+  }, [currentMovie])
+
+  // Handle more info click
+  const handleMoreInfoClick = useCallback(() => {
+    if (currentMovie) {
+      navigate(`/movie/${currentMovie.id}`)
+    }
+  }, [currentMovie, navigate])
 
   const getBackdropUrl = (backdropPath: string | null) => {
     if (!backdropPath) return '/api/placeholder/1920/1080'
@@ -374,6 +420,7 @@ export function HeroSection({ onSearchClick, onTrendingClick, onTopRatedClick, o
           {/* Action Buttons */}
           <div className="flex flex-col sm:flex-row gap-4 mb-8">
             <Button 
+              onClick={handleTrailerClick}
               className="bg-purple-600 hover:bg-purple-700 text-white px-8 py-3 rounded-xl font-semibold transition-all duration-200 hover:scale-105 hover:shadow-xl flex items-center justify-center"
               size="lg"
             >
@@ -381,6 +428,7 @@ export function HeroSection({ onSearchClick, onTrendingClick, onTopRatedClick, o
               Watch Trailer
             </Button>
             <Button 
+              onClick={handleMoreInfoClick}
               variant="outline"
               className="border-2 border-white/80 bg-black/40 backdrop-blur-md text-white hover:bg-white hover:text-black px-8 py-3 rounded-xl font-semibold transition-all duration-200 hover:scale-105 hover:shadow-xl"
               size="lg"

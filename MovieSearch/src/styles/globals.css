@@ -175,3 +175,8 @@ html::-webkit-scrollbar-thumb:hover {
   -webkit-box-orient: vertical;
   -webkit-line-clamp: 3;
 }
+
+/* High z-index for dropdowns and modals */
+.z-dropdown {
+  z-index: 9999;
+}
