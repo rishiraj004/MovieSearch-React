@@ -1,4 +1,4 @@
-import type { MovieDetails, MovieSearchResponse, TVShowSearchResponse, PersonSearchResponse, Credits, MovieDetailsExtended, CollectionDetails, ProductionCompanyDetails, ReviewsResponse } from '../types/movie.types'
+import type { MovieDetails, MovieSearchResponse, TVShowSearchResponse, PersonSearchResponse, Credits, MovieDetailsExtended, CollectionDetails, ProductionCompanyDetails, ReviewsResponse, VideosResponse } from '../types/movie.types'
 
 import { API_CONFIG } from '@/shared/constants/api.constants'
 import type { SearchParams } from '@/shared/types/common.types'
@@ -278,6 +278,15 @@ class MovieService {
     return this.fetchFromApi<MovieSearchResponse>(endpoint)
   }
 
+  async getSimilarMovies(
+    movieId: number,
+    page = 1,
+    language = API_CONFIG.DEFAULT_LANGUAGE
+  ): Promise<MovieSearchResponse> {
+    const endpoint = `/movie/${movieId}/similar?language=${language}&page=${page}`
+    return this.fetchFromApi<MovieSearchResponse>(endpoint)
+  }
+
   async getMovieCredits(
     movieId: number,
     language = API_CONFIG.DEFAULT_LANGUAGE
@@ -311,6 +320,14 @@ class MovieService {
   ): Promise<ReviewsResponse> {
     const endpoint = `/movie/${movieId}/reviews?language=${language}&page=${page}`
     return this.fetchFromApi<ReviewsResponse>(endpoint)
+  }
+
+  async getMovieVideos(
+    movieId: number,
+    language = API_CONFIG.DEFAULT_LANGUAGE
+  ): Promise<VideosResponse> {
+    const endpoint = `/movie/${movieId}/videos?language=${language}`
+    return this.fetchFromApi<VideosResponse>(endpoint)
   }
 
   // Performance optimization methods

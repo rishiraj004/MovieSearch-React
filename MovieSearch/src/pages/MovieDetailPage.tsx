@@ -3,10 +3,10 @@ import { ArrowLeft, Calendar, Clock, Star, Play, Camera, Edit, Megaphone } from 
 import { useState, useEffect } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 
-import { CastCard, MovieCard, ProductionLogo, MovieDetailsGrid, CollectionSection, CrewSection, CastCrewDropdown, ReviewsSection } from './components'
+import { CastCard, ProductionLogo, MovieDetailsGrid, CollectionSection, CrewSection, CastCrewDropdown, ReviewsSection, HorizontalMovieSection, VideosSection } from './components'
 
 import { movieService } from '@/features/movies/services/movie.service'
-import type { MovieDetailsExtended, Cast, Movie, CollectionDetails, Credits, Review } from '@/features/movies/types/movie.types'
+import type { MovieDetailsExtended, Cast, Movie, CollectionDetails, Credits, Review, Video } from '@/features/movies/types/movie.types'
 import { filterCrewByJob } from '@/features/movies/utils/crewUtils'
 import { getImageUrl, getBackdropUrl } from '@/features/movies/utils/imageUtils'
 
@@ -16,8 +16,10 @@ export function MovieDetailPage() {
   const [movie, setMovie] = useState<MovieDetailsExtended | null>(null)
   const [credits, setCredits] = useState<Credits | null>(null)
   const [recommendations, setRecommendations] = useState<Movie[]>([])
+  const [similarMovies, setSimilarMovies] = useState<Movie[]>([])
   const [reviews, setReviews] = useState<Review[]>([])
   const [reviewsTotal, setReviewsTotal] = useState(0)
+  const [videos, setVideos] = useState<Video[]>([])
   const [collection, setCollection] = useState<CollectionDetails | null>(null)
   const [loadingCollection, setLoadingCollection] = useState(false)
   const [loading, setLoading] = useState(true)
@@ -43,17 +45,21 @@ export function MovieDetailPage() {
           throw new Error('Invalid movie ID')
         }
 
-        const [movieDetails, movieCredits, movieRecommendations, movieReviews] = await Promise.all([
+        const [movieDetails, movieCredits, movieRecommendations, movieSimilar, movieReviews, movieVideos] = await Promise.all([
           movieService.getMovieDetailsExtended(movieId),
           movieService.getMovieCredits(movieId),
           movieService.getMovieRecommendations(movieId),
-          movieService.getMovieReviews(movieId)
+          movieService.getSimilarMovies(movieId),
+          movieService.getMovieReviews(movieId),
+          movieService.getMovieVideos(movieId)
         ])
 
         setMovie(movieDetails)
         setCredits(movieCredits)
         setRecommendations(movieRecommendations.results.slice(0, 10))
+        setSimilarMovies(movieSimilar.results.slice(0, 10))
         setReviews(movieReviews.results)
+        setVideos(movieVideos.results)
         setReviewsTotal(movieReviews.total_results)
       } catch (err) {
         setError(err instanceof Error ? err.message : 'Failed to fetch movie details')
@@ -435,6 +441,18 @@ export function MovieDetailPage() {
           </motion.section>
         )}
 
+        {/* Videos Section */}
+        <VideosSection 
+          videos={videos}
+          onVideoClick={(video) => {
+            // Open video in new tab
+            const videoUrl = video.site === 'YouTube' 
+              ? `https://www.youtube.com/watch?v=${video.key}`
+              : '#'
+            window.open(videoUrl, '_blank')
+          }}
+        />
+
         {/* Reviews Section */}
         {reviews.length > 0 && (
           <motion.section
@@ -467,25 +485,21 @@ export function MovieDetailPage() {
           </motion.section>
         )}
 
-        {/* Recommendations */}
-        {recommendations.length > 0 && (
-          <motion.section
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.8 }}
-          >
-            <h2 className="text-3xl font-bold mb-6">You May Also Like</h2>
-            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6">
-              {recommendations.map((movie) => (
-                <MovieCard
-                  key={movie.id}
-                  movie={movie}
-                  onClick={handleMovieClick}
-                />
-              ))}
-            </div>
-          </motion.section>
-        )}
+        {/* Recommendations - Horizontal Scrollable */}
+        <HorizontalMovieSection
+          title="You May Also Like"
+          movies={recommendations}
+          onMovieClick={handleMovieClick}
+          delay={0.8}
+        />
+
+        {/* Similar Movies - Horizontal Scrollable */}
+        <HorizontalMovieSection
+          title="Similar Movies"
+          movies={similarMovies}
+          onMovieClick={handleMovieClick}
+          delay={0.9}
+        />
       </div>
     </div>
   )
