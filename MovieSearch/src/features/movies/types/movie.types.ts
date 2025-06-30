@@ -83,6 +83,60 @@ export interface SpokenLanguage {
   english_name: string
 }
 
+// Extended types for movie detail page
+export interface MovieDetailsExtended extends MovieDetails {
+  belongs_to_collection: Collection | null
+}
+
+export interface Collection {
+  id: number
+  name: string
+  poster_path: string | null
+  backdrop_path: string | null
+}
+
+export interface Cast {
+  id: number
+  name: string
+  character: string
+  profile_path: string | null
+  order: number
+  cast_id: number
+  credit_id: string
+  adult: boolean
+  gender: number
+  known_for_department: string
+  original_name: string
+  popularity: number
+}
+
+export interface Crew {
+  id: number
+  name: string
+  job: string
+  department: string
+  profile_path: string | null
+  credit_id: string
+  adult: boolean
+  gender: number
+  known_for_department: string
+  original_name: string
+  popularity: number
+}
+
+export interface Credits {
+  id: number
+  cast: Cast[]
+  crew: Crew[]
+}
+
+export interface RecommendationsResponse {
+  page: number
+  results: Movie[]
+  total_pages: number
+  total_results: number
+}
+
 // API Response Types
 export interface MovieSearchResponse {
   page: number

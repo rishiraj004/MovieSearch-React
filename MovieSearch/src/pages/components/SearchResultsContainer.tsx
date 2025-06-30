@@ -1,4 +1,5 @@
 import { useState, useCallback, useRef } from 'react'
+import { useNavigate } from 'react-router-dom'
 
 import type { Movie } from '../../features/movies/types/movie.types'
 
@@ -11,6 +12,7 @@ interface SearchResultsContainerProps {
 }
 
 export function SearchResultsContainer({ showSearchSection }: SearchResultsContainerProps) {
+  const navigate = useNavigate()
   const {
     movies,
     isLoading,
@@ -43,8 +45,9 @@ export function SearchResultsContainer({ showSearchSection }: SearchResultsConta
 
   const handleMovieClick = useCallback((movie: Movie) => {
     setSelectedMovie(movie)
-    // In a real app, you might navigate to a movie details page
-  }, [])
+    // Navigate to movie detail page
+    navigate(`/movie/${movie.id}`)
+  }, [navigate])
 
   const handleLoadMore = useCallback(() => {
     loadNextPage()

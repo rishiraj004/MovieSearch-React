@@ -1,0 +1,55 @@
+import { motion } from 'framer-motion'
+import { useState } from 'react'
+
+import type { Cast } from '../../features/movies/types/movie.types'
+import { getPersonImageUrl } from '../../features/movies/utils/imageUtils'
+
+interface CastCardProps {
+  cast: Cast
+  onClick?: (cast: Cast) => void
+}
+
+export function CastCard({ cast, onClick }: CastCardProps) {
+  const [imageError, setImageError] = useState(false)
+
+  const handleImageError = () => {
+    setImageError(true)
+  }
+
+  const getImageSrc = () => {
+    if (imageError || !cast.profile_path) {
+      return getPersonImageUrl(null) // Use the same placeholder as TrendingPersonCard
+    }
+    return getPersonImageUrl(cast.profile_path)
+  }
+
+  return (
+    <motion.div
+      className="flex flex-col items-center cursor-pointer group"
+      onClick={() => onClick?.(cast)}
+      whileHover={{ scale: 1.05 }}
+      whileTap={{ scale: 0.95 }}
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.3 }}
+    >
+      <div className="bg-gray-800 rounded-full overflow-hidden w-16 h-16 sm:w-20 sm:h-20 mb-2 group-hover:ring-2 group-hover:ring-blue-400 transition-all duration-300">
+        <img
+          src={getImageSrc()}
+          alt={cast.name}
+          className="w-full h-full object-cover"
+          loading="lazy"
+          onError={handleImageError}
+        />
+      </div>
+      <div className="text-center max-w-20">
+        <h4 className="text-white font-semibold text-xs sm:text-sm mb-1 line-clamp-2">
+          {cast.name}
+        </h4>
+        <p className="text-gray-400 text-xs line-clamp-2">
+          {cast.character}
+        </p>
+      </div>
+    </motion.div>
+  )
+}
