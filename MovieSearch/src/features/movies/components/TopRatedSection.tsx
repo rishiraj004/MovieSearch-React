@@ -1,25 +1,22 @@
 import { useCallback } from 'react'
 
 import { useHorizontalScroll } from '../hooks/useHorizontalScroll'
-import { useTrendingData } from '../hooks/useTrendingData'
-import type { Movie, TVShow, Person } from '../types/movie.types'
+import { useTopRatedData } from '../hooks/useTopRatedData'
+import type { Movie, TVShow } from '../types/movie.types'
 
 import { TrendingMovieCard } from './TrendingMovieCard'
-import { TrendingPersonCard } from './TrendingPersonCard'
 import { TrendingTVCard } from './TrendingTVCard'
 import { LoadingSkeleton } from './ui/LoadingSkeleton'
 import { ScrollNavigation } from './ui/ScrollNavigation'
-import { TimeWindowToggle } from './ui/TimeWindowToggle'
 
-interface TrendingSectionProps {
+interface TopRatedSectionProps {
   title: string
-  type: 'movie' | 'tv' | 'person'
-  onItemClick?: (item: Movie | TVShow | Person) => void
-  onTimeWindowChange?: (timeWindow: 'day' | 'week') => Promise<void>
+  type: 'movie' | 'tv'
+  onItemClick?: (item: Movie | TVShow) => void
 }
 
-export function TrendingSection({ title, type, onItemClick, onTimeWindowChange }: TrendingSectionProps) {
-  const { data, loading, timeWindow, setTimeWindow } = useTrendingData({ type })
+export function TopRatedSection({ title, type, onItemClick }: TopRatedSectionProps) {
+  const { data, loading } = useTopRatedData({ type })
   const { scrollRef, scrollLeft, scrollRight } = useHorizontalScroll()
 
   // Handle wheel events using ref callback with proper cleanup
@@ -58,21 +55,12 @@ export function TrendingSection({ title, type, onItemClick, onTimeWindowChange }
     }
   }, [scrollRef])
 
-  const handleTimeWindowChange = async (newTimeWindow: 'day' | 'week') => {
-    setTimeWindow(newTimeWindow)
-    if (onTimeWindowChange) {
-      await onTimeWindowChange(newTimeWindow)
-    }
-  }
-
-  const renderCard = (item: Movie | TVShow | Person) => {
+  const renderCard = (item: Movie | TVShow) => {
     switch (type) {
       case 'movie':
         return <TrendingMovieCard key={item.id} movie={item as Movie} onClick={onItemClick} />
       case 'tv':
         return <TrendingTVCard key={item.id} tvShow={item as TVShow} onClick={onItemClick} />
-      case 'person':
-        return <TrendingPersonCard key={item.id} person={item as Person} onClick={onItemClick} />
       default:
         return null
     }
@@ -85,16 +73,10 @@ export function TrendingSection({ title, type, onItemClick, onTimeWindowChange }
         <div className="flex justify-between items-center mb-6">
           <h2 className="text-lg sm:text-xl md:text-2xl font-bold text-white flex items-center gap-2 sm:gap-3">
             <span className="text-2xl sm:text-3xl md:text-4xl">
-              {type === 'movie' ? '🎬' : type === 'tv' ? '📺' : '👤'}
+              {type === 'movie' ? '🏆' : '📻'}
             </span>
             {title}
           </h2>
-          
-          <TimeWindowToggle 
-            timeWindow={timeWindow}
-            onTimeWindowChange={handleTimeWindowChange}
-            disabled={loading}
-          />
         </div>
 
         {/* Loading State */}
@@ -120,7 +102,7 @@ export function TrendingSection({ title, type, onItemClick, onTimeWindowChange }
               ref={handleScrollRef}
               className="flex overflow-x-auto scrollbar-hide gap-4 pb-4 scroll-smooth snap-x snap-mandatory"
             >
-              {data.map((item) => (
+              {data.map((item: Movie | TVShow) => (
                 <div key={item.id} className="snap-start flex-shrink-0 trending-card-container">
                   {renderCard(item)}
                 </div>
@@ -133,12 +115,12 @@ export function TrendingSection({ title, type, onItemClick, onTimeWindowChange }
         {!loading && data.length === 0 && (
           <div className="text-center py-20">
             <div className="text-6xl mb-4">
-              {type === 'movie' ? '🎬' : type === 'tv' ? '📺' : '👤'}
+              {type === 'movie' ? '🏆' : '📻'}
             </div>
             <h3 className="text-xl text-gray-400 mb-2">
-              No {type === 'person' ? 'people' : `${type} shows`} found
+              No top-rated {type === 'movie' ? 'movies' : 'TV shows'} found
             </h3>
-            <p className="text-gray-500">Check back later for trending content!</p>
+            <p className="text-gray-500">Check back later for top-rated content!</p>
           </div>
         )}
       </div>
