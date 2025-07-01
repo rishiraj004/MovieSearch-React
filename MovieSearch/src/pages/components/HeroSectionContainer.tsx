@@ -3,15 +3,10 @@ import { useCallback } from 'react'
 import { HeroSection } from '@/features/movies'
 
 interface HeroSectionContainerProps {
-  onShowSearchSection: () => void
   onLoadPopularMovies: () => void
 }
 
-export function HeroSectionContainer({ onShowSearchSection, onLoadPopularMovies }: HeroSectionContainerProps) {
-  const handleSearchClick = useCallback(() => {
-    onShowSearchSection()
-  }, [onShowSearchSection])
-
+export function HeroSectionContainer({ onLoadPopularMovies }: HeroSectionContainerProps) {
   const handleTrendingClick = useCallback(() => {
     // Scroll to trending section
     const trendingSection = document.getElementById('trending-section')
@@ -30,12 +25,10 @@ export function HeroSectionContainer({ onShowSearchSection, onLoadPopularMovies 
 
   const handleGenresClick = useCallback(() => {
     onLoadPopularMovies()
-    onShowSearchSection()
-  }, [onLoadPopularMovies, onShowSearchSection])
+  }, [onLoadPopularMovies])
 
   return (
     <HeroSection 
-      onSearchClick={handleSearchClick}
       onTrendingClick={handleTrendingClick}
       onTopRatedClick={handleTopRatedClick}
       onGenresClick={handleGenresClick}

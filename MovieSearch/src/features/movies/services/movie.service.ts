@@ -1,4 +1,4 @@
-import type { MovieDetails, MovieSearchResponse, TVShowSearchResponse, PersonSearchResponse, Credits, MovieDetailsExtended, CollectionDetails, ProductionCompanyDetails, ReviewsResponse, VideosResponse, WatchProvidersResponse, Country, TVShowDetails, TVShowDetailsExtended, SeasonDetails, PersonDetails, PersonMovieCredits, PersonTVCredits, PersonImagesResponse } from '../types/movie.types'
+import type { MovieDetails, MovieSearchResponse, TVShowSearchResponse, PersonSearchResponse, MultiSearchResponse, Credits, MovieDetailsExtended, CollectionDetails, ProductionCompanyDetails, ReviewsResponse, VideosResponse, WatchProvidersResponse, Country, TVShowDetails, TVShowDetailsExtended, SeasonDetails, PersonDetails, PersonMovieCredits, PersonTVCredits, PersonImagesResponse } from '../types/movie.types'
 
 import { API_CONFIG } from '@/shared/constants/api.constants'
 import type { SearchParams } from '@/shared/types/common.types'
@@ -190,7 +190,7 @@ class MovieService {
     throw lastError
   }
 
-  async searchMulti(params: SearchParams): Promise<MovieSearchResponse> {
+  async searchMulti(params: SearchParams): Promise<MultiSearchResponse> {
     const { query, page = 1, language = API_CONFIG.DEFAULT_LANGUAGE,include_adult = false } = params
 
     if (!query.trim()) {
@@ -198,7 +198,7 @@ class MovieService {
     }
 
     const endpoint = `/search/multi?query=${encodeURIComponent(query)}&include_adult=${include_adult}&language=${language}&page=${page}`
-    return this.fetchFromApi<MovieSearchResponse>(endpoint)
+    return this.fetchFromApi<MultiSearchResponse>(endpoint)
   }
 
   async searchMovies(params: SearchParams): Promise<MovieSearchResponse> {

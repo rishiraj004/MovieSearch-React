@@ -385,6 +385,18 @@ export interface PersonSearchResponse {
   total_results: number
 }
 
+// Multi-search types
+export interface MultiSearchItem extends Partial<Movie>, Partial<TVShow>, Partial<Person> {
+  media_type: 'movie' | 'tv' | 'person'
+}
+
+export interface MultiSearchResponse {
+  page: number
+  results: MultiSearchItem[]
+  total_pages: number
+  total_results: number
+}
+
 export interface ApiError {
   status_code: number
   status_message: string

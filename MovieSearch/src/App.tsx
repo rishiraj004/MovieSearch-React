@@ -1,24 +1,35 @@
+import { Suspense, lazy } from 'react'
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'
 
-import { MainLayout } from './layouts/MainLayout'
-import { HomePage } from './pages/HomePage'
-import { MovieDetailPage } from './pages/MovieDetailPage'
-import { PersonDetailPage } from './pages/PersonDetailPage'
-import { ProductionCompanyPage } from './pages/ProductionCompanyPage'
-import { TVShowDetailPage } from './pages/TVShowDetailPage'
+import { PageLoader, ScrollToTop } from './components'
+
+// Lazy load everything possible
+const MainLayout = lazy(() => import('./layouts/MainLayout').then(module => ({ default: module.MainLayout })))
+const HomePage = lazy(() => import('./pages/HomePage').then(module => ({ default: module.HomePage })))
+
+// Lazy load detail pages (they're not needed on initial load)
+const MovieDetailPage = lazy(() => import('./pages/MovieDetailPage').then(module => ({ default: module.MovieDetailPage })))
+const TVShowDetailPage = lazy(() => import('./pages/TVShowDetailPage').then(module => ({ default: module.TVShowDetailPage })))
+const PersonDetailPage = lazy(() => import('./pages/PersonDetailPage').then(module => ({ default: module.PersonDetailPage })))
+const ProductionCompanyPage = lazy(() => import('./pages/ProductionCompanyPage').then(module => ({ default: module.ProductionCompanyPage })))
 
 function App() {
   return (
     <Router>
-      <MainLayout>
-        <Routes>
-          <Route path="/" element={<HomePage />} />
-          <Route path="/movie/:id" element={<MovieDetailPage />} />
-          <Route path="/tv/:id" element={<TVShowDetailPage />} />
-          <Route path="/person/:id" element={<PersonDetailPage />} />
-          <Route path="/company/:id" element={<ProductionCompanyPage />} />
-        </Routes>
-      </MainLayout>
+      <ScrollToTop />
+      <Suspense fallback={<PageLoader />}>
+        <MainLayout>
+          <Suspense fallback={<PageLoader />}>
+            <Routes>
+              <Route path="/" element={<HomePage />} />
+              <Route path="/movie/:id" element={<MovieDetailPage />} />
+              <Route path="/tv/:id" element={<TVShowDetailPage />} />
+              <Route path="/person/:id" element={<PersonDetailPage />} />
+              <Route path="/company/:id" element={<ProductionCompanyPage />} />
+            </Routes>
+          </Suspense>
+        </MainLayout>
+      </Suspense>
     </Router>
   )
 }
