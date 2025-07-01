@@ -1,4 +1,5 @@
 import { useState, useCallback, Suspense, lazy } from 'react'
+import { useNavigate } from 'react-router-dom'
 
 import { useMovieSearch } from '@/features/movies'
 import { Navbar } from '@/shared'
@@ -21,6 +22,7 @@ function SectionLoader() {
 
 export function HomePage() {
   const { loadPopularMovies } = useMovieSearch()
+  const navigate = useNavigate()
   
   const [showSearchSection, setShowSearchSection] = useState(false)
 
@@ -52,14 +54,20 @@ export function HomePage() {
       upcomingElement.scrollIntoView({ behavior: 'smooth' })
     }
   }, [])
+  
+  // Navigate to discover page
+  const navigateToDiscover = useCallback(() => {
+    navigate('/discover')
+  }, [navigate])
 
   return (
-    <>
+    <div className="home-page">
       {/* Navbar - positioned in top left */}
       <Navbar 
         onTrendingClick={scrollToTrending}
         onTopRatedClick={scrollToTopRated}
         onUpcomingClick={scrollToUpcoming}
+        onDiscoverClick={navigateToDiscover}
       />
 
       {/* Hero Section */}
@@ -96,6 +104,6 @@ export function HomePage() {
           showSearchSection={showSearchSection} 
         />
       </Suspense>
-    </>
+    </div>
   )
 }

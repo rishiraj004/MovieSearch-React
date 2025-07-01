@@ -1,4 +1,4 @@
-import type { MovieDetails, MovieSearchResponse, TVShowSearchResponse, PersonSearchResponse, MultiSearchResponse, Credits, MovieDetailsExtended, CollectionDetails, ProductionCompanyDetails, ReviewsResponse, VideosResponse, WatchProvidersResponse, Country, TVShowDetails, TVShowDetailsExtended, SeasonDetails, PersonDetails, PersonMovieCredits, PersonTVCredits, PersonImagesResponse } from '../types/movie.types'
+import type { MovieDetails, MovieSearchResponse, TVShowSearchResponse, PersonSearchResponse, MultiSearchResponse, Credits, MovieDetailsExtended, CollectionDetails, ProductionCompanyDetails, ReviewsResponse, VideosResponse, WatchProvidersResponse, Country, TVShowDetails, TVShowDetailsExtended, SeasonDetails, PersonDetails, PersonMovieCredits, PersonTVCredits, PersonImagesResponse, DiscoverMovieParams, DiscoverTVParams, GenresResponse } from '../types/movie.types'
 
 import { API_CONFIG } from '@/shared/constants/api.constants'
 import type { SearchParams } from '@/shared/types/common.types'
@@ -48,7 +48,11 @@ class MovieService {
   private requestQueue = new Map<string, Promise<unknown>>() // Request deduplication
 
   constructor() {
-    // API key validation will be handled in fetchFromApi method
+    // Check if API key is available
+    if (!this.apiKey) {
+      // eslint-disable-next-line no-console
+      console.warn('TMDb API key is missing. Search functionality will not work properly.')
+    }
   }
 
   private async fetchWithTimeout(
@@ -57,20 +61,20 @@ class MovieService {
     timeout?: number
   ): Promise<Response> {
     const controller = new AbortController()
-    const timeoutId = setTimeout(() => controller.abort(), timeout || this.defaultConfig.timeout!)
+    const id = setTimeout(() => controller.abort(), timeout || this.defaultConfig.timeout!)
 
     try {
-      const response = await fetch(url, {
+      // Clone the options object to avoid mutating the original
+      const optionsWithSignal = {
         ...options,
         signal: controller.signal,
-        // Performance optimizations
-        keepalive: true,
-        cache: 'default',
-      })
-      clearTimeout(timeoutId)
+      }
+      
+      const response = await fetch(url, optionsWithSignal)
+      clearTimeout(id)
       return response
     } catch (error) {
-      clearTimeout(timeoutId)
+      clearTimeout(id)
       if (error instanceof Error && error.name === 'AbortError') {
         throw new Error('Request timeout')
       }
@@ -92,12 +96,21 @@ class MovieService {
       throw new Error('TMDb API key is not configured. Please add VITE_TMDB_API_READ_ACCESS_TOKEN to your .env file.')
     }
 
+    // Add language parameter if not already in the endpoint
+    if (!endpoint.includes('language=')) {
+      endpoint += `${endpoint.includes('?') ? '&' : '?'}language=${API_CONFIG.DEFAULT_LANGUAGE}`
+    }
+
     const cacheKey = this.getCacheKey(endpoint)
     
-    // Check cache first
-    const cached = this.cache.get(cacheKey)
-    if (cached) {
-      return cached as T
+    // For search queries, don't use cache
+    const isSearchQuery = endpoint.includes('search')
+    if (!isSearchQuery) {
+      // Check cache first
+      const cached = this.cache.get(cacheKey)
+      if (cached) {
+        return cached as T
+      }
     }
 
     // Prevent duplicate requests (deduplication)
@@ -115,11 +128,11 @@ class MovieService {
         // Performance headers
         'Accept-Encoding': 'gzip, deflate, br',
         'Connection': 'keep-alive',
-        'Cache-Control': 'max-age=300',
+        'Cache-Control': endpoint.includes('search') ? 'no-cache' : 'max-age=300',
       },
       // Additional performance options
       keepalive: true,
-      cache: 'force-cache',
+      cache: endpoint.includes('search') ? 'no-store' : 'default',
     }
 
     const requestPromise = this.performRequest<T>(url, options, config, cacheKey, endpoint.includes('search'))
@@ -489,6 +502,92 @@ class MovieService {
   getImageUrl(path: string | null, size = 'w500'): string {
     if (!path) return '/placeholder-movie.jpg'
     return `${API_CONFIG.IMAGE_BASE_URL}/${size}${path}`
+  }
+
+  // Get genres for movies or TV shows
+  async getGenres(type: 'movie' | 'tv'): Promise<GenresResponse> {
+    const endpoint = `/genre/${type}/list?api_key=${this.apiKey}&language=en-US`
+    return this.fetchFromApi<GenresResponse>(endpoint)
+  }
+
+  // Search TV shows
+  async searchTVShows(query: string, page: number = 1): Promise<TVShowSearchResponse> {
+    const endpoint = `/search/tv?api_key=${this.apiKey}&query=${encodeURIComponent(query)}&page=${page}&language=en-US`
+    return this.fetchFromApi<TVShowSearchResponse>(endpoint)
+  }
+
+  // Discover movies with filters
+  async discoverMovies(params: DiscoverMovieParams): Promise<MovieSearchResponse> {
+    // Build query parameters and filter out empty values
+    const queryParams = Object.entries(params)
+      .filter(([_, value]) => value !== undefined && value !== '' && value !== null)
+      .reduce((acc, [key, value]) => {
+        // Handle people logic - transform with_people based on people_logic
+        if (key === 'with_people' && value) {
+          const peopleLogic = params.people_logic || 'or'
+          const peopleIds = String(value)
+          
+          if (peopleLogic === 'or') {
+            // For OR logic (ANY), use pipe separator: 35742|42802
+            acc['with_people'] = peopleIds.replace(/,/g, '|')
+          } else {
+            // For AND logic (ALL), use comma separator: 35742,42802 (this is already the format we have)
+            acc['with_people'] = peopleIds
+          }
+        } else if (key !== 'people_logic') {
+          // Skip people_logic as it's not a direct API parameter
+          acc[key] = String(value)
+        }
+        return acc
+      }, {} as Record<string, string>)
+    
+    // Create the endpoint
+    const queryString = new URLSearchParams(queryParams).toString()
+    const endpoint = `/discover/movie?${queryString}`
+    
+    return this.fetchFromApi<MovieSearchResponse>(endpoint)
+  }
+
+  // Discover TV shows with filters
+  async discoverTVShows(params: DiscoverTVParams): Promise<TVShowSearchResponse> {
+    // Build query parameters and filter out empty values
+    const queryParams = Object.entries(params)
+      .filter(([_, value]) => value !== undefined && value !== '' && value !== null)
+      .reduce((acc, [key, value]) => {
+        // Handle people logic - transform with_people based on people_logic
+        if (key === 'with_people' && value) {
+          const peopleLogic = params.people_logic || 'or'
+          const peopleIds = String(value)
+          
+          if (peopleLogic === 'or') {
+            // For OR logic (ANY), use pipe separator: 35742|42802
+            acc['with_people'] = peopleIds.replace(/,/g, '|')
+          } else {
+            // For AND logic (ALL), use comma separator: 35742,42802 (this is already the format we have)
+            acc['with_people'] = peopleIds
+          }
+        } else if (key !== 'people_logic') {
+          // Skip people_logic as it's not a direct API parameter
+          acc[key] = String(value)
+        }
+        return acc
+      }, {} as Record<string, string>)
+    
+    // Create the endpoint
+    const queryString = new URLSearchParams(queryParams).toString()
+    const endpoint = `/discover/tv?${queryString}`
+    
+    return this.fetchFromApi<TVShowSearchResponse>(endpoint)
+  }
+
+  // Search for people
+  async searchPeople(query: string, page = 1, language = API_CONFIG.DEFAULT_LANGUAGE): Promise<PersonSearchResponse> {
+    if (!query.trim()) {
+      throw new Error('Search query is required')
+    }
+
+    const endpoint = `/search/person?query=${encodeURIComponent(query)}&language=${language}&page=${page}`
+    return this.fetchFromApi<PersonSearchResponse>(endpoint)
   }
 }
 

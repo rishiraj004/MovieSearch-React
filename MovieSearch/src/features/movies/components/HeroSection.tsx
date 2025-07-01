@@ -259,7 +259,7 @@ export function HeroSection(_props: HeroSectionProps) {
       </div>
 
       {/* Hero Content */}
-      <div className="relative z-10 flex flex-col justify-center h-full px-8 md:px-16 lg:px-24 pt-28 md:pt-32 lg:pt-20">
+      <div className="relative z-10 flex flex-col justify-center h-full px-8 md:px-16 lg:px-24">
         <div className="max-w-2xl">
           {/* Featured Badge */}
           <div className="inline-flex items-center bg-red-600 text-white px-3 py-1 rounded-full text-sm font-medium mb-4">

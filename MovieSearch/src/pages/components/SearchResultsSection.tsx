@@ -53,9 +53,9 @@ export function SearchResultsSection({
         <div className="absolute top-40 left-40 w-80 h-80 bg-slate-600 rounded-full mix-blend-multiply filter blur-xl opacity-10 animate-pulse animation-delay-4000"></div>
       </div>
       
-      <div className="relative z-10 space-y-4 md:space-y-8 px-3 md:px-4 py-8 md:py-12">
+      <div className="relative z-10 space-y-4 md:space-y-8 px-3 md:px-4 py-0 md:py-4">
         {/* Enhanced Search Section */}
-        <div className="text-center py-4 md:py-8 lg:py-12 relative">
+        <div className="text-center py-0 md:py-4 lg:py-8 relative">
           <div className="absolute inset-0 bg-black/20 backdrop-blur-sm rounded-2xl md:rounded-3xl border border-white/5"></div>
           <div className="relative z-10">
             <h2 className="text-3xl sm:text-4xl md:text-5xl font-black mb-3 md:mb-4 bg-gradient-to-r from-white via-gray-200 to-gray-400 bg-clip-text text-transparent">

@@ -59,10 +59,12 @@ export function useMultiSearch(): UseMultiSearchReturn {
     }))
 
     try {
+      console.log('Searching for:', query.trim())
       const response: MultiSearchResponse = await movieService.searchMulti({
         query: query.trim(),
         page: 1,
       })
+      console.log('Search results:', response)
 
       setState(prev => ({
         ...prev,
@@ -71,6 +73,8 @@ export function useMultiSearch(): UseMultiSearchReturn {
         hasSearched: true,
       }))
     } catch (error) {
+      console.error('Search error:', error)
+      
       if (error instanceof Error && error.name === 'AbortError') {
         // Request was cancelled, don't update state
         return

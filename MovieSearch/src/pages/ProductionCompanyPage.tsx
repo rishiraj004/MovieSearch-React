@@ -80,7 +80,7 @@ export function ProductionCompanyPage() {
     <div className="min-h-screen bg-gray-900 text-white">
       {/* Hero Section */}
       <section
-        className="relative bg-gradient-to-br from-blue-900/30 to-purple-900/30 py-12 sm:py-16 lg:py-20 animate-fadeIn"
+        className="relative bg-gradient-to-br from-blue-900/30 to-purple-900/30 py-4 sm:py-6 lg:py-8 animate-fadeIn"
       >
         {/* Background Pattern */}
         <div className="absolute inset-0 bg-gradient-to-br from-blue-900/20 to-purple-900/20 opacity-50" />
@@ -140,7 +140,7 @@ export function ProductionCompanyPage() {
       </section>
 
       {/* Company Information */}
-      <div className="container mx-auto px-4 sm:px-6 py-8 sm:py-12">
+      <div className="container mx-auto px-4 sm:px-6 py-2 sm:py-4">
         <section className="mb-8 sm:mb-12 animate-fadeIn">
           <h2 className="text-2xl sm:text-3xl font-bold mb-6 sm:mb-8 text-center sm:text-left">Company Information</h2>
           

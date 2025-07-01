@@ -42,7 +42,9 @@ function SearchInput({
     const value = e.target.value
     setSearchQuery(value)
     setShowResults(true)
+    
     if (value.trim()) {
+      // Clear any previous error before searching
       debouncedSearch(value)
     } else {
       clearSearch()
@@ -179,6 +181,11 @@ function SearchInput({
             {searchError && (
               <div className="text-center py-8">
                 <p className="text-red-400">{searchError}</p>
+                {searchError.includes('API key') && (
+                  <p className="text-gray-400 text-sm mt-2">
+                    Please check that your TMDB API key is set correctly in the .env file.
+                  </p>
+                )}
               </div>
             )}
 
@@ -250,7 +257,7 @@ export function SearchBar() {
     <>
       {/* Mobile Search - Full Screen Overlay */}
       {isMobileSearchOpen && (
-        <div className="lg:hidden fixed inset-0 z-50 bg-gray-900/95 backdrop-blur-md p-3 sm:p-4">
+        <div className="lg:hidden fixed inset-0 z-50 bg-gray-900/95 backdrop-blur-md p-3 sm:p-4 global-search-overlay">
           <div className="w-full max-w-sm sm:max-w-md mx-auto">
             <div className="flex items-center justify-between mb-3 sm:mb-4">
               <h2 className="text-white text-base sm:text-lg font-semibold">Search</h2>
@@ -273,7 +280,7 @@ export function SearchBar() {
       )}
 
       {/* Search Bar Overlay - Top Right */}
-      <div className="fixed top-3 right-3 sm:top-4 sm:right-4 z-30">
+      <div className="fixed top-3 right-3 sm:top-4 sm:right-4 z-30 global-search-overlay">
         {/* Mobile Search Icon - show on small and medium screens */}
         <button
           onClick={() => setIsMobileSearchOpen(true)}

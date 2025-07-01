@@ -149,7 +149,7 @@ export function PersonDetailPage() {
   return (
     <div className="min-h-screen bg-gray-900 text-white">
       {/* Hero Section */}
-      <section className="px-4 sm:px-6 lg:px-8 py-8 animate-fadeIn">
+      <section className="px-4 sm:px-6 lg:px-8 py-2 sm:py-4 animate-fadeIn">
         <div className="max-w-6xl mx-auto">
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
             {/* Profile Image */}
@@ -270,7 +270,7 @@ export function PersonDetailPage() {
 
       {/* Movie Credits */}
       {sortedMovieCredits.length > 0 && (
-        <section className="px-4 sm:px-6 lg:px-8 py-8 animate-fadeInUp">
+        <section className="px-4 sm:px-6 lg:px-8 py-2 sm:py-4 animate-fadeInUp">
           <div className="max-w-6xl mx-auto">
             <h2 className="text-2xl sm:text-3xl font-bold mb-6 flex items-center gap-2">
               <Film className="w-6 h-6 text-blue-400" />
@@ -292,7 +292,7 @@ export function PersonDetailPage() {
 
       {/* TV Credits */}
       {sortedTVCredits.length > 0 && (
-        <section className="px-4 sm:px-6 lg:px-8 py-8 animate-fadeInUp">
+        <section className="px-4 sm:px-6 lg:px-8 py-2 sm:py-4 animate-fadeInUp">
           <div className="max-w-6xl mx-auto">
             <h2 className="text-2xl sm:text-3xl font-bold mb-6 flex items-center gap-2">
               <Tv className="w-6 h-6 text-green-400" />

@@ -12,23 +12,23 @@ const MovieDetailPage = lazy(() => import('./pages/MovieDetailPage').then(module
 const TVShowDetailPage = lazy(() => import('./pages/TVShowDetailPage').then(module => ({ default: module.TVShowDetailPage })))
 const PersonDetailPage = lazy(() => import('./pages/PersonDetailPage').then(module => ({ default: module.PersonDetailPage })))
 const ProductionCompanyPage = lazy(() => import('./pages/ProductionCompanyPage').then(module => ({ default: module.ProductionCompanyPage })))
+const DiscoverPage = lazy(() => import('./pages/DiscoverPage').then(module => ({ default: module.DiscoverPage })))
 
 function App() {
   return (
     <Router>
       <ScrollToTop />
       <Suspense fallback={<PageLoader />}>
-        <MainLayout>
-          <Suspense fallback={<PageLoader />}>
-            <Routes>
-              <Route path="/" element={<HomePage />} />
-              <Route path="/movie/:id" element={<MovieDetailPage />} />
-              <Route path="/tv/:id" element={<TVShowDetailPage />} />
-              <Route path="/person/:id" element={<PersonDetailPage />} />
-              <Route path="/company/:id" element={<ProductionCompanyPage />} />
-            </Routes>
-          </Suspense>
-        </MainLayout>
+        <Routes>
+          <Route element={<MainLayout />}>
+            <Route path="/" element={<HomePage />} />
+            <Route path="/discover" element={<DiscoverPage />} />
+            <Route path="/movie/:id" element={<MovieDetailPage />} />
+            <Route path="/tv/:id" element={<TVShowDetailPage />} />
+            <Route path="/person/:id" element={<PersonDetailPage />} />
+            <Route path="/company/:id" element={<ProductionCompanyPage />} />
+          </Route>
+        </Routes>
       </Suspense>
     </Router>
   )
