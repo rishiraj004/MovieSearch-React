@@ -1,4 +1,3 @@
-import { motion } from 'framer-motion'
 import { useState } from 'react'
 
 import type { Person } from '../types/movie.types'
@@ -26,11 +25,17 @@ export function TrendingPersonCard({ person, onClick }: TrendingPersonCardProps)
 
   return (
     <div className="flex flex-col items-center">
-      <motion.div
-        className="bg-gray-800 rounded-full overflow-hidden cursor-pointer hover:scale-105 transition-transform duration-300 w-[92px] h-[92px] flex-shrink-0"
+      <div
+        className="bg-gray-800 rounded-full overflow-hidden cursor-pointer hover:scale-105 active:scale-95 transition-transform duration-300 w-[92px] h-[92px] flex-shrink-0"
         onClick={() => onClick?.(person)}
-        whileHover={{ scale: 1.05 }}
-        whileTap={{ scale: 0.95 }}
+        role="button"
+        tabIndex={0}
+        onKeyDown={(e) => {
+          if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault()
+            onClick?.(person)
+          }
+        }}
       >
         <img
           src={getImageSrc()}
@@ -39,7 +44,7 @@ export function TrendingPersonCard({ person, onClick }: TrendingPersonCardProps)
           loading="lazy"
           onError={handleImageError}
         />
-      </motion.div>
+      </div>
       <div className="mt-3 text-center max-w-[92px]">
         <h3 className="text-white font-semibold text-sm mb-1 line-clamp-2">{person.name}</h3>
       </div>

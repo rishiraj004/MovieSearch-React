@@ -1,4 +1,3 @@
-import { motion } from 'framer-motion'
 import { Calendar, Clock, Play, Star, ChevronDown, ChevronRight } from 'lucide-react'
 import { useState } from 'react'
 
@@ -64,23 +63,15 @@ export function SeasonsSection({ seasons, tvShowId }: SeasonsSectionProps) {
   if (regularSeasons.length === 0) return null
 
   return (
-    <motion.section
-      className="py-8 sm:py-12 px-4 sm:px-6 lg:px-8"
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.5 }}
-    >
+    <section className="py-8 sm:py-12 px-4 sm:px-6 lg:px-8 animate-fadeIn">
       <div className="max-w-6xl mx-auto">
         <h2 className="text-2xl sm:text-3xl font-bold mb-6 sm:mb-8 text-center sm:text-left">Seasons</h2>
         
         <div className="space-y-4">
           {regularSeasons.map((season) => (
-            <motion.div
+            <div
               key={season.id}
-              className="bg-gray-800 rounded-lg border border-gray-700 overflow-hidden"
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.3 }}
+              className="bg-gray-800 rounded-lg border border-gray-700 overflow-hidden animate-fadeInUp"
             >
               <button
                 onClick={() => toggleSeason(season.season_number)}
@@ -131,13 +122,7 @@ export function SeasonsSection({ seasons, tvShowId }: SeasonsSectionProps) {
               </button>
               
               {expandedSeasons.has(season.season_number) && (
-                <motion.div
-                  className="border-t border-gray-700 bg-gray-850"
-                  initial={{ opacity: 0, height: 0 }}
-                  animate={{ opacity: 1, height: 'auto' }}
-                  exit={{ opacity: 0, height: 0 }}
-                  transition={{ duration: 0.3 }}
-                >
+                <div className="border-t border-gray-700 bg-gray-850 animate-fadeIn">
                   {loadingSeasons.has(season.season_number) ? (
                     <div className="p-6 text-center">
                       <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-400 mx-auto mb-2"></div>
@@ -148,13 +133,13 @@ export function SeasonsSection({ seasons, tvShowId }: SeasonsSectionProps) {
                       episodes={seasonDetails[season.season_number]?.episodes || []} 
                     />
                   )}
-                </motion.div>
+                </div>
               )}
-            </motion.div>
+            </div>
           ))}
         </div>
       </div>
-    </motion.section>
+    </section>
   )
 }
 
@@ -190,12 +175,9 @@ function EpisodesList({ episodes }: EpisodesListProps) {
       <h4 className="text-lg font-semibold text-white mb-4">Episodes</h4>
       <div className="space-y-3">
         {episodes.map((episode) => (
-          <motion.div
+          <div
             key={episode.id}
-            className="flex gap-4 p-3 rounded-lg bg-gray-800 hover:bg-gray-750 transition-colors"
-            initial={{ opacity: 0, x: -10 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.2 }}
+            className="flex gap-4 p-3 rounded-lg bg-gray-800 hover:bg-gray-750 transition-colors animate-slideInLeft"
           >
             <div className="flex-shrink-0">
               <img
@@ -235,7 +217,7 @@ function EpisodesList({ episodes }: EpisodesListProps) {
                 </p>
               )}
             </div>
-          </motion.div>
+          </div>
         ))}
       </div>
     </div>

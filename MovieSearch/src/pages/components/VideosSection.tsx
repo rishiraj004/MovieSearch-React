@@ -1,4 +1,3 @@
-import { motion } from 'framer-motion'
 import { Film } from 'lucide-react'
 import { useCallback } from 'react'
 
@@ -78,11 +77,8 @@ export function VideosSection({ videos, onVideoClick }: VideosSectionProps) {
   }
 
   return (
-    <motion.section
-      className="mb-12"
-      initial={{ opacity: 0, y: 30 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.6, delay: 0.6 }}
+    <section
+      className="mb-12 animate-fadeInUp"
     >
       <div className="flex items-center gap-3 mb-6">
         <Film className="w-8 h-8 text-blue-400" />
@@ -112,6 +108,6 @@ export function VideosSection({ videos, onVideoClick }: VideosSectionProps) {
           ))}
         </div>
       </div>
-    </motion.section>
+    </section>
   )
 }

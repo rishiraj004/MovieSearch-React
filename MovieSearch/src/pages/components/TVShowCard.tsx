@@ -1,5 +1,3 @@
-import { motion } from 'framer-motion'
-
 import type { TVShow } from '@/features/movies/types/movie.types'
 import { getImageUrl } from '@/features/movies/utils/imageUtils'
 
@@ -13,14 +11,17 @@ export function TVShowCard({ tvShow, onClick }: TVShowCardProps) {
   const rating = tvShow.vote_average ? tvShow.vote_average.toFixed(1) : 'N/A'
 
   return (
-    <motion.div
-      className="flex-shrink-0 cursor-pointer group"
+    <div
+      className="flex-shrink-0 cursor-pointer group hover:scale-105 active:scale-95 transition-all duration-300 animate-fadeInUp"
       onClick={() => onClick?.(tvShow)}
-      whileHover={{ scale: 1.05 }}
-      whileTap={{ scale: 0.95 }}
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.3 }}
+      role="button"
+      tabIndex={0}
+      onKeyDown={(e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault()
+          onClick?.(tvShow)
+        }
+      }}
     >
       <div className="w-40 sm:w-48">
         {/* Poster with consistent 2:3 aspect ratio */}
@@ -49,6 +50,6 @@ export function TVShowCard({ tvShow, onClick }: TVShowCardProps) {
           )}
         </div>
       </div>
-    </motion.div>
+    </div>
   )
 }

@@ -1,4 +1,3 @@
-import { motion, AnimatePresence } from 'framer-motion'
 import { ChevronDown, Users, Camera, User } from 'lucide-react'
 import { useState, useRef, useEffect } from 'react'
 
@@ -48,31 +47,23 @@ export function CastCrewDropdown({ cast, crew, onPersonClick }: CastCrewDropdown
 
   return (
     <div className="relative" ref={dropdownRef}>
-      <motion.button
+      <button
         onClick={() => setIsOpen(!isOpen)}
-        className="bg-gray-800 hover:bg-gray-700 border border-gray-600 text-white px-6 py-3 rounded-lg transition-all duration-300 flex items-center gap-3 font-semibold shadow-lg hover:shadow-xl"
-        whileHover={{ scale: 1.02 }}
-        whileTap={{ scale: 0.98 }}
+        className="bg-gray-800 hover:bg-gray-700 border border-gray-600 text-white px-6 py-3 rounded-lg transition-all duration-300 flex items-center gap-3 font-semibold shadow-lg hover:shadow-xl hover:scale-[1.02] active:scale-[0.98]"
       >
         <Users className="w-5 h-5" />
         <span>Full Cast & Crew</span>
-        <motion.div
-          animate={{ rotate: isOpen ? 180 : 0 }}
-          transition={{ duration: 0.2 }}
+        <div
+          className={`transition-transform duration-200 ${isOpen ? 'rotate-180' : 'rotate-0'}`}
         >
           <ChevronDown className="w-4 h-4" />
-        </motion.div>
-      </motion.button>
+        </div>
+      </button>
 
-      <AnimatePresence>
-        {isOpen && (
-          <motion.div
-            className="absolute top-full left-0 right-0 mt-2 bg-gray-800 border border-gray-600 rounded-xl shadow-2xl z-50 overflow-hidden"
-            initial={{ opacity: 0, y: -10, scale: 0.95 }}
-            animate={{ opacity: 1, y: 0, scale: 1 }}
-            exit={{ opacity: 0, y: -10, scale: 0.95 }}
-            transition={{ duration: 0.2 }}
-          >
+      {isOpen && (
+        <div
+          className="absolute top-full left-0 right-0 mt-2 bg-gray-800 border border-gray-600 rounded-xl shadow-2xl z-50 overflow-hidden animate-fadeIn transition-all duration-200"
+        >
             {/* Tab Headers */}
             <div className="flex border-b border-gray-600 bg-gray-750">
               <button
@@ -105,12 +96,18 @@ export function CastCrewDropdown({ cast, crew, onPersonClick }: CastCrewDropdown
                 <div className="p-4">
                   <div className="space-y-3">
                     {cast.map((actor) => (
-                      <motion.div
+                      <div
                         key={actor.id}
-                        className="flex items-center gap-4 p-3 rounded-lg hover:bg-gray-700 transition-colors cursor-pointer"
+                        className="flex items-center gap-4 p-3 rounded-lg hover:bg-gray-700 transition-colors cursor-pointer hover:scale-[1.02] active:scale-[0.98]"
                         onClick={() => handlePersonClick(actor)}
-                        whileHover={{ scale: 1.02 }}
-                        whileTap={{ scale: 0.98 }}
+                        role="button"
+                        tabIndex={0}
+                        onKeyDown={(e) => {
+                          if (e.key === 'Enter' || e.key === ' ') {
+                            e.preventDefault()
+                            handlePersonClick(actor)
+                          }
+                        }}
                       >
                         <img
                           src={getPersonImageUrl(actor.profile_path)}
@@ -121,7 +118,7 @@ export function CastCrewDropdown({ cast, crew, onPersonClick }: CastCrewDropdown
                           <p className="font-medium text-white truncate">{actor.name}</p>
                           <p className="text-sm text-gray-400 truncate">{actor.character}</p>
                         </div>
-                      </motion.div>
+                      </div>
                     ))}
                   </div>
                 </div>
@@ -131,12 +128,18 @@ export function CastCrewDropdown({ cast, crew, onPersonClick }: CastCrewDropdown
                 <div className="p-4">
                   <div className="space-y-3">
                     {crew.map((member) => (
-                      <motion.div
+                      <div
                         key={`${member.id}-${member.credit_id}`}
-                        className="flex items-center gap-4 p-3 rounded-lg hover:bg-gray-700 transition-colors cursor-pointer"
+                        className="flex items-center gap-4 p-3 rounded-lg hover:bg-gray-700 transition-colors cursor-pointer hover:scale-[1.02] active:scale-[0.98]"
                         onClick={() => handlePersonClick(member)}
-                        whileHover={{ scale: 1.02 }}
-                        whileTap={{ scale: 0.98 }}
+                        role="button"
+                        tabIndex={0}
+                        onKeyDown={(e) => {
+                          if (e.key === 'Enter' || e.key === ' ') {
+                            e.preventDefault()
+                            handlePersonClick(member)
+                          }
+                        }}
                       >
                         <img
                           src={getPersonImageUrl(member.profile_path)}
@@ -149,7 +152,7 @@ export function CastCrewDropdown({ cast, crew, onPersonClick }: CastCrewDropdown
                             {member.job} {member.department && `• ${member.department}`}
                           </p>
                         </div>
-                      </motion.div>
+                      </div>
                     ))}
                   </div>
                 </div>
@@ -165,9 +168,8 @@ export function CastCrewDropdown({ cast, crew, onPersonClick }: CastCrewDropdown
                 Close
               </button>
             </div>
-          </motion.div>
+          </div>
         )}
-      </AnimatePresence>
     </div>
   )
 }

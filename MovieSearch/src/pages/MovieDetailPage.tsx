@@ -1,4 +1,3 @@
-import { motion } from 'framer-motion'
 import { ArrowLeft, Calendar, Clock, Star, Play, Camera, Edit, Megaphone } from 'lucide-react'
 import { useState, useEffect } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
@@ -132,15 +131,10 @@ export function MovieDetailPage() {
   if (loading) {
     return (
       <div className="min-h-screen bg-gray-900 text-white flex items-center justify-center">
-        <motion.div
-          className="text-center"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 0.5 }}
-        >
+        <div className="text-center animate-fadeIn">
           <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-blue-400 mx-auto mb-4"></div>
           <p className="text-gray-400">Loading movie details...</p>
-        </motion.div>
+        </div>
       </div>
     )
   }
@@ -148,12 +142,7 @@ export function MovieDetailPage() {
   if (error || !movie) {
     return (
       <div className="min-h-screen bg-gray-900 text-white flex items-center justify-center">
-        <motion.div
-          className="text-center"
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5 }}
-        >
+        <div className="text-center animate-fadeIn">
           <div className="text-6xl mb-4">🎬</div>
           <h2 className="text-2xl font-bold mb-2">Movie Not Found</h2>
           <p className="text-gray-400 mb-6">{error || 'The requested movie could not be found.'}</p>
@@ -164,7 +153,7 @@ export function MovieDetailPage() {
             <ArrowLeft className="w-4 h-4" />
             Go Back
           </button>
-        </motion.div>
+        </div>
       </div>
     )
   }
@@ -190,11 +179,8 @@ export function MovieDetailPage() {
   return (
     <div className="min-h-screen bg-gray-900 text-white">
       {/* Hero Section */}
-      <motion.section
-        className="relative min-h-[85vh] sm:min-h-[80vh] lg:min-h-[95vh] overflow-hidden"
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ duration: 0.8 }}
+      <section
+        className="relative min-h-[85vh] sm:min-h-[80vh] lg:min-h-[95vh] overflow-hidden animate-fadeIn"
       >
         {/* Backdrop Image - Make sure this is the bottom layer */}
         {backdropUrl && (
@@ -227,25 +213,19 @@ export function MovieDetailPage() {
           <div className="container mx-auto px-4 sm:px-6 pb-6 sm:pb-8">
             <div className="flex flex-col sm:flex-row items-center sm:items-end gap-4 sm:gap-6 lg:gap-8">
               {/* Movie Poster */}
-              <motion.div
-                className="flex-shrink-0 order-1 sm:order-none"
-                initial={{ opacity: 0, x: -50 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ duration: 0.6, delay: 0.2 }}
+              <div
+                className="flex-shrink-0 order-1 sm:order-none animate-fadeInUp"
               >
                 <img
                   src={movie.poster_path ? getImageUrl(movie.poster_path, 'W500') : '/placeholder-movie.jpg'}
                   alt={movie.title}
                   className="w-40 h-60 sm:w-48 sm:h-72 lg:w-64 lg:h-96 object-cover rounded-lg shadow-2xl mx-auto sm:mx-0"
                 />
-              </motion.div>
+              </div>
 
               {/* Movie Info */}
-              <motion.div
-                className="flex-1 max-w-full sm:max-w-2xl text-center sm:text-left order-2 sm:order-none"
-                initial={{ opacity: 0, y: 50 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.6, delay: 0.4 }}
+              <div
+                className="flex-1 max-w-full sm:max-w-2xl text-center sm:text-left order-2 sm:order-none animate-fadeInUp"
               >
                 <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold mb-2 leading-tight">{movie.title}</h1>
                 {movie.tagline && (
@@ -301,39 +281,29 @@ export function MovieDetailPage() {
                     Back
                   </button>
                 </div>
-              </motion.div>
+              </div>
             </div>
           </div>
         </div>
-      </motion.section>
+      </section>
 
       {/* Main Content */}
       <div className="container mx-auto px-4 sm:px-6 py-8 sm:py-12">
         {/* Overview Section */}
         {movie.overview && (
-          <motion.section
-            className="mb-8 sm:mb-12"
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.2 }}
-          >
+          <section className="mb-8 sm:mb-12 animate-fadeIn">
             <h2 className="text-2xl sm:text-3xl font-bold mb-4 sm:mb-6 text-center sm:text-left">Overview</h2>
             <div className="bg-gray-800 rounded-lg p-4 sm:p-6 lg:p-8 mx-0 sm:mx-4 shadow-lg border border-gray-700">
               <p className="text-gray-300 text-sm sm:text-base lg:text-lg leading-relaxed">
                 {movie.overview}
               </p>
             </div>
-          </motion.section>
+          </section>
         )}
 
         {/* Collection Section */}
         {movie.belongs_to_collection && (
-          <motion.section
-            className="mb-12"
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.25 }}
-          >
+          <section className="mb-12 animate-fadeIn">
             <div className="flex items-center justify-between mb-4 sm:mb-6">
               <h2 className="text-2xl sm:text-3xl font-bold text-center sm:text-left">Part of Collection</h2>
             </div>
@@ -395,28 +365,18 @@ export function MovieDetailPage() {
             ) : (
               <CollectionSection collection={collection} onMovieClick={handleMovieClick} />
             )}
-          </motion.section>
+          </section>
         )}
 
         {/* Movie Details Grid */}
-        <motion.section
-          className="mb-8 sm:mb-12"
-          initial={{ opacity: 0, y: 30 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, delay: 0.4 }}
-        >
+        <section className="mb-8 sm:mb-12 animate-fadeIn">
           <h2 className="text-2xl sm:text-3xl font-bold mb-4 sm:mb-6 text-center sm:text-left">Movie Details</h2>
           <MovieDetailsGrid movie={movie} />
-        </motion.section>
+        </section>
 
         {/* Cast Section */}
         {topCast.length > 0 && (
-          <motion.section
-            className="mb-8 sm:mb-12"
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.4 }}
-          >
+          <section className="mb-8 sm:mb-12 animate-fadeIn">
             <div className="flex flex-col sm:flex-row items-center sm:items-center justify-between gap-4 sm:gap-0 mb-4 sm:mb-6">
               <h2 className="text-2xl sm:text-3xl font-bold text-center sm:text-left">Cast</h2>
               {credits && (
@@ -438,17 +398,12 @@ export function MovieDetailPage() {
                 />
               ))}
             </div>
-          </motion.section>
+          </section>
         )}
 
         {/* Crew Section */}
         {credits && (directors.length > 0 || producers.length > 0 || writers.length > 0) && (
-          <motion.section
-            className="mb-8 sm:mb-12"
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.5 }}
-          >
+          <section className="mb-8 sm:mb-12 animate-fadeIn">
             <h2 className="text-2xl sm:text-3xl font-bold mb-6 sm:mb-8 text-center sm:text-left">Key Crew</h2>
             <div className="space-y-4 sm:space-y-6">
               <CrewSection 
@@ -473,7 +428,7 @@ export function MovieDetailPage() {
                 onPersonClick={(person) => navigate(`/person/${person.id}`)}
               />
             </div>
-          </motion.section>
+          </section>
         )}
 
         {/* Videos Section */}
@@ -493,34 +448,24 @@ export function MovieDetailPage() {
 
         {/* Reviews Section */}
         {reviews.length > 0 && (
-          <motion.section
-            className="mb-12"
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.7 }}
-          >
+          <section className="mb-12 animate-fadeIn">
             <ReviewsSection 
               reviews={reviews}
               totalReviews={reviewsTotal}
             />
-          </motion.section>
+          </section>
         )}
 
         {/* Production Companies */}
         {movie.production_companies && movie.production_companies.length > 0 && (
-          <motion.section
-            className="mb-8 sm:mb-12"
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.6 }}
-          >
+          <section className="mb-8 sm:mb-12 animate-fadeIn">
             <h2 className="text-2xl sm:text-3xl font-bold mb-4 sm:mb-6 text-center sm:text-left">Production Companies</h2>
             <div className="flex flex-wrap justify-center sm:justify-start gap-4 sm:gap-6 lg:gap-8">
               {movie.production_companies.map((company) => (
                 <ProductionLogo key={company.id} company={company} />
               ))}
             </div>
-          </motion.section>
+          </section>
         )}
 
         {/* Recommendations - Horizontal Scrollable */}

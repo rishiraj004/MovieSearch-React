@@ -1,4 +1,3 @@
-import { motion } from 'framer-motion'
 import { ArrowLeft, Calendar, Clock, Star, Play, Camera, Edit, Megaphone, Tv } from 'lucide-react'
 import { useState, useEffect } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
@@ -111,15 +110,12 @@ export function TVShowDetailPage() {
   if (loading) {
     return (
       <div className="min-h-screen bg-gray-900 text-white flex items-center justify-center">
-        <motion.div
+        <div
           className="text-center"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 0.5 }}
         >
           <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-blue-400 mx-auto mb-4"></div>
           <p className="text-gray-400">Loading TV show details...</p>
-        </motion.div>
+        </div>
       </div>
     )
   }
@@ -127,11 +123,8 @@ export function TVShowDetailPage() {
   if (error || !tvShow) {
     return (
       <div className="min-h-screen bg-gray-900 text-white flex items-center justify-center">
-        <motion.div
+        <div
           className="text-center"
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5 }}
         >
           <div className="text-6xl mb-4">📺</div>
           <h2 className="text-2xl font-bold mb-2">TV Show Not Found</h2>
@@ -143,7 +136,7 @@ export function TVShowDetailPage() {
             <ArrowLeft className="w-4 h-4" />
             Go Back
           </button>
-        </motion.div>
+        </div>
       </div>
     )
   }
@@ -171,11 +164,8 @@ export function TVShowDetailPage() {
   return (
     <div className="min-h-screen bg-gray-900 text-white">
       {/* Hero Section */}
-      <motion.section
-        className="relative min-h-[85vh] sm:min-h-[80vh] lg:min-h-[95vh] overflow-hidden"
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ duration: 0.8 }}
+      <section
+        className="relative min-h-[85vh] sm:min-h-[80vh] lg:min-h-[95vh] overflow-hidden animate-fadeIn"
       >
         {/* Backdrop Image */}
         {backdropUrl && (
@@ -207,25 +197,19 @@ export function TVShowDetailPage() {
           <div className="container mx-auto px-4 sm:px-6 pb-6 sm:pb-8">
             <div className="flex flex-col sm:flex-row items-center sm:items-end gap-4 sm:gap-6 lg:gap-8">
               {/* TV Show Poster */}
-              <motion.div
+              <div
                 className="flex-shrink-0 order-1 sm:order-none"
-                initial={{ opacity: 0, x: -50 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ duration: 0.6, delay: 0.2 }}
               >
                 <img
                   src={tvShow.poster_path ? getImageUrl(tvShow.poster_path, 'W500') : '/placeholder-tv.jpg'}
                   alt={tvShow.name}
                   className="w-40 h-60 sm:w-48 sm:h-72 lg:w-64 lg:h-96 object-cover rounded-lg shadow-2xl mx-auto sm:mx-0"
                 />
-              </motion.div>
+              </div>
 
               {/* TV Show Info */}
-              <motion.div
+              <div
                 className="flex-1 max-w-full sm:max-w-2xl text-center sm:text-left order-2 sm:order-none"
-                initial={{ opacity: 0, y: 50 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.6, delay: 0.4 }}
               >
                 <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold mb-2 leading-tight">{tvShow.name}</h1>
                 {tvShow.tagline && (
@@ -285,50 +269,35 @@ export function TVShowDetailPage() {
                     Back
                   </button>
                 </div>
-              </motion.div>
+              </div>
             </div>
           </div>
         </div>
-      </motion.section>
+      </section>
 
       {/* Main Content */}
       <div className="container mx-auto px-4 sm:px-6 py-8 sm:py-12">
         {/* Overview Section */}
         {tvShow.overview && (
-          <motion.section
-            className="mb-8 sm:mb-12"
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.2 }}
-          >
+          <section className="mb-8 sm:mb-12 animate-fadeIn">
             <h2 className="text-2xl sm:text-3xl font-bold mb-4 sm:mb-6 text-center sm:text-left">Overview</h2>
             <div className="bg-gray-800 rounded-lg p-4 sm:p-6 lg:p-8 mx-0 sm:mx-4 shadow-lg border border-gray-700">
               <p className="text-gray-300 text-sm sm:text-base lg:text-lg leading-relaxed">
                 {tvShow.overview}
               </p>
             </div>
-          </motion.section>
+          </section>
         )}
 
         {/* TV Show Details Grid */}
-        <motion.section
-          className="mb-8 sm:mb-12"
-          initial={{ opacity: 0, y: 30 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, delay: 0.4 }}
-        >
+        <section className="mb-8 sm:mb-12 animate-fadeIn">
           <h2 className="text-2xl sm:text-3xl font-bold mb-4 sm:mb-6 text-center sm:text-left">Show Details</h2>
           <TVShowDetailsGrid tvShow={tvShow} />
-        </motion.section>
+        </section>
 
         {/* Cast Section */}
         {topCast.length > 0 && (
-          <motion.section
-            className="mb-8 sm:mb-12"
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.4 }}
-          >
+          <section className="mb-8 sm:mb-12 animate-fadeIn">
             <div className="flex flex-col sm:flex-row items-center sm:items-center justify-between gap-4 sm:gap-0 mb-4 sm:mb-6">
               <h2 className="text-2xl sm:text-3xl font-bold text-center sm:text-left">Cast</h2>
               {credits && (
@@ -350,17 +319,12 @@ export function TVShowDetailPage() {
                 />
               ))}
             </div>
-          </motion.section>
+          </section>
         )}
 
         {/* Crew Section */}
         {credits && (directors.length > 0 || producers.length > 0 || writers.length > 0) && (
-          <motion.section
-            className="mb-8 sm:mb-12"
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.5 }}
-          >
+          <section className="mb-8 sm:mb-12 animate-fadeIn">
             <h2 className="text-2xl sm:text-3xl font-bold mb-6 sm:mb-8 text-center sm:text-left">Key Crew</h2>
             <div className="space-y-4 sm:space-y-6">
               <CreatedBySection 
@@ -389,7 +353,7 @@ export function TVShowDetailPage() {
                 onPersonClick={(person) => navigate(`/person/${person.id}`)}
               />
             </div>
-          </motion.section>
+          </section>
         )}
 
         {/* Seasons Section */}
@@ -412,44 +376,29 @@ export function TVShowDetailPage() {
 
         {/* Reviews Section */}
         {reviews.length > 0 && (
-          <motion.section
-            className="mb-12"
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.7 }}
-          >
+          <section className="mb-12 animate-fadeIn">
             <ReviewsSection 
               reviews={reviews}
               totalReviews={reviewsTotal}
             />
-          </motion.section>
+          </section>
         )}
 
         {/* Production Companies */}
         {tvShow.production_companies && tvShow.production_companies.length > 0 && (
-          <motion.section
-            className="mb-8 sm:mb-12"
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.6 }}
-          >
+          <section className="mb-8 sm:mb-12 animate-fadeIn">
             <h2 className="text-2xl sm:text-3xl font-bold mb-4 sm:mb-6 text-center sm:text-left">Production Companies</h2>
             <div className="flex flex-wrap justify-center sm:justify-start gap-4 sm:gap-6 lg:gap-8">
               {tvShow.production_companies.map((company) => (
                 <ProductionLogo key={company.id} company={company} />
               ))}
             </div>
-          </motion.section>
+          </section>
         )}
 
         {/* Networks */}
         {tvShow.networks && tvShow.networks.length > 0 && (
-          <motion.section
-            className="mb-8 sm:mb-12"
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.65 }}
-          >
+          <section className="mb-8 sm:mb-12 animate-fadeIn">
             <h2 className="text-2xl sm:text-3xl font-bold mb-4 sm:mb-6 text-center sm:text-left">Networks</h2>
             <div className="flex flex-wrap justify-center sm:justify-start gap-4 sm:gap-6 lg:gap-8">
               {tvShow.networks.map((network) => (
@@ -468,7 +417,7 @@ export function TVShowDetailPage() {
                 </div>
               ))}
             </div>
-          </motion.section>
+          </section>
         )}
 
         {/* Recommendations - Horizontal Scrollable */}

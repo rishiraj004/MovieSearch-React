@@ -1,4 +1,3 @@
-import { motion } from 'framer-motion'
 import { Play, ExternalLink, Calendar } from 'lucide-react'
 
 import type { Video } from '@/features/movies/types/movie.types'
@@ -63,12 +62,17 @@ export function VideoCard({ video, onVideoClick }: VideoCardProps) {
   }
 
   return (
-    <motion.div
-      className="group cursor-pointer"
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.4 }}
+    <div
+      className="group cursor-pointer animate-fadeInUp hover:scale-105 active:scale-95 transition-all duration-300"
       onClick={handleClick}
+      role="button"
+      tabIndex={0}
+      onKeyDown={(e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault()
+          handleClick()
+        }
+      }}
     >
       <div className="relative rounded-xl overflow-hidden bg-gray-800 shadow-lg group-hover:shadow-xl transition-all duration-300">
         {/* Video Thumbnail */}
@@ -118,6 +122,6 @@ export function VideoCard({ video, onVideoClick }: VideoCardProps) {
           </div>
         </div>
       </div>
-    </motion.div>
+    </div>
   )
 }

@@ -1,5 +1,3 @@
-import { motion } from 'framer-motion'
-
 import type { Movie } from '../../features/movies/types/movie.types'
 import { getImageUrl } from '../../features/movies/utils/imageUtils'
 
@@ -13,14 +11,18 @@ export function MovieCard({ movie, onClick }: MovieCardProps) {
   const rating = movie.vote_average ? movie.vote_average.toFixed(1) : 'N/A'
 
   return (
-    <motion.div
-      className="flex-shrink-0 cursor-pointer group"
+    <div
+      className="flex-shrink-0 cursor-pointer group animate-fadeInUp hover-scale"
       onClick={() => onClick?.(movie)}
-      whileHover={{ scale: 1.05 }}
-      whileTap={{ scale: 0.95 }}
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.3 }}
+      onKeyDown={(e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault()
+          onClick?.(movie)
+        }
+      }}
+      role="button"
+      tabIndex={0}
+      aria-label={`View details for ${movie.title}`}
     >
       <div className="w-40 sm:w-48">
         {/* Poster with consistent 2:3 aspect ratio */}
@@ -49,6 +51,6 @@ export function MovieCard({ movie, onClick }: MovieCardProps) {
           )}
         </div>
       </div>
-    </motion.div>
+    </div>
   )
 }

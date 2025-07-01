@@ -1,4 +1,3 @@
-import { motion } from 'framer-motion'
 import { ArrowLeft, Building2, Globe, MapPin } from 'lucide-react'
 import { useState, useEffect } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
@@ -50,15 +49,10 @@ export function ProductionCompanyPage() {
   if (loading) {
     return (
       <div className="min-h-screen bg-gray-900 text-white flex items-center justify-center">
-        <motion.div
-          className="text-center"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 0.5 }}
-        >
+        <div className="text-center animate-fadeIn">
           <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-blue-400 mx-auto mb-4"></div>
           <p className="text-gray-400">Loading company details...</p>
-        </motion.div>
+        </div>
       </div>
     )
   }
@@ -66,12 +60,7 @@ export function ProductionCompanyPage() {
   if (error || !company) {
     return (
       <div className="min-h-screen bg-gray-900 text-white flex items-center justify-center">
-        <motion.div
-          className="text-center"
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5 }}
-        >
+        <div className="text-center animate-fadeIn">
           <div className="text-6xl mb-4">🏢</div>
           <h2 className="text-2xl font-bold mb-2">Company Not Found</h2>
           <p className="text-gray-400 mb-6">{error || 'The requested company could not be found.'}</p>
@@ -82,7 +71,7 @@ export function ProductionCompanyPage() {
             <ArrowLeft className="w-4 h-4" />
             Go Back
           </button>
-        </motion.div>
+        </div>
       </div>
     )
   }
@@ -90,11 +79,8 @@ export function ProductionCompanyPage() {
   return (
     <div className="min-h-screen bg-gray-900 text-white">
       {/* Hero Section */}
-      <motion.section
-        className="relative bg-gradient-to-br from-blue-900/30 to-purple-900/30 py-12 sm:py-16 lg:py-20"
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ duration: 0.8 }}
+      <section
+        className="relative bg-gradient-to-br from-blue-900/30 to-purple-900/30 py-12 sm:py-16 lg:py-20 animate-fadeIn"
       >
         {/* Background Pattern */}
         <div className="absolute inset-0 bg-gradient-to-br from-blue-900/20 to-purple-900/20 opacity-50" />
@@ -102,12 +88,7 @@ export function ProductionCompanyPage() {
         <div className="relative z-10 container mx-auto px-4 sm:px-6">
           <div className="flex flex-col sm:flex-row items-center sm:items-start gap-6 sm:gap-8 max-w-4xl">
             {/* Company Logo */}
-            <motion.div
-              className="flex-shrink-0 order-1 sm:order-none"
-              initial={{ opacity: 0, x: -50 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.6, delay: 0.2 }}
-            >
+            <div className="flex-shrink-0 order-1 sm:order-none animate-fadeInUp">
               <div className="w-32 h-32 sm:w-40 sm:h-40 lg:w-48 lg:h-48 bg-white/10 rounded-2xl border-2 border-white/20 shadow-2xl flex items-center justify-center p-4 sm:p-6">
                 {company.logo_path ? (
                   <img
@@ -119,15 +100,10 @@ export function ProductionCompanyPage() {
                   <Building2 className="w-12 h-12 sm:w-16 sm:h-16 lg:w-20 lg:h-20 text-gray-400" />
                 )}
               </div>
-            </motion.div>
+            </div>
 
             {/* Company Info */}
-            <motion.div
-              className="flex-1 text-center sm:text-left order-2 sm:order-none"
-              initial={{ opacity: 0, y: 50 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: 0.4 }}
-            >
+            <div className="flex-1 text-center sm:text-left order-2 sm:order-none animate-fadeInUp">
               <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold mb-3 sm:mb-4 text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-purple-400 leading-tight">
                 {company.name}
               </h1>
@@ -158,19 +134,14 @@ export function ProductionCompanyPage() {
                   </a>
                 )}
               </div>
-            </motion.div>
+            </div>
           </div>
         </div>
-      </motion.section>
+      </section>
 
       {/* Company Information */}
       <div className="container mx-auto px-4 sm:px-6 py-8 sm:py-12">
-        <motion.section
-          className="mb-8 sm:mb-12"
-          initial={{ opacity: 0, y: 30 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, delay: 0.2 }}
-        >
+        <section className="mb-8 sm:mb-12 animate-fadeIn">
           <h2 className="text-2xl sm:text-3xl font-bold mb-6 sm:mb-8 text-center sm:text-left">Company Information</h2>
           
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
@@ -207,7 +178,7 @@ export function ProductionCompanyPage() {
               </div>
             )}
           </div>
-        </motion.section>
+        </section>
       </div>
     </div>
   )

@@ -1,4 +1,3 @@
-import { motion } from 'framer-motion'
 import { Calendar, Clock, Globe, Tv, Users, Star } from 'lucide-react'
 
 import type { TVShowDetails } from '@/features/movies/types/movie.types'
@@ -75,14 +74,10 @@ export function TVShowDetailsGrid({ tvShow }: TVShowDetailsGridProps) {
 
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6 lg:gap-8">
-      {validItems.map((item, index) => (
-        <motion.div
+      {validItems.map((item) => (
+        <div
           key={item.label}
-          className="bg-gray-800 rounded-lg p-4 sm:p-6 border border-gray-700 hover:border-gray-600 transition-all duration-300 hover:shadow-lg"
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5, delay: index * 0.1 }}
-          whileHover={{ scale: 1.02 }}
+          className="bg-gray-800 rounded-lg p-4 sm:p-6 border border-gray-700 hover:border-gray-600 transition-all duration-300 hover:shadow-lg animate-fadeInUp hover:scale-[1.02]"
         >
           <div className="flex items-start gap-3 sm:gap-4">
             <div className={`p-2 sm:p-3 rounded-lg bg-${item.color}-600/20 border border-${item.color}-600/30 flex-shrink-0`}>
@@ -97,7 +92,7 @@ export function TVShowDetailsGrid({ tvShow }: TVShowDetailsGridProps) {
               </p>
             </div>
           </div>
-        </motion.div>
+        </div>
       ))}
     </div>
   )

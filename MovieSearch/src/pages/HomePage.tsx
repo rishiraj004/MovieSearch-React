@@ -1,6 +1,7 @@
 import { useState, useCallback, Suspense, lazy } from 'react'
 
 import { useMovieSearch } from '@/features/movies'
+import { Navbar } from '@/shared'
 
 // Lazy load the heavy container components
 const SearchResultsContainer = lazy(() => import('./components/SearchResultsContainer').then(module => ({ default: module.SearchResultsContainer })))
@@ -27,8 +28,30 @@ export function HomePage() {
     setShowSearchSection(true)
   }, [loadPopularMovies])
 
+  // Scroll to trending section
+  const scrollToTrending = useCallback(() => {
+    const trendingElement = document.getElementById('trending-section')
+    if (trendingElement) {
+      trendingElement.scrollIntoView({ behavior: 'smooth' })
+    }
+  }, [])
+
+  // Scroll to top rated section
+  const scrollToTopRated = useCallback(() => {
+    const topRatedElement = document.getElementById('top-rated-section')
+    if (topRatedElement) {
+      topRatedElement.scrollIntoView({ behavior: 'smooth' })
+    }
+  }, [])
+
   return (
     <>
+      {/* Navbar - positioned in top left */}
+      <Navbar 
+        onTrendingClick={scrollToTrending}
+        onTopRatedClick={scrollToTopRated}
+      />
+
       {/* Hero Section */}
       <Suspense fallback={<SectionLoader />}>
         <HeroSectionContainer 
@@ -37,14 +60,18 @@ export function HomePage() {
       </Suspense>
 
       {/* Trending Section */}
-      <Suspense fallback={<SectionLoader />}>
-        <TrendingContainer />
-      </Suspense>
+      <div id="trending-section">
+        <Suspense fallback={<SectionLoader />}>
+          <TrendingContainer />
+        </Suspense>
+      </div>
 
       {/* Top Rated Section */}
-      <Suspense fallback={<SectionLoader />}>
-        <TopRatedContainer />
-      </Suspense>
+      <div id="top-rated-section">
+        <Suspense fallback={<SectionLoader />}>
+          <TopRatedContainer />
+        </Suspense>
+      </div>
       
       {/* Search and Results Section */}
       <Suspense fallback={<SectionLoader />}>

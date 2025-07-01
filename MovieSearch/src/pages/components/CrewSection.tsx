@@ -1,4 +1,3 @@
-import { motion } from 'framer-motion'
 import { Users } from 'lucide-react'
 
 import type { Crew } from '@/features/movies/types/movie.types'
@@ -23,11 +22,8 @@ export function CrewSection({ title, crew, icon: Icon = Users, color = 'blue', o
   }
 
   return (
-    <motion.div
-      className="mb-8"
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.4 }}
+    <div
+      className="mb-8 animate-fadeInUp"
     >
       <div className="flex items-center gap-3 mb-4">
         <Icon className={`w-6 h-6 ${colorClasses[color as keyof typeof colorClasses].split(' ')[0]}`} />
@@ -64,6 +60,6 @@ export function CrewSection({ title, crew, icon: Icon = Users, color = 'blue', o
           +{crew.length - 6} more {title.toLowerCase()}
         </p>
       )}
-    </motion.div>
+    </div>
   )
 }

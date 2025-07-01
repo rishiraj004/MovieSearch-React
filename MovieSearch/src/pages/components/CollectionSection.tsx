@@ -1,4 +1,3 @@
-import { motion } from 'framer-motion'
 import { Calendar, Eye } from 'lucide-react'
 
 import { MovieCard } from './MovieCard'
@@ -24,11 +23,8 @@ export function CollectionSection({ collection, onMovieClick }: CollectionSectio
     : ''
 
   return (
-    <motion.section
-      className="mb-12"
-      initial={{ opacity: 0, y: 30 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.6, delay: 0.3 }}
+    <section
+      className="mb-12 animate-fadeInUp"
     >
       <div className="relative rounded-xl overflow-hidden border border-purple-500/20">
         {/* Backdrop Image with Blur */}
@@ -99,23 +95,21 @@ export function CollectionSection({ collection, onMovieClick }: CollectionSectio
           {/* Collection Movies Grid */}
           <div>
             <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-4 xl:grid-cols-5 gap-3 sm:gap-4 lg:gap-5">
-              {sortedMovies.map((movie, index) => (
-                <motion.div
+              {sortedMovies.map((movie) => (
+                <div
                   key={movie.id}
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.4, delay: index * 0.1 }}
+                  className="animate-fadeInUp"
                 >
                   <MovieCard
                     movie={movie}
                     onClick={onMovieClick}
                   />
-                </motion.div>
+                </div>
               ))}
             </div>
           </div>
         </div>
       </div>
-    </motion.section>
+    </section>
   )
 }

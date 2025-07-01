@@ -1,4 +1,3 @@
-import { motion } from 'framer-motion'
 import { MessageCircle, ChevronDown, ChevronUp } from 'lucide-react'
 import { useState } from 'react'
 
@@ -26,16 +25,13 @@ export function ReviewsSection({
 
   if (reviews.length === 0) {
     return (
-      <motion.div
-        className="text-center py-12"
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ duration: 0.4 }}
+      <div
+        className="text-center py-12 animate-fadeIn"
       >
         <MessageCircle className="w-16 h-16 text-gray-600 mx-auto mb-4" />
         <h3 className="text-xl font-semibold text-gray-400 mb-2">No Reviews Yet</h3>
         <p className="text-gray-500">Be the first to review this movie!</p>
-      </motion.div>
+      </div>
     )
   }
 
@@ -54,25 +50,20 @@ export function ReviewsSection({
 
       {/* Reviews List */}
       <div className="space-y-6">
-        {displayedReviews.map((review, index) => (
-          <motion.div
+        {displayedReviews.map((review) => (
+          <div
             key={review.id}
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.4, delay: index * 0.1 }}
+            className="animate-fadeInUp"
           >
             <ReviewCard review={review} />
-          </motion.div>
+          </div>
         ))}
       </div>
 
       {/* Show More/Less Controls */}
       {reviews.length > 3 && (
-        <motion.div
-          className="text-center"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 0.4, delay: 0.2 }}
+        <div
+          className="text-center animate-fadeIn"
         >
           <button
             onClick={() => setShowAll(!showAll)}
@@ -90,16 +81,13 @@ export function ReviewsSection({
               </>
             )}
           </button>
-        </motion.div>
+        </div>
       )}
 
       {/* Load More from API */}
       {hasMore && showAll && (
-        <motion.div
-          className="text-center"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 0.4 }}
+        <div
+          className="text-center animate-fadeIn"
         >
           <button
             onClick={onLoadMore}
@@ -118,7 +106,7 @@ export function ReviewsSection({
               </>
             )}
           </button>
-        </motion.div>
+        </div>
       )}
     </div>
   )

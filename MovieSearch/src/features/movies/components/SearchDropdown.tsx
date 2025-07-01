@@ -1,4 +1,3 @@
-import { motion, AnimatePresence } from 'framer-motion'
 import { Search, X, Film, Tv, User, Loader2 } from 'lucide-react'
 import { useState, useRef, useEffect, useCallback } from 'react'
 import { useNavigate } from 'react-router-dom'
@@ -102,17 +101,10 @@ export function SearchDropdown({ isOpen, onClose }: SearchDropdownProps) {
 
   return (
     <div className="search-dropdown-container relative w-full max-w-2xl mx-auto">
-      <AnimatePresence>
-        {isOpen && (
-          <>
-            {/* Expanded Search Input */}
-            <motion.div
-              className="relative z-50"
-              initial={{ opacity: 0, y: -10 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -10 }}
-              transition={{ duration: 0.2 }}
-            >
+      {isOpen && (
+        <>
+          {/* Expanded Search Input */}
+          <div className="relative z-50 animate-fadeIn transition-all duration-200">
               <div className={`flex items-center bg-gray-800 rounded-xl border-2 shadow-2xl transition-all duration-200 ${
                 isFocused ? 'border-blue-500 shadow-blue-500/20' : 'border-gray-600'
               }`}>
@@ -138,16 +130,12 @@ export function SearchDropdown({ isOpen, onClose }: SearchDropdownProps) {
                   <X className="w-5 h-5" />
                 </button>
               </div>
-            </motion.div>
+            </div>
 
             {/* Results Dropdown */}
             {(query || results.length > 0 || error) && (
-              <motion.div
-                className="absolute top-full left-0 right-0 mt-2 bg-gray-900 border border-gray-700 rounded-xl shadow-2xl z-40 max-h-96 overflow-y-auto"
-                initial={{ opacity: 0, y: -10, scale: 0.95 }}
-                animate={{ opacity: 1, y: 0, scale: 1 }}
-                exit={{ opacity: 0, y: -10, scale: 0.95 }}
-                transition={{ duration: 0.2, delay: 0.1 }}
+              <div
+                className="absolute top-full left-0 right-0 mt-2 bg-gray-900 border border-gray-700 rounded-xl shadow-2xl z-40 max-h-96 overflow-y-auto animate-fadeIn transition-all duration-200"
               >
                 <div className="p-4">
                   {error && (
@@ -169,16 +157,11 @@ export function SearchDropdown({ isOpen, onClose }: SearchDropdownProps) {
                           Found {results.length} result{results.length !== 1 ? 's' : ''}
                         </p>
                       </div>
-                      {results.map((item, index) => (
-                        <motion.button
+                      {results.map((item) => (
+                        <button
                           key={`${item.media_type}-${item.id}`}
-                          className="flex items-center gap-3 p-3 bg-gray-800 hover:bg-gray-700 rounded-lg transition-all duration-200 text-left w-full group"
+                          className="flex items-center gap-3 p-3 bg-gray-800 hover:bg-gray-700 rounded-lg transition-all duration-200 text-left w-full group hover:scale-[1.01] active:scale-[0.98] animate-slideInLeft"
                           onClick={() => handleItemClick(item)}
-                          initial={{ opacity: 0, x: -20 }}
-                          animate={{ opacity: 1, x: 0 }}
-                          transition={{ delay: index * 0.03 }}
-                          whileHover={{ scale: 1.01, backgroundColor: 'rgba(55, 65, 81, 0.8)' }}
-                          whileTap={{ scale: 0.98 }}
                         >
                           <img
                             src={getItemImage(item)}
@@ -201,7 +184,7 @@ export function SearchDropdown({ isOpen, onClose }: SearchDropdownProps) {
                               </p>
                             )}
                           </div>
-                        </motion.button>
+                        </button>
                       ))}
                     </div>
                   )}
@@ -214,11 +197,10 @@ export function SearchDropdown({ isOpen, onClose }: SearchDropdownProps) {
                     </div>
                   )}
                 </div>
-              </motion.div>
+              </div>
             )}
           </>
         )}
-      </AnimatePresence>
     </div>
   )
 }

@@ -1,5 +1,3 @@
-import { motion } from 'framer-motion'
-
 import type { TVShow } from '../types/movie.types'
 import { getReleaseYear } from '../utils/dateUtils'
 import { getImageUrl } from '../utils/imageUtils'
@@ -13,11 +11,17 @@ interface TrendingTVCardProps {
 
 export function TrendingTVCard({ tvShow, onClick }: TrendingTVCardProps) {
   return (
-    <motion.div
-      className="bg-gray-800 rounded-lg overflow-hidden cursor-pointer hover:scale-105 transition-transform duration-300 w-[140px] sm:w-[160px]"
+    <div
+      className="bg-gray-800 rounded-lg overflow-hidden cursor-pointer hover:scale-105 active:scale-95 transition-transform duration-300 w-[140px] sm:w-[160px]"
       onClick={() => onClick?.(tvShow)}
-      whileHover={{ scale: 1.05 }}
-      whileTap={{ scale: 0.95 }}
+      role="button"
+      tabIndex={0}
+      onKeyDown={(e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault()
+          onClick?.(tvShow)
+        }
+      }}
     >
       <div className="relative overflow-hidden">
         <img
@@ -38,6 +42,6 @@ export function TrendingTVCard({ tvShow, onClick }: TrendingTVCardProps) {
           {getReleaseYear(tvShow.first_air_date)}
         </p>
       </div>
-    </motion.div>
+    </div>
   )
 }

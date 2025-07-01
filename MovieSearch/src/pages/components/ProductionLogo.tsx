@@ -1,4 +1,3 @@
-import { motion } from 'framer-motion'
 import { useNavigate } from 'react-router-dom'
 
 import type { ProductionCompany } from '../../features/movies/types/movie.types'
@@ -17,31 +16,21 @@ export function ProductionLogo({ company }: ProductionLogoProps) {
 
   if (!company.logo_path) {
     return (
-      <motion.button
+      <button
         onClick={handleClick}
-        className="flex items-center justify-center bg-gray-800 hover:bg-gray-700 rounded-lg p-4 min-h-16 transition-all duration-300 cursor-pointer group border border-transparent hover:border-gray-600"
-        initial={{ opacity: 0, scale: 0.9 }}
-        animate={{ opacity: 1, scale: 1 }}
-        transition={{ duration: 0.3 }}
-        whileHover={{ scale: 1.05 }}
-        whileTap={{ scale: 0.95 }}
+        className="flex items-center justify-center bg-gray-800 hover:bg-gray-700 rounded-lg p-4 min-h-16 transition-all duration-300 cursor-pointer group border border-transparent hover:border-gray-600 hover:scale-105 active:scale-95 animate-fadeInUp"
       >
         <span className="text-gray-400 group-hover:text-gray-300 text-sm font-medium text-center transition-colors">
           {company.name}
         </span>
-      </motion.button>
+      </button>
     )
   }
 
   return (
-    <motion.button
+    <button
       onClick={handleClick}
-      className="flex flex-col items-center bg-gray-800 hover:bg-gray-700 rounded-lg p-4 min-h-16 transition-all duration-300 cursor-pointer group border border-transparent hover:border-gray-600"
-      initial={{ opacity: 0, scale: 0.9 }}
-      animate={{ opacity: 1, scale: 1 }}
-      transition={{ duration: 0.3 }}
-      whileHover={{ scale: 1.05 }}
-      whileTap={{ scale: 0.95 }}
+      className="flex flex-col items-center bg-gray-800 hover:bg-gray-700 rounded-lg p-4 min-h-16 transition-all duration-300 cursor-pointer group border border-transparent hover:border-gray-600 hover:scale-105 active:scale-95 animate-fadeInUp"
     >
       <img
         src={getImageUrl(company.logo_path, 'W185')}
@@ -52,6 +41,6 @@ export function ProductionLogo({ company }: ProductionLogoProps) {
       <span className="text-gray-400 group-hover:text-gray-300 text-xs text-center transition-colors">
         {company.name}
       </span>
-    </motion.button>
+    </button>
   )
 }

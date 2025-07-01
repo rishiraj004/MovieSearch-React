@@ -1,4 +1,3 @@
-import { motion } from 'framer-motion'
 import { useState } from 'react'
 
 import type { Cast } from '../../features/movies/types/movie.types'
@@ -24,14 +23,17 @@ export function CastCard({ cast, onClick }: CastCardProps) {
   }
 
   return (
-    <motion.div
-      className="flex flex-col items-center cursor-pointer group"
+    <div
+      className="flex flex-col items-center cursor-pointer group hover:scale-105 active:scale-95 transition-all duration-300 animate-fadeInUp"
       onClick={() => onClick?.(cast)}
-      whileHover={{ scale: 1.05 }}
-      whileTap={{ scale: 0.95 }}
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.3 }}
+      role="button"
+      tabIndex={0}
+      onKeyDown={(e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault()
+          onClick?.(cast)
+        }
+      }}
     >
       <div className="bg-gray-800 rounded-full overflow-hidden w-16 h-16 sm:w-20 sm:h-20 mb-2 group-hover:ring-2 group-hover:ring-blue-400 transition-all duration-300">
         <img
@@ -50,6 +52,6 @@ export function CastCard({ cast, onClick }: CastCardProps) {
           {cast.character}
         </p>
       </div>
-    </motion.div>
+    </div>
   )
 }

@@ -1,4 +1,3 @@
-import { motion } from 'framer-motion'
 import { MapPin, User, Film, Tv, Camera } from 'lucide-react'
 import { useState, useEffect } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
@@ -70,15 +69,10 @@ export function PersonDetailPage() {
   if (loading) {
     return (
       <div className="min-h-screen bg-gray-900 text-white flex items-center justify-center">
-        <motion.div
-          className="text-center"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 0.5 }}
-        >
+        <div className="text-center animate-fadeIn">
           <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-purple-400 mx-auto mb-4"></div>
           <p className="text-gray-400">Loading person details...</p>
-        </motion.div>
+        </div>
       </div>
     )
   }
@@ -86,16 +80,11 @@ export function PersonDetailPage() {
   if (error || !person) {
     return (
       <div className="min-h-screen bg-gray-900 text-white flex items-center justify-center">
-        <motion.div
-          className="text-center"
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5 }}
-        >
+        <div className="text-center animate-fadeIn">
           <div className="text-6xl mb-4">👤</div>
           <h2 className="text-2xl font-bold mb-2">Person Not Found</h2>
           <p className="text-gray-400 mb-6">{error || 'The requested person could not be found.'}</p>
-        </motion.div>
+        </div>
       </div>
     )
   }
@@ -160,12 +149,7 @@ export function PersonDetailPage() {
   return (
     <div className="min-h-screen bg-gray-900 text-white">
       {/* Hero Section */}
-      <motion.section
-        className="px-4 sm:px-6 lg:px-8 py-8"
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.6 }}
-      >
+      <section className="px-4 sm:px-6 lg:px-8 py-8 animate-fadeIn">
         <div className="max-w-6xl mx-auto">
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
             {/* Profile Image */}
@@ -263,19 +247,18 @@ export function PersonDetailPage() {
                   </h2>
                   <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
                     {profileImages.map((image, index) => (
-                      <motion.div
+                      <button
                         key={index}
-                        className="aspect-[2/3] rounded-lg overflow-hidden bg-gray-800 cursor-pointer hover:ring-2 hover:ring-purple-400 transition-all"
+                        className="aspect-[2/3] rounded-lg overflow-hidden bg-gray-800 cursor-pointer hover:ring-2 hover:ring-purple-400 transition-all hover:scale-[1.05] active:scale-[0.95]"
                         onClick={() => setSelectedImageIndex(index)}
-                        whileHover={{ scale: 1.05 }}
-                        whileTap={{ scale: 0.95 }}
+                        aria-label={`View photo ${index + 1} of ${person.name}`}
                       >
                         <img
                           src={getImageUrl(image.file_path, 'W185')}
                           alt={`${person.name} ${index + 1}`}
                           className="w-full h-full object-cover"
                         />
-                      </motion.div>
+                      </button>
                     ))}
                   </div>
                 </div>
@@ -283,16 +266,11 @@ export function PersonDetailPage() {
             </div>
           </div>
         </div>
-      </motion.section>
+      </section>
 
       {/* Movie Credits */}
       {sortedMovieCredits.length > 0 && (
-        <motion.section
-          className="px-4 sm:px-6 lg:px-8 py-8"
-          initial={{ opacity: 0, y: 30 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, delay: 0.2 }}
-        >
+        <section className="px-4 sm:px-6 lg:px-8 py-8 animate-fadeInUp">
           <div className="max-w-6xl mx-auto">
             <h2 className="text-2xl sm:text-3xl font-bold mb-6 flex items-center gap-2">
               <Film className="w-6 h-6 text-blue-400" />
@@ -309,17 +287,12 @@ export function PersonDetailPage() {
               ))}
             </div>
           </div>
-        </motion.section>
+        </section>
       )}
 
       {/* TV Credits */}
       {sortedTVCredits.length > 0 && (
-        <motion.section
-          className="px-4 sm:px-6 lg:px-8 py-8"
-          initial={{ opacity: 0, y: 30 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, delay: 0.4 }}
-        >
+        <section className="px-4 sm:px-6 lg:px-8 py-8 animate-fadeInUp">
           <div className="max-w-6xl mx-auto">
             <h2 className="text-2xl sm:text-3xl font-bold mb-6 flex items-center gap-2">
               <Tv className="w-6 h-6 text-green-400" />
@@ -336,8 +309,9 @@ export function PersonDetailPage() {
               ))}
             </div>
           </div>
-        </motion.section>
+        </section>
       )}
     </div>
   )
 }
+

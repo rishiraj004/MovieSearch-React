@@ -1,4 +1,3 @@
-import { motion } from 'framer-motion'
 import { useCallback } from 'react'
 
 import { TVShowCard } from './TVShowCard'
@@ -17,8 +16,7 @@ interface HorizontalTVShowSectionProps {
 export function HorizontalTVShowSection({ 
   title, 
   tvShows, 
-  onTVShowClick, 
-  delay = 0.8 
+  onTVShowClick
 }: HorizontalTVShowSectionProps) {
   const { scrollRef, scrollLeft, scrollRight } = useHorizontalScroll()
 
@@ -61,11 +59,8 @@ export function HorizontalTVShowSection({
   }
 
   return (
-    <motion.section
-      className="mb-12"
-      initial={{ opacity: 0, y: 30 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.6, delay }}
+    <section
+      className="mb-12 animate-fadeInUp"
     >
       <h2 className="text-3xl font-bold mb-6">{title}</h2>
       
@@ -89,6 +84,6 @@ export function HorizontalTVShowSection({
           ))}
         </div>
       </div>
-    </motion.section>
+    </section>
   )
 }

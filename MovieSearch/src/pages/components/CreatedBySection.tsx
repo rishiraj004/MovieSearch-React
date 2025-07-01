@@ -1,4 +1,3 @@
-import { motion } from 'framer-motion'
 import { Lightbulb } from 'lucide-react'
 
 import type { CreatedBy } from '@/features/movies/types/movie.types'
@@ -13,11 +12,8 @@ export function CreatedBySection({ createdBy, onCreatorClick }: CreatedBySection
   if (createdBy.length === 0) return null
 
   return (
-    <motion.div
-      className="mb-8"
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.4 }}
+    <div
+      className="mb-8 animate-fadeInUp"
     >
       <div className="flex items-center gap-3 mb-4">
         <Lightbulb className="w-6 h-6 text-yellow-400" />
@@ -46,6 +42,6 @@ export function CreatedBySection({ createdBy, onCreatorClick }: CreatedBySection
           </button>
         ))}
       </div>
-    </motion.div>
+    </div>
   )
 }

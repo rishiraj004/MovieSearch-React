@@ -1,4 +1,3 @@
-import { motion } from 'framer-motion'
 import { ChevronDown, Play, ShoppingCart, Tv, Search } from 'lucide-react'
 import { useState, useEffect, useRef } from 'react'
 
@@ -94,11 +93,9 @@ export function TVShowWatchProvidersSection({ tvShowId }: TVShowWatchProvidersSe
         </div>
         <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-3">
           {providers.map((provider) => (
-            <motion.div
+            <div
               key={provider.provider_id}
-              className="bg-gray-800 rounded-lg p-3 border border-gray-700 hover:border-gray-600 transition-colors group cursor-pointer"
-              whileHover={{ scale: 1.02 }}
-              whileTap={{ scale: 0.98 }}
+              className="bg-gray-800 rounded-lg p-3 border border-gray-700 hover:border-gray-600 transition-all duration-200 group cursor-pointer hover:scale-[1.02] active:scale-[0.98]"
             >
               <div className="flex flex-col items-center gap-2">
                 <div className="w-12 h-12 rounded-lg overflow-hidden bg-white p-1">
@@ -112,7 +109,7 @@ export function TVShowWatchProvidersSection({ tvShowId }: TVShowWatchProvidersSe
                   {provider.provider_name}
                 </span>
               </div>
-            </motion.div>
+            </div>
           ))}
         </div>
       </div>
@@ -121,12 +118,7 @@ export function TVShowWatchProvidersSection({ tvShowId }: TVShowWatchProvidersSe
 
   if (loading) {
     return (
-      <motion.section
-        className="mb-8 sm:mb-12"
-        initial={{ opacity: 0, y: 30 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.6, delay: 0.6 }}
-      >
+      <section className="mb-8 sm:mb-12 animate-fadeIn">
         <h2 className="text-2xl sm:text-3xl font-bold mb-4 sm:mb-6 text-center sm:text-left">Where to Watch</h2>
         <div className="bg-gray-800 rounded-lg p-6 border border-gray-700">
           <div className="flex items-center justify-center">
@@ -134,18 +126,13 @@ export function TVShowWatchProvidersSection({ tvShowId }: TVShowWatchProvidersSe
             <span className="ml-3 text-gray-400">Loading watch providers...</span>
           </div>
         </div>
-      </motion.section>
+      </section>
     )
   }
 
   if (!currentCountryProviders) {
     return (
-      <motion.section
-        className="mb-8 sm:mb-12"
-        initial={{ opacity: 0, y: 30 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.6, delay: 0.6 }}
-      >
+      <section className="mb-8 sm:mb-12 animate-fadeIn">
         <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-4 sm:mb-6">
           <h2 className="text-2xl sm:text-3xl font-bold">Where to Watch</h2>
           
@@ -214,17 +201,12 @@ export function TVShowWatchProvidersSection({ tvShowId }: TVShowWatchProvidersSe
             <p className="text-sm mt-2">Try selecting a different country to see available streaming options.</p>
           </div>
         </div>
-      </motion.section>
+      </section>
     )
   }
 
   return (
-    <motion.section
-      className="mb-8 sm:mb-12"
-      initial={{ opacity: 0, y: 30 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.6, delay: 0.6 }}
-    >
+    <section className="mb-8 sm:mb-12 animate-fadeIn">
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-4 sm:mb-6">
         <h2 className="text-2xl sm:text-3xl font-bold">Where to Watch</h2>
         
@@ -326,6 +308,6 @@ export function TVShowWatchProvidersSection({ tvShowId }: TVShowWatchProvidersSe
           </div>
         )}
       </div>
-    </motion.section>
+    </section>
   )
 }

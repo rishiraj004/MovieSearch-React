@@ -26,9 +26,6 @@ export default defineConfig({
             }
             
             // Large UI libraries
-            if (id.includes('framer-motion')) {
-              return 'framer-motion'
-            }
             if (id.includes('lucide-react')) {
               return 'lucide-react'
             }

@@ -4,9 +4,9 @@ import { useNavigate } from 'react-router-dom'
 
 import { movieService } from '../services/movie.service'
 import type { Movie } from '../types/movie.types'
+import { getBackdropUrl } from '../utils/imageUtils'
 
 import { Button } from '@/shared/components/ui/button'
-import { API_CONFIG, IMAGE_SIZES } from '@/shared/constants/api.constants'
 
 interface HeroSectionProps {
   // Props are kept for compatibility but not used with OverlaySearchBar
@@ -22,7 +22,10 @@ export function HeroSection(_props: HeroSectionProps) {
   const [error, setError] = useState<string | null>(null)
   const [isInView, setIsInView] = useState(true)
   const [isPaused, setIsPaused] = useState(false)
-  const [isTransitioning, setIsTransitioning] = useState(false)
+
+  // Animation state for slide-fade effect
+  const [slideIndex, setSlideIndex] = useState(currentIndex)
+  const [isSliding, setIsSliding] = useState(false)
 
   const currentMovie = movies[currentIndex]
   const heroRef = useRef<HTMLDivElement>(null)
@@ -30,59 +33,43 @@ export function HeroSection(_props: HeroSectionProps) {
   const navigate = useNavigate()
 
   const nextMovie = useCallback(() => {
-    if (isTransitioning) return
-    setIsTransitioning(true)
-    
-    setTimeout(() => {
-      setCurrentIndex((prev) => (prev + 1) % movies.length)
-      setTimeout(() => setIsTransitioning(false), 100) // Allow content to settle
-    }, 150) // Half of transition duration
+    setCurrentIndex((prev) => (prev + 1) % movies.length)
     
     // Reset auto-carousel timer when manually navigating
     if (intervalRef.current) {
       clearInterval(intervalRef.current)
       intervalRef.current = setInterval(() => {
-        if (!isTransitioning) {
-          setIsTransitioning(true)
-          setTimeout(() => {
-            setCurrentIndex((prev) => (prev + 1) % movies.length)
-            setTimeout(() => setIsTransitioning(false), 100)
-          }, 150)
-        }
+        setCurrentIndex((prev) => (prev + 1) % movies.length)
       }, 3000)
     }
-  }, [movies.length, isTransitioning])
+  }, [movies.length])
 
   const prevMovie = useCallback(() => {
-    if (isTransitioning) return
-    setIsTransitioning(true)
-    
-    setTimeout(() => {
-      setCurrentIndex((prev) => (prev - 1 + movies.length) % movies.length)
-      setTimeout(() => setIsTransitioning(false), 100) // Allow content to settle
-    }, 150) // Half of transition duration
+    setCurrentIndex((prev) => (prev - 1 + movies.length) % movies.length)
     
     // Reset auto-carousel timer when manually navigating
     if (intervalRef.current) {
       clearInterval(intervalRef.current)
       intervalRef.current = setInterval(() => {
-        if (!isTransitioning) {
-          setIsTransitioning(true)
-          setTimeout(() => {
-            setCurrentIndex((prev) => (prev + 1) % movies.length)
-            setTimeout(() => setIsTransitioning(false), 100)
-          }, 150)
-        }
+        setCurrentIndex((prev) => (prev + 1) % movies.length)
       }, 3000)
     }
-  }, [movies.length, isTransitioning])
+  }, [movies.length])
 
   useEffect(() => {
     const fetchPopularMovies = async () => {
       try {
         setIsLoading(true)
         const response = await movieService.getPopularMovies(1)
-        setMovies(response.results.slice(0, 5)) // Get top 5 popular movies
+        const moviesList = response.results.slice(0, 5) // Get top 5 popular movies
+        setMovies(moviesList)
+        
+        // Preload all background images
+        moviesList.forEach((movie) => {
+          const img = new Image()
+          img.src = getBackdropUrl(movie.backdrop_path, 'ORIGINAL')
+        })
+        
         setError(null)
       } catch {
         setError('Failed to fetch movies')
@@ -96,14 +83,10 @@ export function HeroSection(_props: HeroSectionProps) {
 
   // Auto-carousel functionality
   useEffect(() => {
-    if (!movies.length || isPaused || !isInView || isTransitioning) return
+    if (!movies.length || isPaused || !isInView) return
 
     intervalRef.current = setInterval(() => {
-      setIsTransitioning(true)
-      setTimeout(() => {
-        setCurrentIndex((prev) => (prev + 1) % movies.length)
-        setTimeout(() => setIsTransitioning(false), 100)
-      }, 150)
+      setCurrentIndex((prev) => (prev + 1) % movies.length)
     }, 3000) // Change every 3 seconds
 
     return () => {
@@ -112,7 +95,7 @@ export function HeroSection(_props: HeroSectionProps) {
         intervalRef.current = null
       }
     }
-  }, [movies.length, isPaused, isInView, isTransitioning])
+  }, [movies.length, isPaused, isInView])
 
   // Intersection Observer to detect if hero section is in view
   useEffect(() => {
@@ -155,13 +138,10 @@ export function HeroSection(_props: HeroSectionProps) {
   }, [isInView, movies.length, nextMovie, prevMovie])
 
   const goToMovie = (index: number) => {
-    if (isTransitioning || index === currentIndex) return
-    setIsTransitioning(true)
+    if (index === currentIndex) return
     
-    setTimeout(() => {
-      setCurrentIndex(index)
-      setTimeout(() => setIsTransitioning(false), 100)
-    }, 150)
+    // Instant transition - no animation delay
+    setCurrentIndex(index)
     
     // Pause auto-carousel when manually selecting a movie
     setIsPaused(true)
@@ -212,15 +192,21 @@ export function HeroSection(_props: HeroSectionProps) {
     }
   }, [currentMovie, navigate])
 
-  const getBackdropUrl = (backdropPath: string | null) => {
-    if (!backdropPath) return '/api/placeholder/1920/1080'
-    return `${API_CONFIG.IMAGE_BASE_URL}/${IMAGE_SIZES.BACKDROP.W1280}${backdropPath}`
-  }
-
   const truncateText = (text: string, maxLength: number) => {
     if (text.length <= maxLength) return text
     return `${text.substring(0, maxLength)}...`
   }
+
+  // Animate slide-fade on movie change (only for image)
+  useEffect(() => {
+    if (currentIndex === slideIndex) return;
+    setIsSliding(true)
+    const timeout = setTimeout(() => {
+      setSlideIndex(currentIndex)
+      setIsSliding(false)
+    }, 400) // 400ms slide duration
+    return () => clearTimeout(timeout)
+  }, [currentIndex, slideIndex])
 
   if (isLoading) {
     return (
@@ -245,27 +231,36 @@ export function HeroSection(_props: HeroSectionProps) {
       onMouseEnter={() => setIsPaused(true)}
       onMouseLeave={() => setIsPaused(false)}
     >
-      {/* Background Image */}
-      <div className="absolute inset-0">
+      {/* Outgoing Background Image (fading out) */}
+      {isSliding && (
+        <div className="absolute inset-0 transition-opacity duration-400 ease-in-out opacity-0 z-0">
+          <img
+            key={movies[slideIndex]?.id}
+            src={getBackdropUrl(movies[slideIndex]?.backdrop_path, 'ORIGINAL')}
+            alt={movies[slideIndex]?.title}
+            className="w-full h-full object-cover"
+            style={{transition: 'opacity 0.4s ease-in-out'}}
+          />
+          <div className="absolute inset-0 bg-gradient-to-r from-black/80 via-black/40 to-transparent"></div>
+          <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent"></div>
+        </div>
+      )}
+      {/* Incoming Background Image (fading in) */}
+      <div className={`absolute inset-0 transition-opacity duration-400 ease-in-out opacity-100 z-0`}> 
         <img
-          src={getBackdropUrl(currentMovie.backdrop_path)}
+          key={currentMovie.id}
+          src={getBackdropUrl(currentMovie.backdrop_path, 'ORIGINAL')}
           alt={currentMovie.title}
-          className={`w-full h-full object-cover transition-all duration-300 ${
-            isTransitioning ? 'opacity-80 scale-105' : 'opacity-100 scale-100'
-          }`}
+          className="w-full h-full object-cover"
+          style={{transition: 'opacity 0.4s ease-in-out'}}
         />
-        {/* Dark overlay for better text readability */}
         <div className="absolute inset-0 bg-gradient-to-r from-black/80 via-black/40 to-transparent"></div>
         <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent"></div>
       </div>
 
       {/* Hero Content */}
-      <div className="relative z-10 flex flex-col justify-center h-full px-8 md:px-16 lg:px-24">
-        <div className={`max-w-2xl transition-all duration-300 ${
-          isTransitioning 
-            ? 'opacity-0 transform translate-x-8' 
-            : 'opacity-100 transform translate-x-0'
-        }`}>
+      <div className="relative z-10 flex flex-col justify-center h-full px-8 md:px-16 lg:px-24 pt-28 md:pt-32 lg:pt-20">
+        <div className="max-w-2xl">
           {/* Featured Badge */}
           <div className="inline-flex items-center bg-red-600 text-white px-3 py-1 rounded-full text-sm font-medium mb-4">
             Featured

@@ -1,4 +1,3 @@
-import { motion } from 'framer-motion'
 import { Star, Calendar, ExternalLink } from 'lucide-react'
 import { useState } from 'react'
 
@@ -37,11 +36,8 @@ export function ReviewCard({ review }: ReviewCardProps) {
   const shouldShowReadMore = review.content.length > 300
 
   return (
-    <motion.div
-      className="bg-gray-800 rounded-xl p-6 border border-gray-700 shadow-lg"
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.4 }}
+    <div
+      className="bg-gray-800 rounded-xl p-6 border border-gray-700 shadow-lg animate-fadeInUp transition-all duration-300"
     >
       {/* Review Header */}
       <div className="flex items-start gap-4 mb-4">
@@ -103,6 +99,6 @@ export function ReviewCard({ review }: ReviewCardProps) {
           </button>
         )}
       </div>
-    </motion.div>
+    </div>
   )
 }

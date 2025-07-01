@@ -1,5 +1,3 @@
-import { motion } from 'framer-motion'
-
 import type { Movie } from '../types/movie.types'
 import { getReleaseYear } from '../utils/dateUtils'
 import { getImageUrl } from '../utils/imageUtils'
@@ -13,11 +11,18 @@ interface TrendingMovieCardProps {
 
 export function TrendingMovieCard({ movie, onClick }: TrendingMovieCardProps) {
   return (
-    <motion.div
-      className="bg-gray-800 rounded-lg overflow-hidden cursor-pointer hover:scale-105 transition-transform duration-300 w-[140px] sm:w-[160px]"
+    <div
+      className="bg-gray-800 rounded-lg overflow-hidden cursor-pointer hover-scale transition-transform duration-300 w-[140px] sm:w-[160px] animate-fadeInUp"
       onClick={() => onClick?.(movie)}
-      whileHover={{ scale: 1.05 }}
-      whileTap={{ scale: 0.95 }}
+      onKeyDown={(e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault()
+          onClick?.(movie)
+        }
+      }}
+      role="button"
+      tabIndex={0}
+      aria-label={`View details for ${movie.title}`}
     >
       <div className="relative overflow-hidden">
         <img
@@ -38,6 +43,6 @@ export function TrendingMovieCard({ movie, onClick }: TrendingMovieCardProps) {
           {getReleaseYear(movie.release_date)}
         </p>
       </div>
-    </motion.div>
+    </div>
   )
 }
