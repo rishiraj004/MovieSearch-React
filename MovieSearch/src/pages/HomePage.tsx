@@ -7,6 +7,7 @@ import { Navbar } from '@/shared'
 const SearchResultsContainer = lazy(() => import('./components/SearchResultsContainer').then(module => ({ default: module.SearchResultsContainer })))
 const TrendingContainer = lazy(() => import('./components/TrendingContainer').then(module => ({ default: module.TrendingContainer })))
 const TopRatedContainer = lazy(() => import('./components/TopRatedContainer').then(module => ({ default: module.TopRatedContainer })))
+const UpcomingContainer = lazy(() => import('./components/UpcomingContainer').then(module => ({ default: module.UpcomingContainer })))
 const HeroSectionContainer = lazy(() => import('./components/HeroSectionContainer').then(module => ({ default: module.HeroSectionContainer })))
 
 // Simple loading component for sections
@@ -44,12 +45,21 @@ export function HomePage() {
     }
   }, [])
 
+  // Scroll to upcoming section
+  const scrollToUpcoming = useCallback(() => {
+    const upcomingElement = document.getElementById('upcoming-section')
+    if (upcomingElement) {
+      upcomingElement.scrollIntoView({ behavior: 'smooth' })
+    }
+  }, [])
+
   return (
     <>
       {/* Navbar - positioned in top left */}
       <Navbar 
         onTrendingClick={scrollToTrending}
         onTopRatedClick={scrollToTopRated}
+        onUpcomingClick={scrollToUpcoming}
       />
 
       {/* Hero Section */}
@@ -72,7 +82,14 @@ export function HomePage() {
           <TopRatedContainer />
         </Suspense>
       </div>
-      
+
+      {/* Upcoming Section */}
+      <div id="upcoming-section">
+        <Suspense fallback={<SectionLoader />}>
+          <UpcomingContainer />
+        </Suspense>
+      </div>
+
       {/* Search and Results Section */}
       <Suspense fallback={<SectionLoader />}>
         <SearchResultsContainer 

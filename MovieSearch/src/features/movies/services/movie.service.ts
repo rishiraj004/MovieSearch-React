@@ -236,6 +236,14 @@ class MovieService {
     return this.fetchFromApi<MovieSearchResponse>(endpoint)
   }
 
+  async getUpcomingMovies(
+    page = 1,
+    language = API_CONFIG.DEFAULT_LANGUAGE
+  ): Promise<MovieSearchResponse> {
+    const endpoint = `/movie/upcoming?page=${page}&language=${language}`
+    return this.fetchFromApi<MovieSearchResponse>(endpoint)
+  }
+
   async getTopRatedTVShows(
     page = 1,
     language = API_CONFIG.DEFAULT_LANGUAGE

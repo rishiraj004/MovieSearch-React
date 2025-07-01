@@ -48,7 +48,6 @@ export function Navbar({
     if (onUpcomingClick) {
       onUpcomingClick()
     }
-    // Upcoming functionality will be implemented later
     setIsMenuOpen(false)
   }
 
