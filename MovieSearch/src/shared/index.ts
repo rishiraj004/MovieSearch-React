@@ -1,5 +1,6 @@
 // Components
 export { Button } from './components/ui/button'
+export { Footer } from './components/Footer'
 
 // Utils
 export { cn } from './utils/cn'
