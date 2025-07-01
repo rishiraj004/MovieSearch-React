@@ -188,8 +188,7 @@ export function MovieDetailPage() {
             <img
               src={backdropUrl}
               alt={movie.title}
-              className="w-full h-full object-cover object-center"
-              style={{ objectPosition: '50% 25%' }}
+              className="w-full h-full object-cover object-center backdrop-positioned"
               onLoad={() => {
                 // Backdrop loaded successfully
               }}

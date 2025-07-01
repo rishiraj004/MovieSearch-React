@@ -1,4 +1,4 @@
-import type { MovieDetails, MovieSearchResponse, TVShowSearchResponse, PersonSearchResponse, MultiSearchResponse, Credits, MovieDetailsExtended, CollectionDetails, ProductionCompanyDetails, ReviewsResponse, VideosResponse, WatchProvidersResponse, Country, TVShowDetails, TVShowDetailsExtended, SeasonDetails, PersonDetails, PersonMovieCredits, PersonTVCredits, PersonImagesResponse, DiscoverMovieParams, DiscoverTVParams, GenresResponse } from '../types/movie.types'
+import type { MovieDetails, MovieSearchResponse, TVShowSearchResponse, PersonSearchResponse, MultiSearchResponse, Credits, MovieDetailsExtended, CollectionDetails, ProductionCompanyDetails, NetworkDetails, ReviewsResponse, VideosResponse, WatchProvidersResponse, Country, TVShowDetails, TVShowDetailsExtended, SeasonDetails, PersonDetails, PersonMovieCredits, PersonTVCredits, PersonImagesResponse, DiscoverMovieParams, DiscoverTVParams, GenresResponse } from '../types/movie.types'
 
 import { API_CONFIG } from '@/shared/constants/api.constants'
 import type { SearchParams } from '@/shared/types/common.types'
@@ -332,6 +332,11 @@ class MovieService {
   async getProductionCompany(companyId: number): Promise<ProductionCompanyDetails> {
     const endpoint = `/company/${companyId}`
     return this.fetchFromApi<ProductionCompanyDetails>(endpoint)
+  }
+
+  async getNetwork(networkId: number): Promise<NetworkDetails> {
+    const endpoint = `/network/${networkId}`
+    return this.fetchFromApi<NetworkDetails>(endpoint)
   }
 
   async getMovieReviews(

@@ -12,6 +12,7 @@ const MovieDetailPage = lazy(() => import('./pages/MovieDetailPage').then(module
 const TVShowDetailPage = lazy(() => import('./pages/TVShowDetailPage').then(module => ({ default: module.TVShowDetailPage })))
 const PersonDetailPage = lazy(() => import('./pages/PersonDetailPage').then(module => ({ default: module.PersonDetailPage })))
 const ProductionCompanyPage = lazy(() => import('./pages/ProductionCompanyPage').then(module => ({ default: module.ProductionCompanyPage })))
+const NetworkPage = lazy(() => import('./pages/NetworkPage').then(module => ({ default: module.NetworkPage })))
 const DiscoverPage = lazy(() => import('./pages/DiscoverPage').then(module => ({ default: module.DiscoverPage })))
 
 function App() {
@@ -27,6 +28,7 @@ function App() {
             <Route path="/tv/:id" element={<TVShowDetailPage />} />
             <Route path="/person/:id" element={<PersonDetailPage />} />
             <Route path="/company/:id" element={<ProductionCompanyPage />} />
+            <Route path="/network/:id" element={<NetworkPage />} />
           </Route>
         </Routes>
       </Suspense>

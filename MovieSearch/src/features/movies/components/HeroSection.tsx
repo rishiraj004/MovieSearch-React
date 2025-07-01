@@ -238,8 +238,7 @@ export function HeroSection(_props: HeroSectionProps) {
             key={movies[slideIndex]?.id}
             src={getBackdropUrl(movies[slideIndex]?.backdrop_path, 'ORIGINAL')}
             alt={movies[slideIndex]?.title}
-            className="w-full h-full object-cover"
-            style={{transition: 'opacity 0.4s ease-in-out'}}
+            className="w-full h-full object-cover transition-opacity-smooth"
           />
           <div className="absolute inset-0 bg-gradient-to-r from-black/80 via-black/40 to-transparent"></div>
           <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent"></div>
@@ -251,8 +250,7 @@ export function HeroSection(_props: HeroSectionProps) {
           key={currentMovie.id}
           src={getBackdropUrl(currentMovie.backdrop_path, 'ORIGINAL')}
           alt={currentMovie.title}
-          className="w-full h-full object-cover"
-          style={{transition: 'opacity 0.4s ease-in-out'}}
+          className="w-full h-full object-cover transition-opacity-smooth"
         />
         <div className="absolute inset-0 bg-gradient-to-r from-black/80 via-black/40 to-transparent"></div>
         <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent"></div>

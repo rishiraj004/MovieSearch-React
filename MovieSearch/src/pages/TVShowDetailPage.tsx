@@ -77,6 +77,10 @@ export function TVShowDetailPage() {
     navigate(`/person/${cast.id}`)
   }
 
+  const handleNetworkClick = (networkId: number) => {
+    navigate(`/network/${networkId}`)
+  }
+
   const handleTrailerClick = () => {
     // First, try to find an official trailer
     const officialTrailer = videos.find(video => 
@@ -402,7 +406,11 @@ export function TVShowDetailPage() {
             <h2 className="text-2xl sm:text-3xl font-bold mb-4 sm:mb-6 text-center sm:text-left">Networks</h2>
             <div className="flex flex-wrap justify-center sm:justify-start gap-4 sm:gap-6 lg:gap-8">
               {tvShow.networks.map((network) => (
-                <div key={network.id} className="bg-gray-800 rounded-lg p-4 border border-gray-700 hover:border-gray-600 transition-colors">
+                <button
+                  key={network.id}
+                  onClick={() => handleNetworkClick(network.id)}
+                  className="bg-gray-800 rounded-lg p-4 border border-gray-700 hover:border-gray-600 hover:bg-gray-750 transition-all duration-200 transform hover:scale-105 cursor-pointer"
+                >
                   {network.logo_path ? (
                     <img
                       src={getImageUrl(network.logo_path, 'W185')}
@@ -414,7 +422,7 @@ export function TVShowDetailPage() {
                       <span className="text-gray-300 text-sm font-medium">{network.name}</span>
                     </div>
                   )}
-                </div>
+                </button>
               ))}
             </div>
           </section>

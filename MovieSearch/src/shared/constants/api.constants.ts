@@ -9,6 +9,7 @@ export const API_CONFIG = {
 
 // Check if API key is available in development
 if (import.meta.env.DEV && !API_CONFIG.API_KEY) {
+  // eslint-disable-next-line no-console
   console.warn(
     'Warning: TMDB API key is missing. Make sure VITE_TMDB_API_READ_ACCESS_TOKEN is set in your .env file.'
   )

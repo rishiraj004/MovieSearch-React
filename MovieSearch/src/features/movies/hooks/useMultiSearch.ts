@@ -59,11 +59,13 @@ export function useMultiSearch(): UseMultiSearchReturn {
     }))
 
     try {
+      // eslint-disable-next-line no-console
       console.log('Searching for:', query.trim())
       const response: MultiSearchResponse = await movieService.searchMulti({
         query: query.trim(),
         page: 1,
       })
+      // eslint-disable-next-line no-console
       console.log('Search results:', response)
 
       setState(prev => ({
@@ -73,6 +75,7 @@ export function useMultiSearch(): UseMultiSearchReturn {
         hasSearched: true,
       }))
     } catch (error) {
+      // eslint-disable-next-line no-console
       console.error('Search error:', error)
       
       if (error instanceof Error && error.name === 'AbortError') {
