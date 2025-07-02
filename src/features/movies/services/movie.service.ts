@@ -51,8 +51,9 @@ class MovieService {
     this.apiKey = API_CONFIG.API_KEY;
     this.baseUrl = API_CONFIG.BASE_URL;
 
-    console.log('API KEY:', import.meta.env.VITE_TMDB_API_KEY);
-    
+    console.log('API KEY in prod:', import.meta.env.VITE_TMDB_API_READ_ACCESS_TOKEN);
+
+
     // Check if API key is available
     if (!this.apiKey) {
       // eslint-disable-next-line no-console
