@@ -23,12 +23,12 @@ class SimpleCache {
   get(key: string) {
     const item = this.cache.get(key)
     if (!item) return null
-    
+
     if (Date.now() - item.timestamp > item.ttl) {
       this.cache.delete(key)
       return null
     }
-    
+
     return item.data
   }
 
@@ -38,8 +38,8 @@ class SimpleCache {
 }
 
 class MovieService {
-  private baseUrl = API_CONFIG.BASE_URL
-  private apiKey = API_CONFIG.API_KEY
+  private apiKey: string;
+  private baseUrl: string;
   private defaultConfig: FetchConfig = {
     timeout: 8000, // Optimized timeout
     retries: 2, // Reduced retries for faster failure
@@ -48,6 +48,11 @@ class MovieService {
   private requestQueue = new Map<string, Promise<unknown>>() // Request deduplication
 
   constructor() {
+    this.apiKey = API_CONFIG.API_KEY;
+    this.baseUrl = API_CONFIG.BASE_URL;
+
+    console.log('API KEY:', import.meta.env.VITE_TMDB_API_KEY);
+    
     // Check if API key is available
     if (!this.apiKey) {
       // eslint-disable-next-line no-console
@@ -69,7 +74,7 @@ class MovieService {
         ...options,
         signal: controller.signal,
       }
-      
+
       const response = await fetch(url, optionsWithSignal)
       clearTimeout(id)
       return response
@@ -102,7 +107,7 @@ class MovieService {
     }
 
     const cacheKey = this.getCacheKey(endpoint)
-    
+
     // For search queries, don't use cache
     const isSearchQuery = endpoint.includes('search')
     if (!isSearchQuery) {
@@ -119,7 +124,7 @@ class MovieService {
     }
 
     const url = `${this.baseUrl}${endpoint}`
-    
+
     const options: RequestInit = {
       method,
       headers: {
@@ -174,15 +179,15 @@ class MovieService {
         }
 
         const data = await response.json()
-        
+
         // Cache successful responses with shorter TTL for search
         const cacheTTL = isSearchRequest ? 2 * 60 * 1000 : 5 * 60 * 1000 // 2 min for search, 5 min for others
         this.cache.set(cacheKey, data, cacheTTL)
-        
+
         return data
       } catch (error) {
         lastError = error instanceof Error ? error : new Error('Unknown error')
-        
+
         // Don't retry on timeout or client errors
         if (
           lastError.message.includes('timeout') ||
@@ -531,7 +536,7 @@ class MovieService {
         if (key === 'with_people' && value) {
           const peopleLogic = params.people_logic || 'or'
           const peopleIds = String(value)
-          
+
           if (peopleLogic === 'or') {
             // For OR logic (ANY), use pipe separator: 35742|42802
             acc['with_people'] = peopleIds.replace(/,/g, '|')
@@ -545,11 +550,11 @@ class MovieService {
         }
         return acc
       }, {} as Record<string, string>)
-    
+
     // Create the endpoint
     const queryString = new URLSearchParams(queryParams).toString()
     const endpoint = `/discover/movie?${queryString}`
-    
+
     return this.fetchFromApi<MovieSearchResponse>(endpoint)
   }
 
@@ -563,7 +568,7 @@ class MovieService {
         if (key === 'with_people' && value) {
           const peopleLogic = params.people_logic || 'or'
           const peopleIds = String(value)
-          
+
           if (peopleLogic === 'or') {
             // For OR logic (ANY), use pipe separator: 35742|42802
             acc['with_people'] = peopleIds.replace(/,/g, '|')
@@ -577,11 +582,11 @@ class MovieService {
         }
         return acc
       }, {} as Record<string, string>)
-    
+
     // Create the endpoint
     const queryString = new URLSearchParams(queryParams).toString()
     const endpoint = `/discover/tv?${queryString}`
-    
+
     return this.fetchFromApi<TVShowSearchResponse>(endpoint)
   }
 
