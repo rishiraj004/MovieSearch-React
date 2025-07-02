@@ -38,8 +38,8 @@ class SimpleCache {
 }
 
 class MovieService {
-  private apiKey: string;
-  private baseUrl: string;
+  private _apiKey: string | null = null;
+  private _baseUrl: string | null = null;
   private defaultConfig: FetchConfig = {
     timeout: 8000, // Optimized timeout
     retries: 2, // Reduced retries for faster failure
@@ -48,17 +48,44 @@ class MovieService {
   private requestQueue = new Map<string, Promise<unknown>>() // Request deduplication
 
   constructor() {
-    this.apiKey = API_CONFIG.API_KEY;
-    this.baseUrl = API_CONFIG.BASE_URL;
+    // Don't access API_CONFIG in constructor
+    // We'll initialize it lazily when needed
+  }
 
-    console.log('API KEY in prod:', import.meta.env.VITE_TMDB_API_READ_ACCESS_TOKEN);
+  // Lazy initialization of API configuration
+  private initApiConfig() {
+    if (this._apiKey === null || this._baseUrl === null) {
+      try {
+        // Only access API_CONFIG when this method is called
+        this._apiKey = API_CONFIG.API_KEY;
+        this._baseUrl = API_CONFIG.BASE_URL;
+        
+        // eslint-disable-next-line no-console
+        console.log('API KEY in prod:', import.meta.env.VITE_TMDB_API_READ_ACCESS_TOKEN);
 
-
-    // Check if API key is available
-    if (!this.apiKey) {
-      // eslint-disable-next-line no-console
-      console.warn('TMDb API key is missing. Search functionality will not work properly.')
+        // Check if API key is available
+        if (!this._apiKey) {
+          // eslint-disable-next-line no-console
+          console.warn('TMDb API key is missing. Search functionality will not work properly.')
+        }
+      } catch (error) {
+        // eslint-disable-next-line no-console
+        console.error('Failed to initialize API configuration:', error);
+        this._apiKey = '';
+        this._baseUrl = '';
+      }
     }
+  }
+
+  // Getters to ensure initialization happens before access
+  private get apiKey(): string {
+    this.initApiConfig();
+    return this._apiKey || '';
+  }
+
+  private get baseUrl(): string {
+    this.initApiConfig();
+    return this._baseUrl || '';
   }
 
   private async fetchWithTimeout(

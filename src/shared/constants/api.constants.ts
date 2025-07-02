@@ -1,18 +1,39 @@
+// Get environment variable with debugging
+const getApiKey = () => {
+  const apiKey = import.meta.env.VITE_TMDB_API_READ_ACCESS_TOKEN || '';
+  
+  // Debug in production builds
+  if (import.meta.env.PROD) {
+    // eslint-disable-next-line no-console
+    console.log('Production environment variables check:');
+    // eslint-disable-next-line no-console
+    console.log('Available env vars:', Object.keys(import.meta.env));
+    // eslint-disable-next-line no-console
+    console.log('VITE_TMDB_API_READ_ACCESS_TOKEN exists:', !!apiKey);
+  }
+  
+  return apiKey;
+};
+
 // API Configuration
 export const API_CONFIG = {
   BASE_URL: 'https://api.themoviedb.org/3',
   IMAGE_BASE_URL: 'https://image.tmdb.org/t/p',
-  API_KEY: import.meta.env.VITE_TMDB_API_READ_ACCESS_TOKEN || '',
+  API_KEY: getApiKey(),
   DEFAULT_LANGUAGE: 'en-US',
   DEFAULT_REGION: 'US',
 } as const
 
-// Check if API key is available in development
-if (import.meta.env.DEV && !API_CONFIG.API_KEY) {
+// Check if API key is available
+if (!API_CONFIG.API_KEY) {
   // eslint-disable-next-line no-console
   console.warn(
-    'Warning: TMDB API key is missing. Make sure VITE_TMDB_API_READ_ACCESS_TOKEN is set in your .env file.'
+    'Warning: TMDB API key is missing. Make sure VITE_TMDB_API_READ_ACCESS_TOKEN is set in your environment variables.'
   )
+  // eslint-disable-next-line no-console
+  console.log('Environment mode:', import.meta.env.MODE)
+  // eslint-disable-next-line no-console
+  console.log('Available environment variables:', Object.keys(import.meta.env).filter(key => key.startsWith('VITE_')))
 }
 
 // Image Sizes
