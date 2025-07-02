@@ -1,19 +1,41 @@
 import { Suspense, lazy } from 'react'
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'
+import { Route, BrowserRouter as Router, Routes } from 'react-router-dom'
 
 import { PageLoader, ScrollToTop } from './components'
 
 // Lazy load everything possible
-const MainLayout = lazy(() => import('./layouts/MainLayout').then(module => ({ default: module.MainLayout })))
-const HomePage = lazy(() => import('./pages/HomePage').then(module => ({ default: module.HomePage })))
+const MainLayout = lazy(() =>
+  import('./layouts/MainLayout').then(module => ({
+    default: module.MainLayout,
+  }))
+)
+const HomePage = lazy(() =>
+  import('./pages/HomePage').then(module => ({ default: module.HomePage }))
+)
 
 // Lazy load detail pages (they're not needed on initial load)
-const MovieDetailPage = lazy(() => import('./pages/MovieDetailPage').then(module => ({ default: module.MovieDetailPage })))
-const TVShowDetailPage = lazy(() => import('./pages/TVShowDetailPage').then(module => ({ default: module.TVShowDetailPage })))
-const PersonDetailPage = lazy(() => import('./pages/PersonDetailPage').then(module => ({ default: module.PersonDetailPage })))
-const ProductionCompanyPage = lazy(() => import('./pages/ProductionCompanyPage').then(module => ({ default: module.ProductionCompanyPage })))
-const NetworkPage = lazy(() => import('./pages/NetworkPage').then(module => ({ default: module.NetworkPage })))
-const DiscoverPage = lazy(() => import('./pages/DiscoverPage').then(module => ({ default: module.DiscoverPage })))
+const MovieDetailPage = lazy(() =>
+  import('./pages/MovieDetailPage').then(module => ({
+    default: module.MovieDetailPage,
+  }))
+)
+const TVShowDetailPage = lazy(() => import('./pages/TVShowDetailPage'))
+const PersonDetailPage = lazy(() => import('./pages/PersonDetailPage'))
+const ProductionCompanyPage = lazy(() =>
+  import('./pages/ProductionCompanyPage').then(module => ({
+    default: module.ProductionCompanyPage,
+  }))
+)
+const NetworkPage = lazy(() =>
+  import('./pages/NetworkPage').then(module => ({
+    default: module.NetworkPage,
+  }))
+)
+const DiscoverPage = lazy(() =>
+  import('./pages/DiscoverPage').then(module => ({
+    default: module.DiscoverPage,
+  }))
+)
 
 function App() {
   return (
