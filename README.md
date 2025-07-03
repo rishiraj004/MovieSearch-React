@@ -324,7 +324,6 @@ MovieSearch-React/
 │   │   │   ├── 📄 SearchResultsContainer.tsx # Search results wrapper
 │   │   │   ├── 📄 SearchResultsSection.tsx   # Search results
 │   │   │   ├── 📄 SeasonsSection.tsx      # TV seasons section
-│   │   │   ├── 📄 SelectedMovieDebug.tsx  # Debug component
 │   │   │   ├── 📄 TopRatedContainer.tsx   # Top rated wrapper
 │   │   │   ├── 📄 TrendingContainer.tsx   # Trending wrapper
 │   │   │   ├── � TVShowCard.tsx          # TV show card

@@ -2,7 +2,6 @@ import type { RefObject } from 'react'
 
 import { EmptySearchState } from './EmptySearchState'
 import { ErrorDisplay } from './ErrorDisplay'
-import { SelectedMovieDebug } from './SelectedMovieDebug'
 
 import { MovieGrid } from '@/features/movies/components/MovieGrid'
 import { SearchBar } from '@/features/movies/components/SearchBar'
@@ -15,7 +14,6 @@ interface SearchResultsSectionProps {
   isLoading: boolean
   error: string | null
   hasSearched: boolean
-  selectedMovie: Movie | null
   currentPage: number
   totalPages: number
   onSearch: (query: string) => void
@@ -32,7 +30,6 @@ export function SearchResultsSection({
   isLoading,
   error,
   hasSearched,
-  selectedMovie,
   currentPage,
   totalPages,
   onSearch,
@@ -40,7 +37,7 @@ export function SearchResultsSection({
   onSuggestionClick,
   onMovieClick,
   onClearSearch,
-  onLoadMore
+  onLoadMore,
 }: SearchResultsSectionProps) {
   const hasMorePages = currentPage < totalPages
 
@@ -134,11 +131,6 @@ export function SearchResultsSection({
         {/* Enhanced Empty State */}
         {movies.length === 0 && hasSearched && !isLoading && !error && (
           <EmptySearchState />
-        )}
-
-        {/* Enhanced Selected Movie Debug Info */}
-        {selectedMovie && (
-          <SelectedMovieDebug selectedMovie={selectedMovie} />
         )}
       </div>
     </div>

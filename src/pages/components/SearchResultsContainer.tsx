@@ -1,4 +1,4 @@
-import { useState, useCallback, useRef } from 'react'
+import { useCallback, useRef } from 'react'
 import { useNavigate } from 'react-router-dom'
 
 import type { Movie } from '../../features/movies/types/movie.types'
@@ -26,7 +26,6 @@ export function SearchResultsContainer({ showSearchSection }: SearchResultsConta
     hasSearched,
   } = useMovieSearch()
   
-  const [selectedMovie, setSelectedMovie] = useState<Movie | null>(null)
   const searchSectionRef = useRef<HTMLDivElement>(null)
 
   // Stable callback references to prevent SearchBar re-renders
@@ -44,7 +43,6 @@ export function SearchResultsContainer({ showSearchSection }: SearchResultsConta
   }, [searchMovies])
 
   const handleMovieClick = useCallback((movie: Movie) => {
-    setSelectedMovie(movie)
     // Navigate to movie detail page
     navigate(`/movie/${movie.id}`)
   }, [navigate])
@@ -64,7 +62,6 @@ export function SearchResultsContainer({ showSearchSection }: SearchResultsConta
       isLoading={isLoading}
       error={error}
       hasSearched={hasSearched}
-      selectedMovie={selectedMovie}
       currentPage={currentPage}
       totalPages={totalPages}
       onSearch={handleSearch}

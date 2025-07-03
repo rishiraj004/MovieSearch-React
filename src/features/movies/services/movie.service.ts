@@ -59,18 +59,13 @@ class MovieService {
         // Only access API_CONFIG when this method is called
         this._apiKey = API_CONFIG.API_KEY;
         this._baseUrl = API_CONFIG.BASE_URL;
-        
-        // eslint-disable-next-line no-console
-        console.log('API KEY in prod:', import.meta.env.VITE_TMDB_API_READ_ACCESS_TOKEN);
 
         // Check if API key is available
         if (!this._apiKey) {
-          // eslint-disable-next-line no-console
-          console.warn('TMDb API key is missing. Search functionality will not work properly.')
+          // API key is missing but we don't need to log this
         }
-      } catch (error) {
-        // eslint-disable-next-line no-console
-        console.error('Failed to initialize API configuration:', error);
+      } catch {
+        // Failed to initialize API configuration
         this._apiKey = '';
         this._baseUrl = '';
       }

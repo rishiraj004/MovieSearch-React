@@ -1,8 +1,3 @@
-// Debug environment variables in production
-console.log('ENV in prod:', import.meta.env);
-console.log('TMDB API Token:', import.meta.env.VITE_TMDB_API_READ_ACCESS_TOKEN);
-console.log('All VITE_ vars:', Object.keys(import.meta.env).filter(key => key.startsWith('VITE_')));
-
 import { Suspense, lazy } from 'react'
 import { Route, BrowserRouter as Router, Routes } from 'react-router-dom'
 

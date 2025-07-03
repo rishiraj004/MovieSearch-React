@@ -1,17 +1,6 @@
-// Get environment variable with debugging
+// Get environment variable
 const getApiKey = () => {
   const apiKey = import.meta.env.VITE_TMDB_API_READ_ACCESS_TOKEN || '';
-  
-  // Debug in production builds
-  if (import.meta.env.PROD) {
-    // eslint-disable-next-line no-console
-    console.log('Production environment variables check:');
-    // eslint-disable-next-line no-console
-    console.log('Available env vars:', Object.keys(import.meta.env));
-    // eslint-disable-next-line no-console
-    console.log('VITE_TMDB_API_READ_ACCESS_TOKEN exists:', !!apiKey);
-  }
-  
   return apiKey;
 };
 
@@ -23,18 +12,6 @@ export const API_CONFIG = {
   DEFAULT_LANGUAGE: 'en-US',
   DEFAULT_REGION: 'US',
 } as const
-
-// Check if API key is available
-if (!API_CONFIG.API_KEY) {
-  // eslint-disable-next-line no-console
-  console.warn(
-    'Warning: TMDB API key is missing. Make sure VITE_TMDB_API_READ_ACCESS_TOKEN is set in your environment variables.'
-  )
-  // eslint-disable-next-line no-console
-  console.log('Environment mode:', import.meta.env.MODE)
-  // eslint-disable-next-line no-console
-  console.log('Available environment variables:', Object.keys(import.meta.env).filter(key => key.startsWith('VITE_')))
-}
 
 // Image Sizes
 export const IMAGE_SIZES = {
