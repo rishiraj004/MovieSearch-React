@@ -1,3 +1,4 @@
+import { Camera, Edit, Megaphone } from 'lucide-react'
 import { useNavigate, useParams } from 'react-router-dom'
 
 import {
@@ -10,6 +11,7 @@ import {
   ReviewsSection,
   SeasonsSection,
   TVShowDetailsGrid,
+  TVShowWatchProvidersSection,
   VideosSection,
 } from './components'
 import { TVHero, TVNetworks, TVOverview } from './components/tv-detail'
@@ -18,7 +20,6 @@ import { useTVShowTrailer } from './hooks/useTVShowTrailer'
 
 import type { Cast, TVShow } from '@/features/movies/types/movie.types'
 import { filterCrewByJob } from '@/features/movies/utils/crewUtils'
-import { WatchProviders } from '@/shared/components/watch-providers'
 
 export default function TVShowDetailPage() {
   const { id } = useParams<{ id: string }>()
@@ -58,8 +59,8 @@ export default function TVShowDetailPage() {
   if (loading) {
     return (
       <div className="min-h-screen bg-gray-900 text-white flex items-center justify-center">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-400 mx-auto mb-4"></div>
+        <div className="text-center animate-fadeIn">
+          <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-blue-400 mx-auto mb-4"></div>
           <p className="text-gray-400">Loading TV show details...</p>
         </div>
       </div>
@@ -69,12 +70,15 @@ export default function TVShowDetailPage() {
   if (error || !tvShow) {
     return (
       <div className="min-h-screen bg-gray-900 text-white flex items-center justify-center">
-        <div className="text-center">
-          <h1 className="text-2xl font-bold mb-4">Error</h1>
-          <p className="text-gray-400 mb-6">{error || 'TV show not found'}</p>
+        <div className="text-center animate-fadeIn">
+          <div className="text-6xl mb-4">📺</div>
+          <h2 className="text-2xl font-bold mb-2">TV Show Not Found</h2>
+          <p className="text-gray-400 mb-6">
+            {error || 'The requested TV show could not be found.'}
+          </p>
           <button
             onClick={handleBack}
-            className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-lg transition-colors"
+            className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-lg transition-colors inline-flex items-center gap-2"
           >
             Go Back
           </button>
@@ -83,12 +87,12 @@ export default function TVShowDetailPage() {
     )
   }
 
-  // Get cast and crew data
-  const cast = credits?.cast || []
-  const crew = credits?.crew || []
+  const topCast = credits?.cast.slice(0, 10) || []
 
-  // Filter crew by specific roles
-  const { directors, writers, producers } = filterCrewByJob(crew)
+  // Get filtered crew members
+  const { directors, producers, writers } = credits
+    ? filterCrewByJob(credits.crew)
+    : { directors: [], producers: [], writers: [] }
 
   return (
     <div className="min-h-screen bg-gray-900 text-white">
@@ -102,152 +106,160 @@ export default function TVShowDetailPage() {
 
       {/* Main Content */}
       <div className="container mx-auto px-4 sm:px-6 py-2 sm:py-4">
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 sm:gap-8">
-          {/* Main Content */}
-          <div className="lg:col-span-2 space-y-6 sm:space-y-8">
-            {/* TV Show Overview - Using modular component */}
-            <TVOverview overview={tvShow.overview || ''} />
+        {/* Overview Section - Using modular component */}
+        <TVOverview overview={tvShow.overview || ''} />
 
-            {/* Networks - Using modular component */}
-            <TVNetworks
-              networks={tvShow.networks}
-              onNetworkClick={handleNetworkClick}
-            />
+        {/* TV Show Details Grid */}
+        <section className="mb-8 sm:mb-12 animate-fadeIn">
+          <h2 className="text-2xl sm:text-3xl font-bold mb-4 sm:mb-6 text-center sm:text-left">
+            TV Show Details
+          </h2>
+          <TVShowDetailsGrid tvShow={tvShow} />
+        </section>
 
-            {/* Created By Section */}
-            {tvShow.created_by && tvShow.created_by.length > 0 && (
-              <CreatedBySection createdBy={tvShow.created_by} />
-            )}
-
-            {/* Crew Section */}
-            {(directors.length > 0 ||
-              writers.length > 0 ||
-              producers.length > 0) && (
-              <section className="mb-8 sm:mb-12 animate-fadeIn">
-                <h2 className="text-2xl sm:text-3xl font-bold mb-6 sm:mb-8 text-center sm:text-left">
-                  Key Crew
-                </h2>
-                <div className="space-y-4 sm:space-y-6">
-                  {directors.length > 0 && (
-                    <CrewSection
-                      title="Directors"
-                      crew={directors}
-                      color="blue"
-                      onPersonClick={person => navigate(`/person/${person.id}`)}
-                    />
-                  )}
-                  {producers.length > 0 && (
-                    <CrewSection
-                      title="Producers"
-                      crew={producers}
-                      color="purple"
-                      onPersonClick={person => navigate(`/person/${person.id}`)}
-                    />
-                  )}
-                  {writers.length > 0 && (
-                    <CrewSection
-                      title="Writers"
-                      crew={writers}
-                      color="green"
-                      onPersonClick={person => navigate(`/person/${person.id}`)}
-                    />
-                  )}
-                </div>
-              </section>
-            )}
-
-            {/* Cast & Crew Dropdown */}
-            {(cast.length > 0 || crew.length > 0) && (
-              <CastCrewDropdown
-                cast={cast}
-                crew={crew}
-                onPersonClick={person => {
-                  if ('character' in person) {
-                    // It's a cast member
-                    handleCastClick(person as Cast)
-                  } else {
-                    // It's a crew member, navigate to person page
+        {/* Cast Section */}
+        {topCast.length > 0 && (
+          <section className="mb-8 sm:mb-12 animate-fadeIn">
+            <div className="flex flex-col sm:flex-row items-center sm:items-center justify-between gap-4 sm:gap-0 mb-4 sm:mb-6">
+              <h2 className="text-2xl sm:text-3xl font-bold text-center sm:text-left">
+                Cast
+              </h2>
+              {credits && (
+                <CastCrewDropdown
+                  cast={credits.cast}
+                  crew={credits.crew}
+                  onPersonClick={person => {
                     navigate(`/person/${person.id}`)
-                  }
-                }}
-              />
-            )}
-
-            {/* Seasons */}
-            {tvShow.seasons && tvShow.seasons.length > 0 && (
-              <SeasonsSection seasons={tvShow.seasons} tvShowId={tvShow.id} />
-            )}
-
-            {/* Videos Section */}
-            {videos && videos.length > 0 && <VideosSection videos={videos} />}
-
-            {/* Reviews Section */}
-            {reviews && reviews.length > 0 && (
-              <ReviewsSection reviews={reviews} totalReviews={reviewsTotal} />
-            )}
-          </div>
-
-          {/* Sidebar */}
-          <div className="space-y-6 sm:space-y-8">
-            {/* TV Show Details Grid */}
-            <TVShowDetailsGrid tvShow={tvShow} />
-
-            {/* Watch Providers */}
-            <WatchProviders id={tvShow.id} type="tv" />
-
-            {/* Featured Cast */}
-            {cast.length > 0 && (
-              <section>
-                <h2 className="text-xl sm:text-2xl font-bold mb-4 sm:mb-6">
-                  Featured Cast
-                </h2>
-                <div className="space-y-3">
-                  {cast.slice(0, 8).map(actor => (
-                    <CastCard
-                      key={actor.id}
-                      cast={actor}
-                      onClick={() => handleCastClick(actor)}
-                    />
-                  ))}
-                </div>
-              </section>
-            )}
-
-            {/* Production Logo */}
-            {tvShow.production_companies &&
-              tvShow.production_companies.length > 0 && (
-                <section>
-                  <h2 className="text-xl sm:text-2xl font-bold mb-4 sm:mb-6">
-                    Production Companies
-                  </h2>
-                  <div className="space-y-3">
-                    {tvShow.production_companies.map(company => (
-                      <ProductionLogo key={company.id} company={company} />
-                    ))}
-                  </div>
-                </section>
+                  }}
+                />
               )}
-          </div>
-        </div>
+            </div>
+            <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 lg:grid-cols-8 xl:grid-cols-10 gap-3 sm:gap-4 lg:gap-6">
+              {topCast.map(actor => (
+                <CastCard
+                  key={actor.id}
+                  cast={actor}
+                  onClick={handleCastClick}
+                />
+              ))}
+            </div>
+          </section>
+        )}
 
-        {/* Recommendations and Similar TV Shows */}
-        <div className="mt-8 sm:mt-12 space-y-8 sm:space-y-12">
-          {recommendations && recommendations.length > 0 && (
-            <HorizontalTVShowSection
-              title="Recommended TV Shows"
-              tvShows={recommendations}
-              onTVShowClick={handleTVShowClick}
-            />
+        {/* Crew Section */}
+        {credits &&
+          (directors.length > 0 ||
+            producers.length > 0 ||
+            writers.length > 0) && (
+            <section className="mb-8 sm:mb-12 animate-fadeIn">
+              <h2 className="text-2xl sm:text-3xl font-bold mb-6 sm:mb-8 text-center sm:text-left">
+                Key Crew
+              </h2>
+              <div className="space-y-4 sm:space-y-6">
+                <CrewSection
+                  title="Directors"
+                  crew={directors}
+                  icon={Camera}
+                  color="blue"
+                  onPersonClick={person => navigate(`/person/${person.id}`)}
+                />
+                <CrewSection
+                  title="Producers"
+                  crew={producers}
+                  icon={Megaphone}
+                  color="purple"
+                  onPersonClick={person => navigate(`/person/${person.id}`)}
+                />
+                <CrewSection
+                  title="Writers"
+                  crew={writers}
+                  icon={Edit}
+                  color="green"
+                  onPersonClick={person => navigate(`/person/${person.id}`)}
+                />
+              </div>
+            </section>
           )}
 
-          {similarTVShows && similarTVShows.length > 0 && (
-            <HorizontalTVShowSection
-              title="Similar TV Shows"
-              tvShows={similarTVShows}
-              onTVShowClick={handleTVShowClick}
-            />
+        {/* Videos Section */}
+        <VideosSection
+          videos={videos}
+          onVideoClick={video => {
+            // Open video in new tab
+            const videoUrl =
+              video.site === 'YouTube'
+                ? `https://www.youtube.com/watch?v=${video.key}`
+                : '#'
+            window.open(videoUrl, '_blank')
+          }}
+        />
+
+        {/* Seasons Section */}
+        {tvShow.seasons && tvShow.seasons.length > 0 && (
+          <SeasonsSection seasons={tvShow.seasons} tvShowId={tvShow.id} />
+        )}
+
+        {/* Production Companies */}
+        {tvShow.production_companies &&
+          tvShow.production_companies.length > 0 && (
+            <section className="mb-8 sm:mb-12 animate-fadeIn">
+              <h2 className="text-2xl sm:text-3xl font-bold mb-4 sm:mb-6 text-center sm:text-left">
+                Production Companies
+              </h2>
+              <div className="flex flex-wrap justify-center sm:justify-start gap-4 sm:gap-6 lg:gap-8">
+                {tvShow.production_companies.map(company => (
+                  <ProductionLogo key={company.id} company={company} />
+                ))}
+              </div>
+            </section>
           )}
-        </div>
+
+        {/* Networks Section - Using modular component */}
+        {tvShow.networks && tvShow.networks.length > 0 && (
+          <TVNetworks
+            networks={tvShow.networks}
+            onNetworkClick={handleNetworkClick}
+          />
+        )}
+
+        {/* Watch Providers Section */}
+        <TVShowWatchProvidersSection tvShowId={parseInt(id!, 10)} />
+
+        {/* Reviews Section */}
+        {reviews.length > 0 && (
+          <section className="mb-12 animate-fadeIn">
+            <ReviewsSection reviews={reviews} totalReviews={reviewsTotal} />
+          </section>
+        )}
+
+        {/* Created By Section */}
+        {tvShow.created_by && tvShow.created_by.length > 0 && (
+          <section className="mb-8 sm:mb-12 animate-fadeIn">
+            <h2 className="text-2xl sm:text-3xl font-bold mb-4 sm:mb-6 text-center sm:text-left">
+              Created By
+            </h2>
+            <CreatedBySection
+              createdBy={tvShow.created_by}
+              onCreatorClick={(creator) => navigate(`/person/${creator.id}`)}
+            />
+          </section>
+        )}
+
+        {/* Recommendations - Horizontal Scrollable */}
+        <HorizontalTVShowSection
+          title="You May Also Like"
+          tvShows={recommendations}
+          onTVShowClick={handleTVShowClick}
+          delay={0.8}
+        />
+
+        {/* Similar TV Shows - Horizontal Scrollable */}
+        <HorizontalTVShowSection
+          title="Similar TV Shows"
+          tvShows={similarTVShows}
+          onTVShowClick={handleTVShowClick}
+          delay={0.9}
+        />
       </div>
     </div>
   )
