@@ -109,17 +109,6 @@ export function MovieDetailPage() {
         {/* Overview Section - Using our new component */}
         <MovieOverview overview={movie.overview} />
 
-        {/* Collection Section - Using our new component */}
-        {movie.belongs_to_collection && (
-          <MovieCollectionSection
-            movie={movie}
-            collection={collection}
-            loadingCollection={loadingCollection}
-            onFetchCollection={fetchCollection}
-            onMovieClick={handleMovieClick}
-          />
-        )}
-
         {/* Movie Details Grid */}
         <section className="mb-8 sm:mb-12 animate-fadeIn">
           <h2 className="text-2xl sm:text-3xl font-bold mb-4 sm:mb-6 text-center sm:text-left">
@@ -205,14 +194,15 @@ export function MovieDetailPage() {
           }}
         />
 
-        {/* Watch Providers Section */}
-        <WatchProvidersSection movieId={parseInt(id!, 10)} />
-
-        {/* Reviews Section */}
-        {reviews.length > 0 && (
-          <section className="mb-12 animate-fadeIn">
-            <ReviewsSection reviews={reviews} totalReviews={reviewsTotal} />
-          </section>
+        {/* Collection Section - Using our new component */}
+        {movie.belongs_to_collection && (
+          <MovieCollectionSection
+            movie={movie}
+            collection={collection}
+            loadingCollection={loadingCollection}
+            onFetchCollection={fetchCollection}
+            onMovieClick={handleMovieClick}
+          />
         )}
 
         {/* Production Companies */}
@@ -229,6 +219,16 @@ export function MovieDetailPage() {
               </div>
             </section>
           )}
+
+        {/* Watch Providers Section */}
+        <WatchProvidersSection movieId={parseInt(id!, 10)} />
+
+        {/* Reviews Section */}
+        {reviews.length > 0 && (
+          <section className="mb-12 animate-fadeIn">
+            <ReviewsSection reviews={reviews} totalReviews={reviewsTotal} />
+          </section>
+        )}
 
         {/* Recommendations - Horizontal Scrollable */}
         <HorizontalMovieSection
