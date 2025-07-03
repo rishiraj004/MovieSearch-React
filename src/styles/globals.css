@@ -65,21 +65,75 @@
   animation: slideInLeft 0.4s ease-out;
 }
 
-/* Hover effects */
-.hover-scale {
-  transition: transform 0.2s ease-in-out;
+/* Animation delays */
+.animate-delay-200 {
+  animation-delay: 0.2s;
 }
 
-.hover-scale:hover {
-  transform: scale(1.05);
+.animate-delay-400 {
+  animation-delay: 0.4s;
 }
 
-.hover-scale-sm {
-  transition: transform 0.2s ease-in-out;
+.animate-delay-600 {
+  animation-delay: 0.6s;
 }
 
-.hover-scale-sm:hover {
+/* Horizontal scroll container */
+.horizontal-scroll-container {
+  width: max-content;
+}
+
+/* Enhanced hover effects for person detail page */
+.profile-image-container {
+  transition: all 0.3s ease-in-out;
+}
+
+.profile-image-container:hover {
   transform: scale(1.02);
+}
+
+.info-card-hover {
+  transition: all 0.2s ease-in-out;
+}
+
+.info-card-hover:hover {
+  background: rgba(255, 255, 255, 0.15);
+  transform: translateY(-2px);
+}
+
+.photo-gallery-item {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.photo-gallery-item:hover {
+  transform: scale(1.05) translateY(-4px);
+}
+
+.back-button-hover {
+  transition: all 0.2s ease-in-out;
+}
+
+/* Smooth horizontal scrolling */
+.overflow-x-auto {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(255, 255, 255, 0.3) transparent;
+}
+
+.overflow-x-auto::-webkit-scrollbar {
+  height: 6px;
+}
+
+.overflow-x-auto::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.overflow-x-auto::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.3);
+  border-radius: 3px;
+}
+
+.overflow-x-auto::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.5);
 }
 
 /* Network/Company hover effects */

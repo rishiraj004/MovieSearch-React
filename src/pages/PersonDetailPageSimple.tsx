@@ -9,7 +9,7 @@ import { movieService } from '@/features/movies/services/movie.service'
 import type { PersonDetails, PersonMovieCredits, PersonTVCredits, PersonImagesResponse, Movie, TVShow } from '@/features/movies/types/movie.types'
 import { getPersonImageUrl, getImageUrl } from '@/features/movies/utils/imageUtils'
 
-export function PersonDetailPage() {
+export function PersonDetailPageSimple() {
   const { id } = useParams<{ id: string }>()
   const navigate = useNavigate()
   const [person, setPerson] = useState<PersonDetails | null>(null)
@@ -318,5 +318,3 @@ export function PersonDetailPage() {
     </div>
   )
 }
-
-export default PersonDetailPage
