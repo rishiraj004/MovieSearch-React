@@ -54,7 +54,20 @@ export function DiscoverPage() {
   // Filter visibility
   const [showFilters, setShowFilters] = useState(false)
   const [showFilterDropdown, setShowFilterDropdown] = useState(false)
+  const [isMobile, setIsMobile] = useState(false)
   const filterDropdownRef = useRef<HTMLDivElement>(null)
+
+  // Check if we're on mobile screen
+  useEffect(() => {
+    const checkScreenSize = () => {
+      setIsMobile(window.innerWidth < 1024) // lg breakpoint
+    }
+
+    checkScreenSize()
+    window.addEventListener('resize', checkScreenSize)
+
+    return () => window.removeEventListener('resize', checkScreenSize)
+  }, [])
 
   // Genre data
   const [movieGenres, setMovieGenres] = useState<Genre[]>([])
@@ -286,6 +299,12 @@ export function DiscoverPage() {
               filters={filters}
               genres={getCurrentGenres()}
               onFilterChange={handleFilterChange}
+              isMobile={isMobile} // Pass the mobile state
+              onApplyFilters={() => {
+                setShowFilters(false) // Hide filter panel when Apply is clicked
+                // Optional: You could add a toast notification here
+                // toast.success('Filters applied!')
+              }}
             />
           </div>
 

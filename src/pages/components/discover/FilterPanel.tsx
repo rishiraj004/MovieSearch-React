@@ -1,4 +1,4 @@
-import { ChevronDown, ChevronUp, X, Search, Users } from 'lucide-react'
+import { ChevronDown, ChevronUp, X, Search, Users, Filter } from 'lucide-react'
 import { useState, useRef, useEffect } from 'react'
 
 import { movieService } from '@/features/movies/services/movie.service'
@@ -49,6 +49,9 @@ interface FilterPanelProps {
   filters: DiscoverMovieParams | DiscoverTVParams
   genres: Genre[]
   onFilterChange: (filters: Partial<DiscoverMovieParams | DiscoverTVParams>) => void
+  // Mobile filter panel props
+  isMobile?: boolean
+  onApplyFilters?: () => void
 }
 
 interface FilterSectionProps {
@@ -75,10 +78,10 @@ function FilterSection({ title, children, initialExpanded = true }: FilterSectio
   )
 }
 
-export function FilterPanel({ mediaType, filters, genres, onFilterChange }: FilterPanelProps) {
+export function FilterPanel({ mediaType, filters, genres, onFilterChange, isMobile = false, onApplyFilters }: FilterPanelProps) {
   // Local state for selected people (since we need full Person objects, not just IDs)
   const [selectedPeople, setSelectedPeople] = useState<Person[]>([])
-  
+
   // Sort options
   const sortOptions = [
     { value: 'popularity.desc', label: 'Popularity ↓' },
@@ -147,13 +150,13 @@ export function FilterPanel({ mediaType, filters, genres, onFilterChange }: Filt
   const handleGenreChange = (genreId: number) => {
     const currentGenres = filters.with_genres ? filters.with_genres.split(',').map(Number) : []
     let newGenres: number[]
-    
+
     if (currentGenres.includes(genreId)) {
       newGenres = currentGenres.filter(id => id !== genreId)
     } else {
       newGenres = [...currentGenres, genreId]
     }
-    
+
     onFilterChange({
       with_genres: newGenres.length > 0 ? newGenres.join(',') : ''
     })
@@ -355,7 +358,7 @@ export function FilterPanel({ mediaType, filters, genres, onFilterChange }: Filt
   return (
     <div className="bg-gray-800 rounded-lg p-4 sticky top-4">
       <h3 className="text-xl font-bold mb-4 text-white">Filters</h3>
-      
+
       <FilterSection title="Sort By">
         <select
           id="sort-by"
@@ -369,7 +372,7 @@ export function FilterPanel({ mediaType, filters, genres, onFilterChange }: Filt
           ))}
         </select>
       </FilterSection>
-      
+
       <FilterSection title="People">
         <PeopleSearch
           selectedPeople={selectedPeople}
@@ -383,13 +386,13 @@ export function FilterPanel({ mediaType, filters, genres, onFilterChange }: Filt
           peopleLogic={(filters.people_logic as 'and' | 'or') || 'or'}
         />
       </FilterSection>
-      
+
       <FilterSection title="Genres">
         <div className="flex flex-wrap gap-2">
           {genres.map(genre => {
-            const isSelected = filters.with_genres ? 
+            const isSelected = filters.with_genres ?
               filters.with_genres.split(',').includes(genre.id.toString()) : false
-              
+
             return (
               <button
                 key={genre.id}
@@ -407,7 +410,7 @@ export function FilterPanel({ mediaType, filters, genres, onFilterChange }: Filt
           })}
         </div>
       </FilterSection>
-      
+
       <FilterSection title="Rating">
         <div className="space-y-3">
           <div>
@@ -424,7 +427,7 @@ export function FilterPanel({ mediaType, filters, genres, onFilterChange }: Filt
               ))}
             </select>
           </div>
-          
+
           <div>
             <label htmlFor="min-votes" className="text-sm text-gray-400 mb-1 block">Minimum Vote Count</label>
             <select
@@ -441,7 +444,7 @@ export function FilterPanel({ mediaType, filters, genres, onFilterChange }: Filt
           </div>
         </div>
       </FilterSection>
-      
+
       <FilterSection title="Language">
         <select
           id="language"
@@ -455,7 +458,7 @@ export function FilterPanel({ mediaType, filters, genres, onFilterChange }: Filt
           ))}
         </select>
       </FilterSection>
-      
+
       <FilterSection title="Year">
         <select
           id="year"
@@ -469,7 +472,7 @@ export function FilterPanel({ mediaType, filters, genres, onFilterChange }: Filt
           ))}
         </select>
       </FilterSection>
-      
+
       <FilterSection title="Release Date Range">
         <div className="space-y-3">
           <div>
@@ -479,8 +482,8 @@ export function FilterPanel({ mediaType, filters, genres, onFilterChange }: Filt
             <input
               id="date-after"
               type="date"
-              value={mediaType === 'movie' 
-                ? (filters['primary_release_date.gte']?.toString() || '') 
+              value={mediaType === 'movie'
+                ? (filters['primary_release_date.gte']?.toString() || '')
                 : (filters['first_air_date.gte']?.toString() || '')}
               onChange={(e) => handleDateRangeChange(
                 mediaType === 'movie' ? 'primary_release_date.gte' : 'first_air_date.gte',
@@ -490,7 +493,7 @@ export function FilterPanel({ mediaType, filters, genres, onFilterChange }: Filt
               aria-label={mediaType === 'movie' ? 'Released After' : 'First Aired After'}
             />
           </div>
-          
+
           <div>
             <label htmlFor="date-before" className="text-sm text-gray-400 mb-1 block">
               {mediaType === 'movie' ? 'Released Before' : 'First Aired Before'}
@@ -498,8 +501,8 @@ export function FilterPanel({ mediaType, filters, genres, onFilterChange }: Filt
             <input
               id="date-before"
               type="date"
-              value={mediaType === 'movie' 
-                ? (filters['primary_release_date.lte']?.toString() || '') 
+              value={mediaType === 'movie'
+                ? (filters['primary_release_date.lte']?.toString() || '')
                 : (filters['first_air_date.lte']?.toString() || '')}
               onChange={(e) => handleDateRangeChange(
                 mediaType === 'movie' ? 'primary_release_date.lte' : 'first_air_date.lte',
@@ -511,7 +514,7 @@ export function FilterPanel({ mediaType, filters, genres, onFilterChange }: Filt
           </div>
         </div>
       </FilterSection>
-      
+
       <FilterSection title="Adult Content">
         <div className="flex items-center">
           <input
@@ -526,7 +529,7 @@ export function FilterPanel({ mediaType, filters, genres, onFilterChange }: Filt
           </label>
         </div>
       </FilterSection>
-      
+
       <button
         type="button"
         onClick={() => {
@@ -555,6 +558,20 @@ export function FilterPanel({ mediaType, filters, genres, onFilterChange }: Filt
       >
         Reset All Filters
       </button>
+
+      {/* Apply Filters button - only shown on small screens */}
+      {isMobile && onApplyFilters && (
+        <div className="lg:hidden sticky bottom-0 bg-gray-800 pt-4 pb-2 -mx-4 px-4 mt-6 border-t border-gray-700">
+          <button
+            type="button"
+            onClick={onApplyFilters}
+            className="w-full bg-blue-600 hover:bg-blue-700 text-white py-3 px-4 rounded-lg font-medium transition-colors shadow-lg flex items-center justify-center gap-2"
+          >
+            <Filter className="w-4 h-4" />
+            Apply Filters
+          </button>
+        </div>
+      )}
     </div>
   )
 }
