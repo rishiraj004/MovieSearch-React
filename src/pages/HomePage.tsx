@@ -23,7 +23,7 @@ function SectionLoader() {
 export function HomePage() {
   const { loadPopularMovies } = useMovieSearch()
   const navigate = useNavigate()
-  
+
   const [showSearchSection, setShowSearchSection] = useState(false)
 
   const handleLoadPopularMovies = useCallback(() => {
@@ -54,7 +54,7 @@ export function HomePage() {
       upcomingElement.scrollIntoView({ behavior: 'smooth' })
     }
   }, [])
-  
+
   // Navigate to discover page
   const navigateToDiscover = useCallback(() => {
     navigate('/discover')
@@ -63,7 +63,7 @@ export function HomePage() {
   return (
     <div className="home-page">
       {/* Navbar - positioned in top left */}
-      <Navbar 
+      <Navbar
         onTrendingClick={scrollToTrending}
         onTopRatedClick={scrollToTopRated}
         onUpcomingClick={scrollToUpcoming}
@@ -72,7 +72,7 @@ export function HomePage() {
 
       {/* Hero Section */}
       <Suspense fallback={<SectionLoader />}>
-        <HeroSectionContainer 
+        <HeroSectionContainer
           onLoadPopularMovies={handleLoadPopularMovies}
         />
       </Suspense>
@@ -100,8 +100,8 @@ export function HomePage() {
 
       {/* Search and Results Section */}
       <Suspense fallback={<SectionLoader />}>
-        <SearchResultsContainer 
-          showSearchSection={showSearchSection} 
+        <SearchResultsContainer
+          showSearchSection={showSearchSection}
         />
       </Suspense>
     </div>

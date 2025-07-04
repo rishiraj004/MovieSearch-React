@@ -41,7 +41,7 @@ class MovieService {
   private _apiKey: string | null = null;
   private _baseUrl: string | null = null;
   private defaultConfig: FetchConfig = {
-    timeout: 8000, // Optimized timeout
+    timeout: 60000, // Increased timeout to 60 seconds for slow connections
     retries: 2, // Reduced retries for faster failure
   }
   private cache = new SimpleCache()
@@ -120,8 +120,8 @@ class MovieService {
     method: 'GET' | 'POST' = 'GET'
   ): Promise<T> {
     // Check if API key is configured
-    if (!this.apiKey) {
-      throw new Error('TMDb API key is not configured. Please add VITE_TMDB_API_READ_ACCESS_TOKEN to your .env file.')
+    if (!this.apiKey || this.apiKey === 'your_read_access_token_here') {
+      throw new Error('TMDb API key is not configured. Please:\n1. Get your read access token from https://www.themoviedb.org/settings/api\n2. Add VITE_TMDB_API_READ_ACCESS_TOKEN=your_token_here to your .env file\n3. Restart the development server')
     }
 
     // Add language parameter if not already in the endpoint
@@ -539,13 +539,13 @@ class MovieService {
 
   // Get genres for movies or TV shows
   async getGenres(type: 'movie' | 'tv'): Promise<GenresResponse> {
-    const endpoint = `/genre/${type}/list?api_key=${this.apiKey}&language=en-US`
+    const endpoint = `/genre/${type}/list?language=en-US`
     return this.fetchFromApi<GenresResponse>(endpoint)
   }
 
   // Search TV shows
   async searchTVShows(query: string, page: number = 1): Promise<TVShowSearchResponse> {
-    const endpoint = `/search/tv?api_key=${this.apiKey}&query=${encodeURIComponent(query)}&page=${page}&language=en-US`
+    const endpoint = `/search/tv?query=${encodeURIComponent(query)}&page=${page}&language=en-US`
     return this.fetchFromApi<TVShowSearchResponse>(endpoint)
   }
 
